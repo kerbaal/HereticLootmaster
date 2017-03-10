@@ -1,0 +1,96 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+  ..\FrameXML\UI.xsd">
+  <Button name="MyLootButton" inherits="LootButtonTemplate" virtual="true">
+    <Layers>
+      <Layer level="ARTWORK">
+        <Texture name="$parentFromNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
+					<Size x="130" y="62"/>
+					<Anchors>
+						<Anchor point="LEFT" x="140" y="0"/>
+					</Anchors>
+				</Texture>
+        <FontString name="$parentFromText" inherits="GameFontNormal" justifyH="LEFT">
+          <Size x="93" y="38"/>
+          <Anchors>
+            <Anchor point="LEFT" relativePoint="RIGHT" x="138" y="0"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Scripts>
+      <OnLoad>
+        self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+        self.hasItem = 1;
+      </OnLoad>
+      <OnEnter>
+        MyLootItem_OnEnter(self, motion)
+      </OnEnter>
+      <OnLeave>
+        GameTooltip:Hide();
+        ResetCursor();
+      </OnLeave>
+      <OnUpdate>
+        if ( GameTooltip:IsOwned(self) ) then
+          MyLootItem_OnEnter(self)
+        end
+        CursorOnUpdate(self);
+      </OnUpdate>
+      <OnClick>
+        print(self.itemLink)
+        if ( IsModifiedClick() ) then
+          HandleModifiedItemClick(self.itemLink);
+        else
+
+        end
+      </OnClick>
+    </Scripts>
+  </Button>
+  <Frame name="RaidDonatorFrame" parent="UIParent" frameLevel="5" toplevel="true"
+    frameStrata="DIALOG" movable="true" enableMouse="true">
+		<Size x="300" y="200"/>
+    <Anchors>
+			<Anchor point="CENTER"/>
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
+      edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="5" right="5" top="5" bottom="5"/>
+			</BackgroundInsets>
+			<TileSize>
+				<AbsValue val="32"/>
+			</TileSize>
+			<EdgeSize>
+				<AbsValue val="32"/>
+			</EdgeSize>
+		</Backdrop>
+    <Frames>
+			<Button name="MyLootButton1" inherits="MyLootButton" id="1">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="20" y="-20"/>
+				</Anchors>
+      </Button>
+      <Button name="MyLootButton2" inherits="MyLootButton" id="2">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="20" y="-60"/>
+				</Anchors>
+      </Button>
+      <Button name="MyLootButton3" inherits="MyLootButton" id="3">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="20" y="-100"/>
+				</Anchors>
+      </Button>
+      <Button name="MyLootButton4" inherits="MyLootButton" id="4">
+				<Anchors>
+					<Anchor point="TOPLEFT" x="20" y="-140"/>
+				</Anchors>
+      </Button>
+    </Frames>
+    <Scripts>
+     <OnLoad>self:RegisterForDrag("LeftButton");</OnLoad>
+     <OnDragStart>self:StartMoving();</OnDragStart>
+     <OnDragStop>self:StopMovingOrSizing();</OnDragStop>
+ </Scripts>
+	</Frame>
+</Ui>

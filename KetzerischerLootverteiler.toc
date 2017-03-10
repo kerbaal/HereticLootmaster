@@ -1,0 +1,9 @@
+## Interface: 70100
+## Title: Ketzerischer Lootverteiler
+## Notes: Helps distributing loot if master loot is unavailable
+## Author: Kerbaal
+## SavedVariables:
+## SavedVariablesPerCharacter:
+
+KetzerischerLootverteiler.xml
+KetzerischerLootverteiler.lua
