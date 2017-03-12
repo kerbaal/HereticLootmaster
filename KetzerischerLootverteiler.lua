@@ -215,14 +215,23 @@ end
 function LootDonatorNavigationFrame_OnLoad()
 end
 
-function MyLootButton_OnClick(self)
+function MyLootButton_OnClick(self, button)
   print(self.itemLink)
-  local itemLink = select(2,GetItemInfo(self.itemLink))
-  if ( IsModifiedClick() ) then
-    HandleModifiedItemClick(itemLink);
-  else
-    local msg = self.itemDonor .. " bietet " .. itemLink .. " an";
-    SendChatMessage(msg, RAID)
+  if (button == "LeftButton") then
+    local itemLink = select(2,GetItemInfo(self.itemLink))
+    if ( IsModifiedClick() ) then
+      HandleModifiedItemClick(itemLink);
+    else
+      local msg = self.itemDonor .. " bietet " .. itemLink .. " an";
+      SendChatMessage(msg, RAID)
+    end
+  elseif (button == "RightButton") then
+    if ( IsModifiedClick() ) then
+      local id = (Addon.currentPage - 1) * Addon.ITEMS_PER_PAGE + self:GetID()
+      table.remove(Addon.itemList,id)
+      table.remove(Addon.fromList,id)
+      Addon.numItems = Addon.itemNum-1
+    end
   end
 end
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,

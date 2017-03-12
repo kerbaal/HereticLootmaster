@@ -38,9 +38,7 @@
         end
         CursorOnUpdate(self);
       </OnUpdate>
-      <OnClick>
-        MyLootButton_OnClick(self);
-      </OnClick>
+      <OnClick function="MyLootButton_OnClick"/>
     </Scripts>
   </Button>
 
