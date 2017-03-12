@@ -1,5 +1,8 @@
 local ADDON, Addon = ...
 
+local function dbgprint(...)
+  --print(...)
+end
 
 function Addon:getItemLink(index)
   if (index > Addon.itemNum) then
@@ -11,7 +14,7 @@ end
 local function eventHandlerSystem(self, event, msg)
   local name, roll, minRoll, maxRoll = msg:match("^(.+) würfelt. Ergebnis: (%d+) %((%d+)%-(%d+)%)$")
   if (name and roll and minRoll and maxRoll) then
-    print (name .. roll);
+    dbgprint (name .. roll);
   end
 end
 
@@ -39,7 +42,7 @@ local function updateButton(index)
     return
   end
   local itemIndex = (Addon.currentPage - 1) * Addon.ITEMS_PER_PAGE + index;
-  print ("Updating button " .. index .. "with item #" .. itemIndex)
+  dbgprint ("Updating button " .. index .. "with item #" .. itemIndex)
 
   local itemLink = Addon:getItemLink(itemIndex)
 
@@ -50,7 +53,7 @@ local function updateButton(index)
 
   button.itemLink = itemLink
   button.itemDonor = Addon.fromList[itemIndex]
-  print ("Button " .. button.itemLink)
+  dbgprint ("Button " .. button.itemLink)
 
   local from = _G["MyLootButton"..index.."FromText"];
   from:SetText(Addon.fromList[itemIndex]);
@@ -60,7 +63,7 @@ local function updateButton(index)
   local itemName, itemLink, quality, itemLevel, itemMinLevel, itemType,
   itemSubType, itemStackCount, itemEquipLoc, itemTexture,
   itemSellPrice = GetItemInfo(itemLink)
-  print (itemName)
+  dbgprint (itemName)
   local locked = false;
   local isQuestItem = false;
   local questId = nil;
@@ -69,7 +72,7 @@ local function updateButton(index)
 
 	if ( itemTexture ) then
 	  local color = ITEM_QUALITY_COLORS[quality];
-    print (itemTexture)
+    dbgprint (itemTexture)
 		SetItemButtonQuality(button, quality, itemId);
 		_G["MyLootButton"..index.."IconTexture"]:SetTexture(itemTexture);
 		text:SetText(itemName);
@@ -118,18 +121,18 @@ local function updatePageNavigation()
   Addon.maxPages = max(ceil(Addon.itemNum / Addon.ITEMS_PER_PAGE), 1);
 
   if ( Addon.currentPage == 1 ) then
-		LootDonatorPrevPageButton:Disable();
+		KetzerischerLootverteilerPrevPageButton:Disable();
 	else
-		LootDonatorPrevPageButton:Enable();
+		KetzerischerLootverteilerPrevPageButton:Enable();
 	end
 
 	if ( Addon.currentPage == Addon.maxPages ) then
-		LootDonatorNextPageButton:Disable();
+		KetzerischerLootverteilerNextPageButton:Disable();
 	else
-		LootDonatorNextPageButton:Enable();
+		KetzerischerLootverteilerNextPageButton:Enable();
 	end
 
-	LootDonatorPageText:SetFormattedText("%d / %d", Addon.currentPage, Addon.maxPages);
+	KetzerischerLootverteilerPageText:SetFormattedText("%d / %d", Addon.currentPage, Addon.maxPages);
 end
 
 local function update()
@@ -151,13 +154,13 @@ local function eventHandlerItem(self, event, msg, from)
   update()
 end
 
-function RaidDonatorFrame_OnUpdate(self)
+function KetzerischerLootverteilerFrame_OnUpdate(self)
   update()
 end
 
 local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID)
    if (14 <= difficultyID and difficultyID <= 16) then
-     RaidDonatorFrame:Show()
+     KetzerischerLootverteilerFrame:Show()
    end
 end
 
@@ -171,52 +174,52 @@ local function eventHandler(self, event, ...)
   end
 end
 
-SLASH_RAIDDONATOR1 = '/klv';
-function SlashCmdList.RAIDDONATOR(msg, editbox)
-  if (RaidDonatorFrame:IsVisible()) then
-    RaidDonatorFrame:Hide()
+SLASH_KetzerischerLootverteiler1 = '/klv';
+function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
+  if (KetzerischerLootverteilerFrame:IsVisible()) then
+    KetzerischerLootverteilerFrame:Hide()
   else
-    RaidDonatorFrame:Show()
+    KetzerischerLootverteilerFrame:Show()
   end
 end
 
-function RaidDonatorFrame_OnLoad(self)
+function KetzerischerLootverteilerFrame_OnLoad(self)
   Addon.ITEMS_PER_PAGE = 6
   Addon.itemList = {}
   Addon.fromList = {}
   Addon.itemNum = 0
   Addon.currentPage = 1
   Addon.maxPages = 1
-  RaidDonatorFrame:SetScript("OnEvent", eventHandler);
-  RaidDonatorFrame:RegisterEvent("CHAT_MSG_WHISPER");
-  RaidDonatorFrame:RegisterEvent("CHAT_MSG_SYSTEM");
-  RaidDonatorFrame:RegisterEvent("ENCOUNTER_END");
+  KetzerischerLootverteilerFrame:SetScript("OnEvent", eventHandler);
+  KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_WHISPER");
+  KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_SYSTEM");
+  KetzerischerLootverteilerFrame:RegisterEvent("ENCOUNTER_END");
 	self:RegisterForDrag("LeftButton");
 end
 
-function RaidDonatorFrame_OnDragStart()
-	RaidDonatorFrame:StartMoving();
+function KetzerischerLootverteilerFrame_OnDragStart()
+	KetzerischerLootverteilerFrame:StartMoving();
 end
 
-function RaidDonatorFrame_OnDragStop()
-	RaidDonatorFrame:StopMovingOrSizing();
+function KetzerischerLootverteilerFrame_OnDragStop()
+	KetzerischerLootverteilerFrame:StopMovingOrSizing();
 end
 
-function LootDonatorPrevPageButton_OnClick()
+function KetzerischerLootverteilerPrevPageButton_OnClick()
   Addon.currentPage = max(1, Addon.currentPage - 1)
   update()
 end
 
-function LootDonatorNextPageButton_OnClick()
+function KetzerischerLootverteilerNextPageButton_OnClick()
   Addon.currentPage = min(Addon.maxPages, Addon.currentPage + 1)
   update()
 end
 
-function LootDonatorNavigationFrame_OnLoad()
+function KetzerischerLootverteilerNavigationFrame_OnLoad()
 end
 
 function MyLootButton_OnClick(self, button)
-  print(self.itemLink)
+  dbgprint(self.itemLink)
   if (button == "LeftButton") then
     local itemLink = select(2,GetItemInfo(self.itemLink))
     if ( IsModifiedClick() ) then

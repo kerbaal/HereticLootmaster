@@ -42,10 +42,10 @@
     </Scripts>
   </Button>
 
-  <Frame name="LootDonatorNavigationFrameTemplate" setAllPoints="true" virtual="true">
+  <Frame name="KetzerischerLootverteilerNavigationFrameTemplate" setAllPoints="true" virtual="true">
 				<Layers>
 					<Layer level="OVERLAY">
-						<FontString name="LootDonatorPageText" inherits="GameFontNormal" justifyH="RIGHT">
+						<FontString name="KetzerischerLootverteilerPageText" inherits="GameFontNormal" justifyH="RIGHT">
 							<Size>
 								<AbsDimension x="102" y="0"/>
 							</Size>
@@ -61,7 +61,7 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Button name="LootDonatorPrevPageButton">
+					<Button name="KetzerischerLootverteilerPrevPageButton">
 						<Size>
 							<AbsDimension x="32" y="32"/>
 						</Size>
@@ -73,14 +73,14 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnClick function="LootDonatorPrevPageButton_OnClick"/>
+							<OnClick function="KetzerischerLootverteilerPrevPageButton_OnClick"/>
 						</Scripts>
 						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
 						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
 						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
 						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
 					</Button>
-					<Button name="LootDonatorNextPageButton">
+					<Button name="KetzerischerLootverteilerNextPageButton">
 						<Size>
 							<AbsDimension x="32" y="32"/>
 						</Size>
@@ -92,7 +92,7 @@
 							</Anchor>
 						</Anchors>
 						<Scripts>
-							<OnClick function="LootDonatorNextPageButton_OnClick"/>
+							<OnClick function="KetzerischerLootverteilerNextPageButton_OnClick"/>
 						</Scripts>
 						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
 						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
@@ -102,7 +102,7 @@
 				</Frames>
 			</Frame>
 
-  <Frame name="RaidDonatorFrame" parent="UIParent" frameLevel="5" toplevel="true"
+  <Frame name="KetzerischerLootverteilerFrame" parent="UIParent" frameLevel="5" toplevel="true"
     frameStrata="DIALOG" movable="true" enableMouse="true" clampedToScreen="true">
 		<Size x="300" y="310"/>
     <TitleRegion>
@@ -143,7 +143,7 @@
       <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
         <Size x="24" y="24"/>
          <Anchors>
-           <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="RaidDonatorFrame">
+           <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="KetzerischerLootverteilerFrame">
              <Offset x="0" y="0"/>
            </Anchor>
          </Anchors>
@@ -178,23 +178,23 @@
 					<Anchor point="TOPLEFT" x="20" y="-230"/>
 				</Anchors>
       </Button>
-      <Frame name="LootDonatorNavigationFrame" inherits="LootDonatorNavigationFrameTemplate"
+      <Frame name="KetzerischerLootverteilerNavigationFrame" inherits="KetzerischerLootverteilerNavigationFrameTemplate"
         visible="true" >
         <Anchors>
-          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="RaidDonatorFrame">
+          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="KetzerischerLootverteilerFrame">
             <Offset x="10" y="-25"/>
           </Anchor>
         </Anchors>
         <Scripts>
-         <OnLoad>LootDonatorNavigationFrame_OnLoad(self);</OnLoad>
+         <OnLoad>KetzerischerLootverteilerNavigationFrame_OnLoad(self);</OnLoad>
         </Scripts>
       </Frame>
     </Frames>
     <Scripts>
-     <OnLoad>RaidDonatorFrame_OnLoad(self);</OnLoad>
-     <OnUpdate function="RaidDonatorFrame_OnUpdate" />
-     <OnDragStart>RaidDonatorFrame_OnDragStart(self);</OnDragStart>
-     <OnDragStop>RaidDonatorFrame_OnDragStop(self);</OnDragStop>
+     <OnLoad>KetzerischerLootverteilerFrame_OnLoad(self);</OnLoad>
+     <OnUpdate function="KetzerischerLootverteilerFrame_OnUpdate" />
+     <OnDragStart>KetzerischerLootverteilerFrame_OnDragStart(self);</OnDragStart>
+     <OnDragStop>KetzerischerLootverteilerFrame_OnDragStop(self);</OnDragStop>
     </Scripts>
 	</Frame>
 </Ui>
