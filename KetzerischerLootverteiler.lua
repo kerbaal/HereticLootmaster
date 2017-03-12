@@ -1,19 +1,7 @@
 local ADDON, Addon = ...
 
-RaidDonatorFrame:RegisterEvent("CHAT_MSG_WHISPER");
-RaidDonatorFrame:RegisterEvent("CHAT_MSG_SYSTEM");
-
-function Addon:getItemList()
-  if (Addon.itemList == nil) then
-    Addon.itemList = {}
-    Addon.fromList = {}
-    Addon.itemNum = 0
-  end
-  return Addon.itemList
-end
 
 function Addon:getItemLink(index)
-  Addon:getItemList();
   if (index > Addon.itemNum) then
     return nil
   end
@@ -50,8 +38,10 @@ local function updateButton(index)
   if (button == nil) then
     return
   end
-  print ("Updating button " .. index)
-  local itemLink = Addon:getItemLink(index)
+  local itemIndex = (Addon.currentPage - 1) * Addon.ITEMS_PER_PAGE + index;
+  print ("Updating button " .. index .. "with item #" .. itemIndex)
+
+  local itemLink = Addon:getItemLink(itemIndex)
 
   if (itemLink == nil) then
     button:Hide()
@@ -59,10 +49,11 @@ local function updateButton(index)
   end
 
   button.itemLink = itemLink
+  button.itemDonor = Addon.fromList[itemIndex]
   print ("Button " .. button.itemLink)
 
   local from = _G["MyLootButton"..index.."FromText"];
-  from:SetText(Addon.fromList[index]);
+  from:SetText(Addon.fromList[itemIndex]);
 
   local itemId = getItemIdFromLink(itemLink)
 
@@ -123,19 +114,51 @@ local function updateButton(index)
 	button:Show();
 end
 
+local function updatePageNavigation()
+  Addon.maxPages = max(ceil(Addon.itemNum / Addon.ITEMS_PER_PAGE), 1);
+
+  if ( Addon.currentPage == 1 ) then
+		LootDonatorPrevPageButton:Disable();
+	else
+		LootDonatorPrevPageButton:Enable();
+	end
+
+	if ( Addon.currentPage == Addon.maxPages ) then
+		LootDonatorNextPageButton:Disable();
+	else
+		LootDonatorNextPageButton:Enable();
+	end
+
+	LootDonatorPageText:SetFormattedText("%d / %d", Addon.currentPage, Addon.maxPages);
+end
+
+local function update()
+  updatePageNavigation()
+
+  for i=1,Addon.ITEMS_PER_PAGE do
+    updateButton(i)
+  end
+end
+
+
 local function eventHandlerItem(self, event, msg, from)
-  Addon:getItemList()
   for itemString in string.gmatch(msg, "item[%-?%d:]+") do
-    Addon.itemList[Addon.itemNum+1] = itemString
+    Addon.itemList[Addon.itemNum+1] = itemString:gsub("%s+", "")
     Addon.fromList[Addon.itemNum+1] = from
     Addon.itemNum = Addon.itemNum+1
   end
 
-  for i=1,Addon.itemNum do
-    print (Addon.itemList[i])
-    updateButton(i)
-  end
+  update()
+end
 
+function RaidDonatorFrame_OnUpdate(self)
+  update()
+end
+
+local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID)
+   if (14 <= difficultyID and difficultyID <= 16) then
+     RaidDonatorFrame:Show()
+   end
 end
 
 local function eventHandler(self, event, ...)
@@ -143,11 +166,65 @@ local function eventHandler(self, event, ...)
     eventHandlerItem(self, event, ...)
   elseif (event == "CHAT_MSG_SYSTEM") then
     eventHandlerSystem(self, event, ...)
+  elseif (event == "ENCOUNTER_END") then
+    eventHandlerEncounterEnd(self, event, ...)
   end
 end
 
-RaidDonatorFrame:SetScript("OnEvent", eventHandler);
+SLASH_RAIDDONATOR1 = '/klv';
+function SlashCmdList.RAIDDONATOR(msg, editbox)
+  if (RaidDonatorFrame:IsVisible()) then
+    RaidDonatorFrame:Hide()
+  else
+    RaidDonatorFrame:Show()
+  end
+end
 
+function RaidDonatorFrame_OnLoad(self)
+  Addon.ITEMS_PER_PAGE = 6
+  Addon.itemList = {}
+  Addon.fromList = {}
+  Addon.itemNum = 0
+  Addon.currentPage = 1
+  Addon.maxPages = 1
+  RaidDonatorFrame:SetScript("OnEvent", eventHandler);
+  RaidDonatorFrame:RegisterEvent("CHAT_MSG_WHISPER");
+  RaidDonatorFrame:RegisterEvent("CHAT_MSG_SYSTEM");
+  RaidDonatorFrame:RegisterEvent("ENCOUNTER_END");
+	self:RegisterForDrag("LeftButton");
+end
+
+function RaidDonatorFrame_OnDragStart()
+	RaidDonatorFrame:StartMoving();
+end
+
+function RaidDonatorFrame_OnDragStop()
+	RaidDonatorFrame:StopMovingOrSizing();
+end
+
+function LootDonatorPrevPageButton_OnClick()
+  Addon.currentPage = max(1, Addon.currentPage - 1)
+  update()
+end
+
+function LootDonatorNextPageButton_OnClick()
+  Addon.currentPage = min(Addon.maxPages, Addon.currentPage + 1)
+  update()
+end
+
+function LootDonatorNavigationFrame_OnLoad()
+end
+
+function MyLootButton_OnClick(self)
+  print(self.itemLink)
+  local itemLink = select(2,GetItemInfo(self.itemLink))
+  if ( IsModifiedClick() ) then
+    HandleModifiedItemClick(itemLink);
+  else
+    local msg = self.itemDonor .. " bietet " .. itemLink .. " an";
+    SendChatMessage(msg, RAID)
+  end
+end
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
 --  Suffix, Unique, LinkLvl, reforging, Name = string.find(arg, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
 --print("Got item" .. Id);

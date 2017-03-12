@@ -5,5 +5,5 @@
 ## SavedVariables:
 ## SavedVariablesPerCharacter:
 
+#KetzerischerLootverteiler.lua
 KetzerischerLootverteiler.xml
-KetzerischerLootverteiler.lua
