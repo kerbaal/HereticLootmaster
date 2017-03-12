@@ -174,7 +174,7 @@ local function eventHandler(self, event, ...)
   end
 end
 
-SLASH_KetzerischerLootverteiler1 = '/klv';
+SLASH_KetzerischerLootverteiler1, SLASH_KetzerischerLootverteiler2 = '/klv', '/kpm';
 function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   if (KetzerischerLootverteilerFrame:IsVisible()) then
     KetzerischerLootverteilerFrame:Hide()
