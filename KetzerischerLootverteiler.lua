@@ -158,10 +158,10 @@ function KetzerischerLootverteilerFrame_OnUpdate(self)
   update()
 end
 
-local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID)
-   if (14 <= difficultyID and difficultyID <= 16) then
-     KetzerischerLootverteilerFrame:Show()
-   end
+local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID, raidSize, endStatus)
+  if (endStatus == 1 and 14 <= difficultyID and difficultyID <= 16) then
+    KetzerischerLootverteilerFrame:Show()
+  end
 end
 
 local function eventHandler(self, event, ...)
