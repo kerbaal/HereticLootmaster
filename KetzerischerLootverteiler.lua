@@ -226,7 +226,7 @@ function MyLootButton_OnClick(self, button)
       HandleModifiedItemClick(itemLink);
     else
       local msg = self.itemDonor .. " bietet " .. itemLink .. " an";
-      SendChatMessage(msg, RAID)
+      SendChatMessage(msg, "RAID")
     end
   elseif (button == "RightButton") then
     if ( IsModifiedClick() ) then
