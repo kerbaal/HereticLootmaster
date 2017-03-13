@@ -233,7 +233,7 @@ function MyLootButton_OnClick(self, button)
       local id = (Addon.currentPage - 1) * Addon.ITEMS_PER_PAGE + self:GetID()
       table.remove(Addon.itemList,id)
       table.remove(Addon.fromList,id)
-      Addon.numItems = Addon.itemNum-1
+      Addon.itemNum = Addon.itemNum-1
     end
   end
 end
