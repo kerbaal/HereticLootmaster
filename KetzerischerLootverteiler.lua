@@ -1,14 +1,18 @@
 local ADDON, Addon = ...
 
+KetzerischerLootverteilerData = {}
+
 local function dbgprint(...)
   --print(...)
 end
 
 function Addon:initialize()
   Addon.ITEMS_PER_PAGE = 6
-  Addon.itemList = {}
-  Addon.fromList = {}
-  Addon.itemNum = 0
+  if (Addon.itemList == nil) then
+    Addon.itemList = {}
+    Addon.fromList = {}
+    Addon.itemNum = 0
+  end
   Addon.currentPage = 1
   Addon.maxPages = 1
 end
@@ -194,6 +198,26 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
   end
 end
 
+local function eventHandlerLogout(self, event)
+  KetzerischerLootverteilerData.itemList = Addon.itemList
+  KetzerischerLootverteilerData.fromList = Addon.fromList
+  KetzerischerLootverteilerData.itemNum = Addon.itemNum
+end
+
+local function eventHandlerAddonLoaded(self, event, addonName)
+  if (addonName == ADDON) then
+    if KetzerischerLootverteilerData.itemList then
+      Addon.itemList = KetzerischerLootverteilerData.itemList
+    end
+    if KetzerischerLootverteilerData.fromList then
+      Addon.fromList = KetzerischerLootverteilerData.fromList
+    end
+    if KetzerischerLootverteilerData.itemNum then
+      Addon.itemNum = KetzerischerLootverteilerData.itemNum
+    end
+  end
+end
+
 local function eventHandler(self, event, ...)
   if event == "CHAT_MSG_WHISPER" then
     eventHandlerItem(self, event, ...)
@@ -203,6 +227,10 @@ local function eventHandler(self, event, ...)
     eventHandlerEncounterEnd(self, event, ...)
   elseif (event == "CHAT_MSG_LOOT") then
     eventHandlerLoot(self, event, ...)
+  elseif (event == "PLAYER_LOGOUT") then
+    eventHandlerLogout(self, event, ...)
+  elseif (event == "ADDON_LOADED") then
+    eventHandlerAddonLoaded(self, event, ...)
   end
 end
 
@@ -231,6 +259,8 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_SYSTEM");
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_LOOT");
   KetzerischerLootverteilerFrame:RegisterEvent("ENCOUNTER_END");
+  KetzerischerLootverteilerFrame:RegisterEvent("ADDON_LOADED");
+  KetzerischerLootverteilerFrame:RegisterEvent("PLAYER_LOGOUT");
 	self:RegisterForDrag("LeftButton");
 end
 

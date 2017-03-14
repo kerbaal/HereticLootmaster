@@ -3,7 +3,7 @@
 ## Notes: Helps distributing loot if master loot is unavailable
 ## Author: Kerbaal
 ## SavedVariables:
-## SavedVariablesPerCharacter:
+## SavedVariablesPerCharacter: KetzerischerLootverteilerData
 
 #KetzerischerLootverteiler.lua
 KetzerischerLootverteiler.xml
