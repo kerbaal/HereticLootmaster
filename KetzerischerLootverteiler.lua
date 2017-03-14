@@ -183,6 +183,11 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   end
 end
 
+-- Keybindings
+BINDING_HEADER_KETZERISCHER_LOOTVERTEILER = "Ketzerischer Lootverteiler"
+BINDING_NAME_KETZERISCHER_LOOTVERTEILER_TOGGLE = "Toggle window"
+
+
 function KetzerischerLootverteilerFrame_OnLoad(self)
   Addon.ITEMS_PER_PAGE = 6
   Addon.itemList = {}

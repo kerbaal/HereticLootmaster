@@ -7,3 +7,4 @@
 
 #KetzerischerLootverteiler.lua
 KetzerischerLootverteiler.xml
+Bindings.xml
