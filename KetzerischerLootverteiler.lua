@@ -9,6 +9,20 @@ local function dbgprint(...)
   end
 end
 
+local function FormatLink(linkType, linkDisplayText, ...)
+	local linkFormatTable = { ("|H%s"):format(linkType), ... };
+	return table.concat(linkFormatTable, ":") .. ("|h%s|h"):format(linkDisplayText);
+end
+
+local function GetPlayerLink(characterName, linkDisplayText, lineID, chatType, chatTarget)
+	-- Use simplified link if possible
+	if lineID or chatType or chatTarget then
+		return FormatLink("player", linkDisplayText, characterName, lineID or 0, chatType or 0, chatTarget or "");
+	else
+		return FormatLink("player", linkDisplayText, characterName);
+	end
+end
+
 local function GetFullUnitName(unitId)
   local name, realm = UnitName(unitId)
   if (realm == nil or realm == "") then
@@ -152,17 +166,19 @@ function RaidInfo:Update()
   dbgprint("Reindexing Raid...")
   wipe(RaidInfo.unitids)
   RaidInfo.unitids [GetFullUnitName("player")] = "player";
+  local numMembers = GetNumGroupMembers(LE_PARTY_CATEGORY_HOME)
+
   if ( IsInRaid(LE_PARTY_CATEGORY_HOME) ) then
-    for index = 1, GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) do
+    for index = 1, numMembers do
       local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index)
       local unitId = "raid" .. index
       local fullName = GetFullUnitName(unitId)
       RaidInfo.unitids [fullName] = unitId
     end
-  else
+  elseif (numMembers > 0) then
     local partyInfo = GetHomePartyInfo();
     if (partyInfo) then
-      for index = 1, (GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) - 1) do
+      for index = 1, (numMembers - 1) do
         local unitId = "party" .. index
         local fullName = GetFullUnitName(unitId)
         RaidInfo.unitids [fullName] = unitId
@@ -267,7 +283,7 @@ end
 local function updateTitle()
   if (Addon.master) then
     local name, _ = DecomposeName(Addon.master)
-    KetzerischerLootverteilerTitleText:SetText(Addon.TITLE_TEXT .. ": " .. name)
+    KetzerischerLootverteilerTitleText:SetText(Addon.TITLE_TEXT .. ": " .. GetPlayerLink(Addon.master, name))
   else
     KetzerischerLootverteilerTitleText:SetText(Addon.TITLE_TEXT)
   end
@@ -278,11 +294,16 @@ function Addon:SetMaster(name)
   updateTitle()
 end
 
+local function IsPlayerInPartyOrRaid()
+  return GetNumGroupMembers() > 0
+end
+
 function Addon:ClaimMaster()
   local isAuthorized = UnitIsGroupAssistant("player") or UnitIsGroupLeader("player")
-  if isAuthorized then
+  if isAuthorized or not IsPlayerInPartyOrRaid() then
     print ("You proclaim yourself Ketzerischer Lootverteiler.")
     SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "RAID")
+    SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", GetFullUnitName("player"))
   else
     print ("Only leader or assistant may become Ketzerischer Lootverteiler.")
   end
@@ -290,11 +311,14 @@ end
 
 function Addon:ProcessClaimMaster(name)
   if (name == nil) then return end
+  if (Addon.master == name) then return end
+  dbgprint(name .. " claims lootmastership")
 
   local unitId = RaidInfo:GetUnitId(name)
   RaidInfo:DebugPrint()
   local isAuthorized = UnitIsGroupAssistant(unitId) or UnitIsGroupLeader(unitId)
-  if (isAuthorized and not Addon.master == name) then
+  local lonely = not IsPlayerInPartyOrRaid() and name == GetFullUnitName("player")
+  if (isAuthorized or lonely) then
     Addon:SetMaster(name)
     print("You accepted " .. name .. " as your Ketzerischer Lootverteiler.")
   end
@@ -374,6 +398,7 @@ end
 
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
+    RaidInfo:Update()
     if KetzerischerLootverteilerData.itemList then
       Addon.itemList = KetzerischerLootverteilerData.itemList
     end
@@ -465,6 +490,8 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     else
       print("Debug is now off.")
     end
+  elseif (msg:match("^%s*raid%s*$")) then
+    RaidInfo:DebugPrint()
   end
 end
 
@@ -518,17 +545,20 @@ end
 
 function MyLootButton_OnClick(self, button)
   if (button == "LeftButton") then
+    local donor, _ = DecomposeName(self.itemDonor)
     local itemLink = select(2,GetItemInfo(self.itemLink))
     if ( IsModifiedClick() ) then
       HandleModifiedItemClick(itemLink);
     else
-      local msg = itemLink .. " (" .. self.itemDonor .. ")";
+      local msg = itemLink .. " (" .. donor .. ")";
       SendChatMessage(msg, "RAID")
     end
   elseif (button == "RightButton") then
     if ( IsModifiedClick() ) then
       local id = (Addon.currentPage - 1) * Addon.ITEMS_PER_PAGE + self:GetID()
       Addon:DeleteItem(id)
+    else
+      ChatFrame_OpenChat("/w " .. self.itemDonor .. " ")
     end
   end
 end
