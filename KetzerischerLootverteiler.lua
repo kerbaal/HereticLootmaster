@@ -138,6 +138,20 @@ local function update()
   end
 end
 
+function KetzerischerLootverteilerShow()
+  update()
+  KetzerischerLootverteilerFrame:Show()
+end
+
+function KetzerischerLootverteilerToggle()
+  if (KetzerischerLootverteilerFrame:IsVisible()) then
+    KetzerischerLootverteilerFrame:Hide()
+  else
+    KetzerischerLootverteilerShow()
+  end
+end
+
+
 function RaidInfo:Initialize()
   RaidInfo.unitids = {}
 end
@@ -145,11 +159,22 @@ end
 function RaidInfo:Update()
   dbgprint("Reindexing Raid...")
   wipe(RaidInfo.unitids)
-  for index = 1, GetNumGroupMembers() do
-    local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index)
-    local unitId = "raid" .. index
-    local fullName = GetFullUnitName(unitId)
-    RaidInfo.unitids [fullName] = unitId
+  if ( IsInRaid(LE_PARTY_CATEGORY_HOME) ) then
+    for index = 1, GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) do
+      local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index)
+      local unitId = "raid" .. index
+      local fullName = GetFullUnitName(unitId)
+      RaidInfo.unitids [fullName] = unitId
+    end
+  else
+    local partyInfo = GetHomePartyInfo();
+    if (partyInfo) then
+      for index = 1, (GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) - 1) do
+        local unitId = "party" .. index
+        local fullName = GetFullUnitName(unitId)
+        RaidInfo.unitids [fullName] = unitId
+      end
+    end
   end
 end
 
@@ -204,7 +229,7 @@ end
 
 local function showIfNotCombat()
   if not UnitAffectingCombat("player") then
-    KetzerischerLootverteilerFrame:Show()
+    KetzerischerLootverteilerShow()
   end
 end
 
@@ -339,7 +364,7 @@ end
 
 local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID, raidSize, endStatus)
   if (endStatus == 1 and 14 <= difficultyID and difficultyID <= 16) then
-    KetzerischerLootverteilerFrame:Show()
+    KetzerischerLootverteilerShow()
   end
 end
 
@@ -361,9 +386,9 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     if KetzerischerLootverteilerData.itemNum then
       Addon.itemNum = KetzerischerLootverteilerData.itemNum
     end
-    update()
-    if (KetzerischerLootverteilerData.isVisible == true) then
-      KetzerischerLootverteilerFrame:Show()
+    if (KetzerischerLootverteilerData.isVisible == nil or
+        KetzerischerLootverteilerData.isVisible == true) then
+      KetzerischerLootverteilerShow()
     end
   end
 end
@@ -387,7 +412,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
   end
 end
 --/run SendAddonMessage("KTZR_LT_VERT", "LootAnnounce Viridjana-DieAldor  [Gugel des Hochlords der Illidari]", "RAID")
-local function eventHandlerRaidRoosterUpdate(self, event)
+local function eventHandlerRaidRosterUpdate(self, event)
   RaidInfo:Update()
 end
 
@@ -406,19 +431,13 @@ local function eventHandler(self, event, ...)
     eventHandlerAddonLoaded(self, event, ...)
   elseif (event == "CHAT_MSG_ADDON") then
     eventHandlerAddonMessage(self, event, ...)
-  elseif (event == "RAID_ROSTER_UPDATE" or event == "GROUP_ROSTER_UPDATE") then
-    dbgprint("got " .. event)
-    eventHandlerRaidRoosterUpdate(self, event, ...)
+  elseif (event == "RAID_ROSTER_UPDATE" or event == "GROUP_ROSTER_UPDATE" or
+          event == "PARTY_MEMBER_CHANGED") then
+    print("got " .. event)
+    eventHandlerRaidRosterUpdate(self, event, ...)
   end
 end
 
-function KetzerischerLootverteilerToggle()
-  if (KetzerischerLootverteilerFrame:IsVisible()) then
-    KetzerischerLootverteilerFrame:Hide()
-  else
-    KetzerischerLootverteilerFrame:Show()
-  end
-end
 
 -- Keybindings
 BINDING_HEADER_KETZERISCHER_LOOTVERTEILER = "Ketzerischer Lootverteiler"
@@ -430,7 +449,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   if (msg == "" or msg:match("^%s*toggle%s*$")) then
     KetzerischerLootverteilerToggle()
   elseif (msg:match("^%s*show%s*$")) then
-    KetzerischerLootverteilerFrame:Show()
+    KetzerischerLootverteilerShow()
   elseif (msg:match("^%s*hide%s*$")) then
     KetzerischerLootverteilerFrame:Hide()
   elseif (msg:match("^%s*master.*$")) then
