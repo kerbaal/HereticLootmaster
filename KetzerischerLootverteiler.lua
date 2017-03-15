@@ -11,7 +11,7 @@ end
 
 local function GetFullUnitName(unitId)
   local name, realm = UnitName(unitId)
-  if (realm == nil) then
+  if (realm == nil or realm == "") then
     realm = GetRealmName():gsub("%s+", "")
   end
   return (name .. "-" .. realm)
@@ -159,6 +159,7 @@ end
 function RaidInfo:Update()
   dbgprint("Reindexing Raid...")
   wipe(RaidInfo.unitids)
+  RaidInfo.unitids [GetFullUnitName("player")] = "player";
   if ( IsInRaid(LE_PARTY_CATEGORY_HOME) ) then
     for index = 1, GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) do
       local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index)
@@ -249,6 +250,7 @@ function Addon:AddItem(itemString, from)
   Addon.itemNum = Addon.itemNum+1
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
+    dbgprint("Announcing loot")
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
@@ -321,6 +323,8 @@ end
 
 function Addon:IsMaster()
   local fullName = GetFullUnitName("player")
+  if Addon.master then dbgprint(Addon.master) end
+  if fullName then dbgprint(fullName) end
   return fullName == Addon.master
 end
 
@@ -357,6 +361,7 @@ local function eventHandlerLoot(self, event, message, sender)
 end
 
 local function eventHandlerItem(self, event, msg, from)
+  dbgprint("In Eventhandler")
   for itemString in string.gmatch(msg, "item[%-?%d:]+") do
     Addon:AddItem(itemString, from)
   end
@@ -394,6 +399,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
 end
 
 local function eventHandlerAddonMessage(self, event, prefix, message, channel, sender)
+  dbgprint("In handle addon message")
   if (prefix ~= Addon.MSG_PREFIX) then return end
   local type, msg = message:match("^%s*([^ ]+)(.*)$")
   if (type == nil) then return end
@@ -433,7 +439,7 @@ local function eventHandler(self, event, ...)
     eventHandlerAddonMessage(self, event, ...)
   elseif (event == "RAID_ROSTER_UPDATE" or event == "GROUP_ROSTER_UPDATE" or
           event == "PARTY_MEMBER_CHANGED") then
-    print("got " .. event)
+    dbgprint("got " .. event)
     eventHandlerRaidRosterUpdate(self, event, ...)
   end
 end
