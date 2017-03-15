@@ -29,14 +29,11 @@ local function DecomposeName(name)
 end
 
 local function updateButton(index)
-
   local button = _G["MyLootButton"..index];
   if (button == nil) then
     return
   end
   local itemIndex = (Addon.currentPage - 1) * Addon.ITEMS_PER_PAGE + index;
-  dbgprint ("Updating button " .. index .. "with item #" .. itemIndex)
-
   local itemLink = Addon:GetItemLink(itemIndex)
 
   if (itemLink == nil) then
@@ -47,9 +44,6 @@ local function updateButton(index)
   button.itemLink = itemLink
   button.itemDonor = Addon.fromList[itemIndex]
   local donor, realm = DecomposeName(Addon.fromList[itemIndex])
-
-  dbgprint ("Button " .. button.itemLink)
-
   local from = _G["MyLootButton"..index.."FromText"];
   from:SetText(donor);
 
@@ -58,7 +52,6 @@ local function updateButton(index)
   local itemName, itemLink, quality, itemLevel, itemMinLevel, itemType,
   itemSubType, itemStackCount, itemEquipLoc, itemTexture,
   itemSellPrice = GetItemInfo(itemLink)
-  dbgprint (itemName)
   local locked = false;
   local isQuestItem = false;
   local questId = nil;
@@ -67,7 +60,6 @@ local function updateButton(index)
 
 	if ( itemTexture ) then
 	  local color = ITEM_QUALITY_COLORS[quality];
-    dbgprint (itemTexture)
 		SetItemButtonQuality(button, quality, itemId);
 		_G["MyLootButton"..index.."IconTexture"]:SetTexture(itemTexture);
 		text:SetText(itemName);
@@ -302,7 +294,7 @@ function Addon:ProcessClaimMaster(name)
   local unitId = RaidInfo:GetUnitId(name)
   RaidInfo:DebugPrint()
   local isAuthorized = UnitIsGroupAssistant(unitId) or UnitIsGroupLeader(unitId)
-  if (isAuthorized) then
+  if (isAuthorized and not Addon.master == name) then
     Addon:SetMaster(name)
     print("You accepted " .. name .. " as your Ketzerischer Lootverteiler.")
   end
@@ -310,7 +302,7 @@ end
 
 function Addon:RenounceMaster()
   if (Addon.master ~= GetFullUnitName("player")) then return end
-  print ("You renounce the title of Ketzerischer Lootverteiler.")
+  print ("You renounce your title of Ketzerischer Lootverteiler.")
   SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_RENOUNCE_MASTER, "RAID")
 end
 
@@ -399,7 +391,6 @@ local function eventHandlerAddonLoaded(self, event, addonName)
 end
 
 local function eventHandlerAddonMessage(self, event, prefix, message, channel, sender)
-  dbgprint("In handle addon message")
   if (prefix ~= Addon.MSG_PREFIX) then return end
   local type, msg = message:match("^%s*([^ ]+)(.*)$")
   if (type == nil) then return end
@@ -460,8 +451,6 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     KetzerischerLootverteilerFrame:Hide()
   elseif (msg:match("^%s*master.*$")) then
     local action, argument = msg:match("^%s*master%s+([^ ]*) ?([^ ]*)$")
-    --if action then print("Action: " .. action) end
-    --if argument then print("Argument: " .. argument) end
     if (action == nil or action == "set") then
       Addon:ClaimMaster();
     elseif (action == "unset") then
@@ -528,13 +517,12 @@ function MyLootItem_OnEnter(self, motion)
 end
 
 function MyLootButton_OnClick(self, button)
-  dbgprint(self.itemLink)
   if (button == "LeftButton") then
     local itemLink = select(2,GetItemInfo(self.itemLink))
     if ( IsModifiedClick() ) then
       HandleModifiedItemClick(itemLink);
     else
-      local msg = self.itemDonor .. " bietet " .. itemLink .. " an";
+      local msg = itemLink .. " (" .. self.itemDonor .. ")";
       SendChatMessage(msg, "RAID")
     end
   elseif (button == "RightButton") then
