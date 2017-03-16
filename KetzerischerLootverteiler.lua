@@ -203,6 +203,7 @@ function Addon:Initialize()
   Addon.ITEMS_PER_PAGE = 6
   Addon.MSG_PREFIX = "KTZR_LT_VERT"
   Addon.MSG_CLAIM_MASTER = "ClaimMaster"
+  Addon.MSG_CHECK_MASTER = "CheckMaster"
   Addon.MSG_DELETE_LOOT = "DeleteLoot"
   Addon.MSG_DELETE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.MSG_RENOUNCE_MASTER = "RenounceMaster"
@@ -421,6 +422,7 @@ local function eventHandlerLogout(self, event)
   KetzerischerLootverteilerData.fromList = Addon.fromList
   KetzerischerLootverteilerData.itemNum = Addon.itemNum
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
+  KetzerischerLootverteilerData.master = Addon.master
 end
 
 local function eventHandlerAddonLoaded(self, event, addonName)
@@ -438,6 +440,10 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     if (KetzerischerLootverteilerData.isVisible == nil or
         KetzerischerLootverteilerData.isVisible == true) then
       KetzerischerLootverteilerShow()
+    end
+    if (KetzerischerLootverteilerData.master && IsPlayerInPartyOrRaid()) then
+      SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CHECK_MASTER, "WHISPER",
+        KetzerischerLootverteilerData.master)
     end
   end
 end
@@ -465,6 +471,8 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     if (sender == Addon.master and not Addon:IsMaster()) then
       Addon:DeleteItemById(itemString, from)
     end
+  elseif (type == Addon.MSG_CHECK_MASTER) then
+    SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", sender)
   end
 end
 
