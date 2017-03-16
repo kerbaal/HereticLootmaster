@@ -203,6 +203,8 @@ function Addon:Initialize()
   Addon.ITEMS_PER_PAGE = 6
   Addon.MSG_PREFIX = "KTZR_LT_VERT"
   Addon.MSG_CLAIM_MASTER = "ClaimMaster"
+  Addon.MSG_DELETE_LOOT = "DeleteLoot"
+  Addon.MSG_DELETE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.MSG_RENOUNCE_MASTER = "RenounceMaster"
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
@@ -267,10 +269,33 @@ function Addon:AddItem(itemString, from)
 end
 
 function Addon:DeleteItem(index)
+  if Addon:IsMaster() then
+    local msg = Addon.MSG_DELETE_LOOT .. " " .. Addon.fromList[index] .. " " .. Addon.itemList[index]
+    dbgprint("Announcing loot deletion")
+    SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
+  end
+
   table.remove(Addon.itemList, index)
   table.remove(Addon.fromList, index)
   Addon.itemNum = Addon.itemNum-1
   update()
+end
+
+function Addon:ItemById(itemString, from)
+  for i=1,Addon.itemNum do
+    if (Addon.itemList[i] == itemString and
+        Addon.fromList[i] == from)
+      return i
+    end
+  end
+  return nil
+end
+
+function Addon:DeleteItemById(itemString, from)
+  local index = Addon:ItemById(itemString, from)
+  if (index) then
+    Addon:DeleteItem(index)
+  end
 end
 
 function Addon:DeleteAllItems()
@@ -433,6 +458,13 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     dbgprint ("Announcement: " .. from .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
       Addon:AddItem(itemString, from)
+    end
+  elseif (type == Addon.MSG_DELETE_LOOT) then
+    if not msg then return end
+    local from, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
+    dbgprint ("Deletion: " .. from .. " " .. itemString)
+    if (sender == Addon.master and not Addon:IsMaster()) then
+      Addon:DeleteItemById(itemString, from)
     end
   end
 end
