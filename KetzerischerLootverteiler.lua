@@ -401,9 +401,8 @@ local function eventHandlerLoot(self, event, message, sender)
   end
 end
 
-local function eventHandlerItem(self, event, msg, from)
-  dbgprint("In Eventhandler")
-  for itemString in string.gmatch(msg, "item[%-?%d:]+") do
+function Addon:AddAllItems(itemStrings, from)
+  for itemString in string.gmatch(itemStrings, "item[%-?%d:]+") do
     Addon:AddItem(itemString, from)
   end
 end
@@ -468,14 +467,28 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     end
   end
 end
---/run SendAddonMessage("KTZR_LT_VERT", "LootAnnounce Viridjana-DieAldor  [Gugel des Hochlords der Illidari]", "RAID")
+
 local function eventHandlerRaidRosterUpdate(self, event)
   RaidInfo:Update()
+end
+
+local function eventHandlerItem(self, event, msg, from)
+  Addon:AddAllItems(msg, from)
+end
+
+local function eventHandlerBNChat(self, event, msg, sender, u1, u2, u3, u4, u5, u6, u7, u8, cnt, u9, bnetIDAccount)
+  local bnetIDGameAccount = select(6,BNGetFriendInfoByID(bnetIDAccount))
+  local _, name, client, realm = BNGetGameAccountInfo(bnetIDGameAccount)
+  dbgprint("BN: " .. sender .. " " .. bnetIDAccount .. " " .. name .. "-" .. realm)
+
+  Addon:AddAllItems(msg, name .. "-" .. realm)
 end
 
 local function eventHandler(self, event, ...)
   if event == "CHAT_MSG_WHISPER" then
     eventHandlerItem(self, event, ...)
+  elseif event == "CHAT_MSG_BN_WHISPER" then
+    eventHandlerBNChat(self, event, ...)
   elseif (event == "CHAT_MSG_SYSTEM") then
     eventHandlerSystem(self, event, ...)
   elseif (event == "ENCOUNTER_END") then
@@ -535,6 +548,7 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   RaidInfo:Initialize()
   KetzerischerLootverteilerFrame:SetScript("OnEvent", eventHandler);
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_WHISPER");
+  KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_BN_WHISPER");
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_SYSTEM");
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_LOOT");
   KetzerischerLootverteilerFrame:RegisterEvent("ENCOUNTER_END");
