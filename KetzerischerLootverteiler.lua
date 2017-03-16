@@ -284,7 +284,7 @@ end
 function Addon:ItemById(itemString, from)
   for i=1,Addon.itemNum do
     if (Addon.itemList[i] == itemString and
-        Addon.fromList[i] == from)
+        Addon.fromList[i] == from) then
       return i
     end
   end
