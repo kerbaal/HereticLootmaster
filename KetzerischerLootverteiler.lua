@@ -387,6 +387,9 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
   if (endStatus == 1 and 14 <= difficultyID and difficultyID <= 16) then
     KetzerischerLootverteilerShow()
   end
+  if (Addon:IsMaster()) then
+    Addon:ClaimMaster()
+  end
 end
 
 local function eventHandlerLogout(self, event)
