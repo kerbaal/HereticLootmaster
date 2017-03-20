@@ -441,7 +441,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
         KetzerischerLootverteilerData.isVisible == true) then
       KetzerischerLootverteilerShow()
     end
-    if (KetzerischerLootverteilerData.master && IsPlayerInPartyOrRaid()) then
+    if (KetzerischerLootverteilerData.master and IsPlayerInPartyOrRaid()) then
       SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CHECK_MASTER, "WHISPER",
         KetzerischerLootverteilerData.master)
     end
