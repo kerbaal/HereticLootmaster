@@ -160,31 +160,67 @@ end
 
 function RaidInfo:Initialize()
   RaidInfo.unitids = {}
+  RaidInfo.newPlayers = {}
+  RaidInfo.stale = "stale"
+end
+
+function RaidInfo:markStale()
+  for i,v in pairs(RaidInfo.unitids) do
+    RaidInfo.unitids[i] = RaidInfo.stale
+  end
+end
+
+function RaidInfo:clearStale()
+  for i,v in pairs(RaidInfo.unitids) do
+    if (v == RaidInfo.stale ) then
+      RaidInfo.unitids[i] = nil
+    end
+  end
+end
+
+function RaidInfo:recordByUnitId(unitId)
+  local fullName = GetFullUnitName(unitId)
+  local first, _ = DecomposeName(fullName)
+  if (first == UNKNOWNOBJECT) then return end
+  if RaidInfo.unitids[fullName] == nil then
+    table.insert(RaidInfo.newPlayers, fullName)
+  end
+  RaidInfo.unitids[fullName] = unitId
+end
+
+function RaidInfo:printNewPlayers(unitId)
+  local players = ""
+  for i,v in pairs(RaidInfo.newPlayers) do
+    players = players .. " " .. v
+  end
+  dbgprint ("New players (" .. table.getn(RaidInfo.newPlayers) .. "):" .. players)
+end
+
+function RaidInfo:GetNewPlayers()
+  return RaidInfo.newPlayers
 end
 
 function RaidInfo:Update()
   dbgprint("Reindexing Raid...")
-  wipe(RaidInfo.unitids)
+
+  RaidInfo:markStale()
+  wipe(RaidInfo.newPlayers)
   RaidInfo.unitids [GetFullUnitName("player")] = "player";
   local numMembers = GetNumGroupMembers(LE_PARTY_CATEGORY_HOME)
-
-  if ( IsInRaid(LE_PARTY_CATEGORY_HOME) ) then
-    for index = 1, numMembers do
-      local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(index)
-      local unitId = "raid" .. index
-      local fullName = GetFullUnitName(unitId)
-      RaidInfo.unitids [fullName] = unitId
+  if (numMembers > 0) then
+    local prefix = "raid"
+    if ( not IsInRaid(LE_PARTY_CATEGORY_HOME) ) then
+      prefix = "party"
+      numMembers = numMembers - 1  -- Party ids don't include the player
     end
-  elseif (numMembers > 0) then
-    local partyInfo = GetHomePartyInfo();
-    if (partyInfo) then
-      for index = 1, (numMembers - 1) do
-        local unitId = "party" .. index
-        local fullName = GetFullUnitName(unitId)
-        RaidInfo.unitids [fullName] = unitId
-      end
+
+    for index = 1, numMembers do
+      local unitId = prefix .. index
+      RaidInfo:recordByUnitId(unitId)
     end
   end
+  RaidInfo:printNewPlayers()
+  RaidInfo:clearStale()
 end
 
 function RaidInfo:GetUnitId(name)
@@ -321,7 +357,7 @@ function Addon:SetMaster(name)
 end
 
 local function IsPlayerInPartyOrRaid()
-  return GetNumGroupMembers() > 0
+  return GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) > 0
 end
 
 function Addon:ClaimMaster()
@@ -341,7 +377,7 @@ function Addon:ProcessClaimMaster(name)
   dbgprint(name .. " claims lootmastership")
 
   local unitId = RaidInfo:GetUnitId(name)
-  RaidInfo:DebugPrint()
+  if not unitId then return end -- Reject master claims from instance groups
   local isAuthorized = UnitIsGroupAssistant(unitId) or UnitIsGroupLeader(unitId)
   local lonely = not IsPlayerInPartyOrRaid() and name == GetFullUnitName("player")
   if (isAuthorized or lonely) then
@@ -393,12 +429,11 @@ local function eventHandlerLoot(self, event, message, sender)
   local _, _, sPlayer, itemlink = string.find(message, LOOT_REGEX)
   if not sPlayer then
     _, _, itemlink = string.find(message, LOOT_SELF_REGEX)
-  else
-    dbgprint(sPlayer)
+    sPlayer = GetFullUnitName("player")
   end
   if itemlink then
     local _, _, itemId = string.find(itemlink, "item:(%d+):")
-    dbgprint(itemlink)
+    dbgprint(sPlayer .. " got " .. itemlink)
   end
 end
 
@@ -476,8 +511,13 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
   end
 end
 
-local function eventHandlerRaidRosterUpdate(self, event)
+local function eventHandlerRaidRosterUpdate(self, event, arg)
   RaidInfo:Update()
+  if Addon:IsMaster() then
+    for i,v in pairs(RaidInfo:GetNewPlayers()) do
+      SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", v)
+    end
+  end
 end
 
 local function eventHandlerItem(self, event, msg, from)
@@ -509,9 +549,7 @@ local function eventHandler(self, event, ...)
     eventHandlerAddonLoaded(self, event, ...)
   elseif (event == "CHAT_MSG_ADDON") then
     eventHandlerAddonMessage(self, event, ...)
-  elseif (event == "RAID_ROSTER_UPDATE" or event == "GROUP_ROSTER_UPDATE" or
-          event == "PARTY_MEMBER_CHANGED") then
-    dbgprint("got " .. event)
+  elseif (event == "GROUP_ROSTER_UPDATE") then
     eventHandlerRaidRosterUpdate(self, event, ...)
   end
 end
