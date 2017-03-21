@@ -23,12 +23,25 @@ local function GetPlayerLink(characterName, linkDisplayText, lineID, chatType, c
 	end
 end
 
-local function GetFullUnitName(unitId)
-  local name, realm = UnitName(unitId)
+local function DecomposeName(name)
+  return name:match("^([^-]*)-?(.*)$")
+end
+
+local function MergeFullName(name, realm)
   if (realm == nil or realm == "") then
     realm = GetRealmName():gsub("%s+", "")
   end
-  return (name .. "-" .. realm)
+  return name .. "-" .. realm
+end
+
+local function CompleteUnitName(unitName)
+  local name, realm = DecomposeName(unitName)
+  return MergeFullName(name, realm)
+end
+
+local function GetFullUnitName(unitId)
+  local name, realm = UnitName(unitId)
+  return MergeFullName(name, realm)
 end
 
 local function getItemIdFromLink(itemLink)
@@ -36,10 +49,6 @@ local function getItemIdFromLink(itemLink)
   Suffix, Unique, LinkLvl, reforging, Name =
   string.find(itemLink,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
   return itemId
-end
-
-local function DecomposeName(name)
-  return name:match("^([^-]*)-(.*)$")
 end
 
 local function updateButton(index)
@@ -381,9 +390,17 @@ local function IsPlayerInPartyOrRaid()
   return GetNumGroupMembers(LE_PARTY_CATEGORY_HOME) > 0
 end
 
+function Addon:IsAuthorizedToClaimMaster(unitId)
+  if not unitId then return false end -- Reject master claims from instance groups
+  if (GetFullUnitName(unitId) == GetFullUnitName("player")
+      and not IsPlayerInPartyOrRaid()) then
+    return true
+  end
+  return UnitIsGroupAssistant(unitId) or UnitIsGroupLeader(unitId)
+end
+
 function Addon:ClaimMaster()
-  local isAuthorized = UnitIsGroupAssistant("player") or UnitIsGroupLeader("player")
-  if isAuthorized or not IsPlayerInPartyOrRaid() then
+  if Addon:IsAuthorizedToClaimMaster("player") then
     print ("You proclaim yourself Ketzerischer Lootverteiler.")
     SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "RAID")
     SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", GetFullUnitName("player"))
@@ -398,10 +415,7 @@ function Addon:ProcessClaimMaster(name)
   dbgprint(name .. " claims lootmastership")
 
   local unitId = RaidInfo:GetUnitId(name)
-  if not unitId then return end -- Reject master claims from instance groups
-  local isAuthorized = UnitIsGroupAssistant(unitId) or UnitIsGroupLeader(unitId)
-  local lonely = not IsPlayerInPartyOrRaid() and name == GetFullUnitName("player")
-  if (isAuthorized or lonely) then
+  if (Addon:IsAuthorizedToClaimMaster(unitId)) then
     Addon:SetMaster(name)
     print("You accepted " .. name .. " as your Ketzerischer Lootverteiler.")
   end
@@ -436,6 +450,7 @@ end
 -- Eventhandler
 
 local function eventHandlerSystem(self, event, msg)
+  -- LOOT_ROLL_ROLLED  LOOT_ROLL_ROLLED_SELF
   local name, roll, minRoll, maxRoll = msg:match("^(.+) würfelt. Ergebnis: (%d+) %((%d+)%-(%d+)%)$")
   if (name and roll and minRoll and maxRoll) then
     dbgprint (name .. " " .. roll);
@@ -449,6 +464,8 @@ local function eventHandlerLoot(self, event, message, sender)
   if not sPlayer then
     _, _, itemlink = string.find(message, LOOT_SELF_REGEX)
     sPlayer = GetFullUnitName("player")
+  else
+    sPlayer = CompleteUnitName(sPlayer)
   end
   if itemlink then
     local _, _, itemId = string.find(itemlink, "item:(%d+):")
@@ -466,7 +483,7 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
   if (endStatus == 1 and 14 <= difficultyID and difficultyID <= 16) then
     KetzerischerLootverteilerShow()
   end
-  if (Addon:IsMaster()) then
+  if (Addon:IsMaster() and Addon:IsAuthorizedToClaimMaster("player") ) then
     Addon:ClaimMaster()
   end
 end
@@ -533,8 +550,12 @@ end
 local function eventHandlerRaidRosterUpdate(self, event, arg)
   RaidInfo:Update()
   if Addon:IsMaster() then
-    for i,v in pairs(RaidInfo:GetNewPlayers()) do
-      SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", v)
+    if Addon:IsAuthorizedToClaimMaster("player") then
+      for i,v in pairs(RaidInfo:GetNewPlayers()) do
+        SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", v)
+      end
+    else
+      Addon:RenounceMaster()
     end
   end
 end
