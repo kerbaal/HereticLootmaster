@@ -162,6 +162,24 @@ function RaidInfo:Initialize()
   RaidInfo.unitids = {}
   RaidInfo.newPlayers = {}
   RaidInfo.stale = "stale"
+  RaidInfo.timer = nil
+end
+
+local function RaidInfoUpdate()
+  dbgprint("Reindexing Raid through timer...")
+  RaidInfo:Update()
+end
+
+function RaidInfo:ProvideReindexing()
+  if RaidInfo.timer then RaidInfo.timer:Cancel() end
+  RaidInfo.timer = nil
+end
+
+function RaidInfo:RequestReindexing()
+  if (RaidInfo.timer == nil) then
+    dbgprint("Request Reindexing...")
+    RaidInfo.timer = C_Timer.NewTimer(2, RaidInfoUpdate)
+  end
 end
 
 function RaidInfo:markStale()
@@ -181,7 +199,10 @@ end
 function RaidInfo:recordByUnitId(unitId)
   local fullName = GetFullUnitName(unitId)
   local first, _ = DecomposeName(fullName)
-  if (first == UNKNOWNOBJECT) then return end
+  if (first == UNKNOWNOBJECT) then
+     RaidInfo:RequestReindexing()
+     return
+   end
   if RaidInfo.unitids[fullName] == nil then
     table.insert(RaidInfo.newPlayers, fullName)
   end
@@ -201,7 +222,7 @@ function RaidInfo:GetNewPlayers()
 end
 
 function RaidInfo:Update()
-  dbgprint("Reindexing Raid...")
+  RaidInfo:ProvideReindexing()
 
   RaidInfo:markStale()
   wipe(RaidInfo.newPlayers)
@@ -401,8 +422,6 @@ end
 
 function Addon:IsMaster()
   local fullName = GetFullUnitName("player")
-  if Addon.master then dbgprint(Addon.master) end
-  if fullName then dbgprint(fullName) end
   return fullName == Addon.master
 end
 
@@ -419,7 +438,7 @@ end
 local function eventHandlerSystem(self, event, msg)
   local name, roll, minRoll, maxRoll = msg:match("^(.+) würfelt. Ergebnis: (%d+) %((%d+)%-(%d+)%)$")
   if (name and roll and minRoll and maxRoll) then
-    dbgprint (name .. roll);
+    dbgprint (name .. " " .. roll);
   end
 end
 
