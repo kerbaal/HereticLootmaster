@@ -280,6 +280,7 @@ function Addon:Initialize()
   if (Addon.itemList == nil) then
     Addon.itemList = {}
     Addon.fromList = {}
+    Addon.senderList = {}
     Addon.itemNum = 0
   end
   Addon.currentPage = 1
@@ -296,23 +297,13 @@ function Addon:GetItemLink(index)
   return Addon.itemList[index]
 end
 
-function Addon:IsItemPresent(from, itemString)
-  for i=1,Addon.ITEMS_PER_PAGE do
-    if (Addon.itemList[i] == itemString and
-        Addon.fromList[i] == from) then
-      return true
-    end
-  end
-  return false
-end
-
 local function showIfNotCombat()
   if not UnitAffectingCombat("player") then
     KetzerischerLootverteilerShow()
   end
 end
 
-function Addon:AddItem(itemString, from, source)
+function Addon:AddItem(itemString, from, sender)
   itemString = itemString:match("item[%-?%d:]+")
   if (itemString == nil) then return end
   if (from == nil or from:gsub("%s+", "") == "") then return end
@@ -329,6 +320,7 @@ function Addon:AddItem(itemString, from, source)
 
   Addon.itemList[Addon.itemNum+1] = itemString
   Addon.fromList[Addon.itemNum+1] = from
+  Addon.senderList[Addon.itemNum+1] = sender
   Addon.itemNum = Addon.itemNum+1
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
@@ -349,22 +341,24 @@ function Addon:DeleteItem(index)
 
   table.remove(Addon.itemList, index)
   table.remove(Addon.fromList, index)
+  table.remove(Addon.senderList, index)
   Addon.itemNum = Addon.itemNum-1
   update()
 end
 
-function Addon:ItemById(itemString, from)
+function Addon:ItemById(itemString, from, sender)
   for i=1,Addon.itemNum do
     if (Addon.itemList[i] == itemString and
-        Addon.fromList[i] == from) then
+        Addon.fromList[i] == from and
+        Addon.senderList[i] == sender) then
       return i
     end
   end
   return nil
 end
 
-function Addon:DeleteItemById(itemString, from)
-  local index = Addon:ItemById(itemString, from)
+function Addon:DeleteItemById(itemString, from, sender)
+  local index = Addon:ItemById(itemString, from, sender)
   if (index) then
     Addon:DeleteItem(index)
   end
@@ -373,6 +367,7 @@ end
 function Addon:DeleteAllItems()
   wipe(Addon.itemList)
   wipe(Addon.fromList)
+  wipe(Addon.senderList)
   Addon.itemNum = 0
   update()
 end
@@ -479,9 +474,9 @@ local function eventHandlerLoot(self, event, message, sender)
   end
 end
 
-function Addon:AddAllItems(itemStrings, from, source)
+function Addon:AddAllItems(itemStrings, from, sender)
   for itemString in string.gmatch(itemStrings, "item[%-?%d:]+") do
-    Addon:AddItem(itemString, from, source)
+    Addon:AddItem(itemString, from, sender)
   end
 end
 
@@ -497,6 +492,7 @@ end
 local function eventHandlerLogout(self, event)
   KetzerischerLootverteilerData.itemList = Addon.itemList
   KetzerischerLootverteilerData.fromList = Addon.fromList
+  KetzerischerLootverteilerData.senderList = Addon.senderList
   KetzerischerLootverteilerData.itemNum = Addon.itemNum
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
@@ -511,6 +507,9 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     end
     if KetzerischerLootverteilerData.fromList then
       Addon.fromList = KetzerischerLootverteilerData.fromList
+    end
+    if KetzerischerLootverteilerData.senderList then
+      Addon.senderList = KetzerischerLootverteilerData.senderList
     end
     if KetzerischerLootverteilerData.itemNum then
       Addon.itemNum = KetzerischerLootverteilerData.itemNum
@@ -551,7 +550,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     local from, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
     dbgprint ("Deletion: " .. from .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
-      Addon:DeleteItemById(itemString, from)
+      Addon:DeleteItemById(itemString, from, sender)
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
     SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", sender)
