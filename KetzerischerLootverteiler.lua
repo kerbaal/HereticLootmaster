@@ -10,17 +10,17 @@ local function dbgprint(...)
 end
 
 local function FormatLink(linkType, linkDisplayText, ...)
-	local linkFormatTable = { ("|H%s"):format(linkType), ... };
-	return table.concat(linkFormatTable, ":") .. ("|h%s|h"):format(linkDisplayText);
+  local linkFormatTable = { ("|H%s"):format(linkType), ... };
+  return table.concat(linkFormatTable, ":") .. ("|h%s|h"):format(linkDisplayText);
 end
 
 local function GetPlayerLink(characterName, linkDisplayText, lineID, chatType, chatTarget)
-	-- Use simplified link if possible
-	if lineID or chatType or chatTarget then
-		return FormatLink("player", linkDisplayText, characterName, lineID or 0, chatType or 0, chatTarget or "");
-	else
-		return FormatLink("player", linkDisplayText, characterName);
-	end
+  -- Use simplified link if possible.
+  if lineID or chatType or chatTarget then
+    return FormatLink("player", linkDisplayText, characterName, lineID or 0, chatType or 0, chatTarget or "");
+  else
+    return FormatLink("player", linkDisplayText, characterName);
+  end
 end
 
 local function DecomposeName(name)
@@ -79,70 +79,70 @@ local function updateButton(index)
   local isQuestItem = false;
   local questId = nil;
   local isActive = false;
-	local text = _G["MyLootButton"..index.."Text"];
+  local text = _G["MyLootButton"..index.."Text"];
 
-	if ( itemTexture ) then
-	  local color = ITEM_QUALITY_COLORS[quality];
-		SetItemButtonQuality(button, quality, itemId);
-		_G["MyLootButton"..index.."IconTexture"]:SetTexture(itemTexture);
-		text:SetText(itemName);
-		if( locked ) then
-		  SetItemButtonNameFrameVertexColor(button, 1.0, 0, 0);
-			SetItemButtonTextureVertexColor(button, 0.9, 0, 0);
-			SetItemButtonNormalTextureVertexColor(button, 0.9, 0, 0);
-		else
-			SetItemButtonNameFrameVertexColor(button, 0.5, 0.5, 0.5);
-			SetItemButtonTextureVertexColor(button, 1.0, 1.0, 1.0);
-			SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
-		end
+  if ( itemTexture ) then
+    local color = ITEM_QUALITY_COLORS[quality];
+    SetItemButtonQuality(button, quality, itemId);
+    _G["MyLootButton"..index.."IconTexture"]:SetTexture(itemTexture);
+    text:SetText(itemName);
+    if( locked ) then
+      SetItemButtonNameFrameVertexColor(button, 1.0, 0, 0);
+      SetItemButtonTextureVertexColor(button, 0.9, 0, 0);
+      SetItemButtonNormalTextureVertexColor(button, 0.9, 0, 0);
+    else
+      SetItemButtonNameFrameVertexColor(button, 0.5, 0.5, 0.5);
+      SetItemButtonTextureVertexColor(button, 1.0, 1.0, 1.0);
+      SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
+    end
 
-		local questTexture = _G["MyLootButton"..index.."IconQuestTexture"];
-		if ( questId and not isActive ) then
-			questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
-			questTexture:Show();
-		elseif ( questId or isQuestItem ) then
-			questTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER);
-			questTexture:Show();
-		else
-			questTexture:Hide();
-		end
+    local questTexture = _G["MyLootButton"..index.."IconQuestTexture"];
+    if ( questId and not isActive ) then
+      questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
+      questTexture:Show();
+    elseif ( questId or isQuestItem ) then
+      questTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER);
+      questTexture:Show();
+    else
+      questTexture:Hide();
+    end
 
-		text:SetVertexColor(color.r, color.g, color.b);
-		local countString = _G["MyLootButton"..index.."Count"];
-		if ( itemStackCount > 1 ) then
-			countString:SetText(itemStackCount);
-			countString:Show();
-		else
-			countString:Hide();
-		end
-		button.quality = quality;
-		button:Enable();
-	else
-		text:SetText("");
-		_G["MyLootButton"..index.."IconTexture"]:SetTexture(nil);
-		SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
-		--LootFrame:SetScript("OnUpdate", LootFrame_OnUpdate);
-		button:Disable();
-	end
-	button:Show();
+    text:SetVertexColor(color.r, color.g, color.b);
+    local countString = _G["MyLootButton"..index.."Count"];
+    if ( itemStackCount > 1 ) then
+      countString:SetText(itemStackCount);
+      countString:Show();
+    else
+      countString:Hide();
+    end
+    button.quality = quality;
+    button:Enable();
+  else
+    text:SetText("");
+    _G["MyLootButton"..index.."IconTexture"]:SetTexture(nil);
+    SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
+    --LootFrame:SetScript("OnUpdate", LootFrame_OnUpdate);
+    button:Disable();
+  end
+  button:Show();
 end
 
 local function updatePageNavigation()
   Addon.maxPages = max(ceil(Addon.itemNum / Addon.ITEMS_PER_PAGE), 1);
 
   if ( Addon.currentPage == 1 ) then
-		KetzerischerLootverteilerPrevPageButton:Disable();
-	else
-		KetzerischerLootverteilerPrevPageButton:Enable();
-	end
+    KetzerischerLootverteilerPrevPageButton:Disable();
+  else
+    KetzerischerLootverteilerPrevPageButton:Enable();
+  end
 
-	if ( Addon.currentPage == Addon.maxPages ) then
-		KetzerischerLootverteilerNextPageButton:Disable();
-	else
-		KetzerischerLootverteilerNextPageButton:Enable();
-	end
+  if ( Addon.currentPage == Addon.maxPages ) then
+    KetzerischerLootverteilerNextPageButton:Disable();
+  else
+    KetzerischerLootverteilerNextPageButton:Enable();
+  end
 
-	KetzerischerLootverteilerPageText:SetFormattedText("%d / %d", Addon.currentPage, Addon.maxPages);
+  KetzerischerLootverteilerPageText:SetFormattedText("%d / %d", Addon.currentPage, Addon.maxPages);
 end
 
 local function update()
@@ -241,7 +241,8 @@ function RaidInfo:Update()
     local prefix = "raid"
     if ( not IsInRaid(LE_PARTY_CATEGORY_HOME) ) then
       prefix = "party"
-      numMembers = numMembers - 1  -- Party ids don't include the player
+      -- Party ids don't include the player, hence decrement.
+      numMembers = numMembers - 1
     end
 
     for index = 1, numMembers do
@@ -311,15 +312,19 @@ local function showIfNotCombat()
   end
 end
 
-function Addon:AddItem(itemString, from)
+function Addon:AddItem(itemString, from, source)
   itemString = itemString:match("item[%-?%d:]+")
   if (itemString == nil) then return end
   if (from == nil or from:gsub("%s+", "") == "") then return end
   from = from:gsub("%s+", "")
   itemString = itemString:gsub("%s+", "")
 
-  if (Addon:IsItemPresent(from, itemString)) then
-    --return
+  -- Do not filter if the item comes from the lootmaster.
+  if (source ~= Addon.master or Addon:IsMaster()) then
+    local quality = select(3,GetItemInfo(itemString))
+    if (Addon.minRarity and quality < Addon.minRarity[1]) then
+      return
+    end
   end
 
   Addon.itemList[Addon.itemNum+1] = itemString
@@ -391,7 +396,8 @@ local function IsPlayerInPartyOrRaid()
 end
 
 function Addon:IsAuthorizedToClaimMaster(unitId)
-  if not unitId then return false end -- Reject master claims from instance groups
+  -- Reject master claims from instance groups.
+  if not unitId then return false end
   if (GetFullUnitName(unitId) == GetFullUnitName("player")
       and not IsPlayerInPartyOrRaid()) then
     return true
@@ -473,9 +479,9 @@ local function eventHandlerLoot(self, event, message, sender)
   end
 end
 
-function Addon:AddAllItems(itemStrings, from)
+function Addon:AddAllItems(itemStrings, from, source)
   for itemString in string.gmatch(itemStrings, "item[%-?%d:]+") do
-    Addon:AddItem(itemString, from)
+    Addon:AddItem(itemString, from, source)
   end
 end
 
@@ -494,6 +500,7 @@ local function eventHandlerLogout(self, event)
   KetzerischerLootverteilerData.itemNum = Addon.itemNum
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
+  KetzerischerLootverteilerData.minRarity = Addon.minRarity
 end
 
 local function eventHandlerAddonLoaded(self, event, addonName)
@@ -507,6 +514,10 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     end
     if KetzerischerLootverteilerData.itemNum then
       Addon.itemNum = KetzerischerLootverteilerData.itemNum
+    end
+    if KetzerischerLootverteilerData.minRarity then
+      Addon.minRarity = KetzerischerLootverteilerData.minRarity
+      UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, Addon.minRarity[2])
     end
     if (KetzerischerLootverteilerData.isVisible == nil or
         KetzerischerLootverteilerData.isVisible == true) then
@@ -533,7 +544,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     local from, itemString = msg:match(Addon.MSG_ANNOUNCE_LOOT_PATTERN)
     dbgprint ("Announcement: " .. from .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
-      Addon:AddItem(itemString, from)
+      Addon:AddItem(itemString, from, sender)
     end
   elseif (type == Addon.MSG_DELETE_LOOT) then
     if not msg then return end
@@ -561,7 +572,7 @@ local function eventHandlerRaidRosterUpdate(self, event, arg)
 end
 
 local function eventHandlerItem(self, event, msg, from)
-  Addon:AddAllItems(msg, from)
+  Addon:AddAllItems(msg, from, from)
 end
 
 local function eventHandlerBNChat(self, event, msg, sender, u1, u2, u3, u4, u5, u6, u7, u8, cnt, u9, bnetIDAccount)
@@ -569,7 +580,7 @@ local function eventHandlerBNChat(self, event, msg, sender, u1, u2, u3, u4, u5, 
   local _, name, client, realm = BNGetGameAccountInfo(bnetIDGameAccount)
   dbgprint("BN: " .. sender .. " " .. bnetIDAccount .. " " .. name .. "-" .. realm)
 
-  Addon:AddAllItems(msg, name .. "-" .. realm)
+  Addon:AddAllItems(msg, name .. "-" .. realm, sender)
 end
 
 local function eventHandler(self, event, ...)
@@ -643,16 +654,16 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_ADDON");
   KetzerischerLootverteilerFrame:RegisterEvent("RAID_ROSTER_UPDATE");
   KetzerischerLootverteilerFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
-	self:RegisterForDrag("LeftButton");
+  self:RegisterForDrag("LeftButton");
   update()
 end
 
 function KetzerischerLootverteilerFrame_OnDragStart()
-	KetzerischerLootverteilerFrame:StartMoving();
+  KetzerischerLootverteilerFrame:StartMoving();
 end
 
 function KetzerischerLootverteilerFrame_OnDragStop()
-	KetzerischerLootverteilerFrame:StopMovingOrSizing();
+  KetzerischerLootverteilerFrame:StopMovingOrSizing();
 end
 
 function KetzerischerLootverteilerPrevPageButton_OnClick()
@@ -672,9 +683,9 @@ end
 function MyLootItem_OnEnter(self, motion)
   local itemLink = Addon:GetItemLink(self:GetID())
   if itemLink then
-	  GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-	  GameTooltip:SetHyperlink(itemLink);
-	  CursorUpdate(self);
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetHyperlink(itemLink);
+    CursorUpdate(self);
   end
 end
 
@@ -696,6 +707,24 @@ function MyLootButton_OnClick(self, button)
       ChatFrame_OpenChat("/w " .. self.itemDonor .. " ")
     end
   end
+end
+
+local function KetzerischerlootverteilerRarityDropDown_OnClick(self)
+   UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, self:GetID())
+   Addon.minRarity = { self.value, self:GetID() }
+end
+
+function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
+  for i = 0, 5 do
+    local r, g, b, hex = GetItemQualityColor(i)
+    local info = UIDropDownMenu_CreateInfo()
+    info.text = "|c" .. hex .. _G["ITEM_QUALITY" .. i .. "_DESC"] .. "|r"
+    info.value = i
+    info.func = KetzerischerlootverteilerRarityDropDown_OnClick
+    UIDropDownMenu_AddButton(info, level)
+  end
+  UIDropDownMenu_JustifyText(KetzerischerlootverteilerRarityDropDown, "LEFT")
+  UIDropDownMenu_SetWidth(KetzerischerlootverteilerRarityDropDown, 100);
 end
 
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,

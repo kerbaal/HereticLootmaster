@@ -1,209 +1,213 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
   ..\FrameXML\UI.xsd">
-  <Script file="KetzerischerLootverteiler.lua"/>
-  <Button name="MyLootButton" inherits="LootButtonTemplate" virtual="true">
-    <Layers>
-      <Layer level="ARTWORK">
-        <Texture name="$parentFromNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
-					<Size x="130" y="62"/>
-					<Anchors>
-						<Anchor point="LEFT" x="140" y="0"/>
-					</Anchors>
-				</Texture>
-        <FontString name="$parentFromText" inherits="GameFontNormal" justifyH="LEFT">
-          <Size x="93" y="38"/>
-          <Anchors>
-            <Anchor point="LEFT" relativePoint="RIGHT" x="138" y="0"/>
-          </Anchors>
-        </FontString>
-      </Layer>
-    </Layers>
-    <Scripts>
-      <OnLoad>
-        self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-        self.hasItem = 1;
-      </OnLoad>
-      <OnEnter>
-        MyLootItem_OnEnter(self, motion)
-      </OnEnter>
-      <OnLeave>
-        GameTooltip:Hide();
-        ResetCursor();
-      </OnLeave>
-      <OnUpdate>
-        if ( GameTooltip:IsOwned(self) ) then
-          MyLootItem_OnEnter(self)
-        end
-        CursorOnUpdate(self);
-      </OnUpdate>
-      <OnClick function="MyLootButton_OnClick"/>
-    </Scripts>
-  </Button>
+    <Script file="KetzerischerLootverteiler.lua"/>
+    <Button name="MyLootButton" inherits="LootButtonTemplate" virtual="true">
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture name="$parentFromNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
+                    <Size x="130" y="62"/>
+                    <Anchors>
+                        <Anchor point="LEFT" x="140" y="0"/>
+                    </Anchors>
+                </Texture>
+                <FontString name="$parentFromText" inherits="GameFontNormal" justifyH="LEFT">
+                    <Size x="93" y="38"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativePoint="RIGHT" x="138" y="0"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad>
+                self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+                self.hasItem = 1;
+            </OnLoad>
+            <OnEnter>
+                MyLootItem_OnEnter(self, motion)
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide();
+                ResetCursor();
+            </OnLeave>
+            <OnUpdate>
+                if ( GameTooltip:IsOwned(self) ) then MyLootItem_OnEnter(self) end
+                CursorOnUpdate(self);
+            </OnUpdate>
+            <OnClick function="MyLootButton_OnClick"/>
+        </Scripts>
+    </Button>
 
-  <Frame name="KetzerischerLootverteilerNavigationFrameTemplate" setAllPoints="true" virtual="true">
-				<Layers>
-					<Layer level="OVERLAY">
-						<FontString name="KetzerischerLootverteilerPageText" inherits="GameFontNormal" justifyH="RIGHT">
-							<Size>
-								<AbsDimension x="100" y="0"/>
-							</Size>
-							<Anchors>
-								<Anchor point="BOTTOMRIGHT">
-									<Offset>
-										<AbsDimension x="-80" y="10"/>
-									</Offset>
-								</Anchor>
-							</Anchors>
-						</FontString>
+    <Frame name="KetzerischerLootverteilerNavigationFrameTemplate" setAllPoints="true" virtual="true">
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="KetzerischerLootverteilerPageText" inherits="GameFontNormal" justifyH="RIGHT">
+                    <Size>
+                        <AbsDimension x="100" y="0"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="BOTTOMRIGHT">
+                            <Offset>
+                                <AbsDimension x="-80" y="10"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
 
-					</Layer>
-				</Layers>
-				<Frames>
-					<Button name="KetzerischerLootverteilerPrevPageButton">
-						<Size>
-							<AbsDimension x="32" y="32"/>
-						</Size>
-						<Anchors>
-							<Anchor point="BOTTOMRIGHT" relativeTo="$parent">
-								<Offset>
-									<AbsDimension x="-36" y="1"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick function="KetzerischerLootverteilerPrevPageButton_OnClick"/>
-						</Scripts>
-						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
-						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
-						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
-						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
-					</Button>
-					<Button name="KetzerischerLootverteilerNextPageButton">
-						<Size>
-							<AbsDimension x="32" y="32"/>
-						</Size>
-						<Anchors>
-							<Anchor point="BOTTOMRIGHT">
-								<Offset>
-									<AbsDimension x="-1" y="1"/>
-								</Offset>
-							</Anchor>
-						</Anchors>
-						<Scripts>
-							<OnClick function="KetzerischerLootverteilerNextPageButton_OnClick"/>
-						</Scripts>
-						<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
-						<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
-						<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
-						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
-					</Button>
-				</Frames>
-			</Frame>
+            </Layer>
+        </Layers>
+        <Frames>
+            <Button name="KetzerischerLootverteilerPrevPageButton">
+                <Size>
+                    <AbsDimension x="32" y="32"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="$parent">
+                        <Offset>
+                            <AbsDimension x="-36" y="1"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick function="KetzerischerLootverteilerPrevPageButton_OnClick"/>
+                </Scripts>
+                <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
+                <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
+                <DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
+            <Button name="KetzerischerLootverteilerNextPageButton">
+                <Size>
+                    <AbsDimension x="32" y="32"/>
+                </Size>
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset>
+                            <AbsDimension x="-1" y="1"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick function="KetzerischerLootverteilerNextPageButton_OnClick"/>
+                </Scripts>
+                <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
+                <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
+                <DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
+                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+            </Button>
+        </Frames>
+    </Frame>
 
-  <Frame name="KetzerischerLootverteilerFrame" parent="UIParent" frameLevel="5" toplevel="true"
-    frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
-		<Size x="300" y="310"/>
-    <TitleRegion>
-      <Size x="300" y="20"/>
-      <Anchors><Anchor point="TOP"/>
-      </Anchors>
-    </TitleRegion>
-    <Anchors>
-			<Anchor point="CENTER"/>
-		</Anchors>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background"
-      edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-			<!-- <BackgroundInsets>
+    <Frame name="KetzerischerLootverteilerFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
+        <Size x="300" y="310"/>
+        <TitleRegion>
+            <Size x="300" y="20"/>
+            <Anchors><Anchor point="TOP"/>
+            </Anchors>
+        </TitleRegion>
+        <Anchors>
+            <Anchor point="CENTER"/>
+        </Anchors>
+        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+            <!-- <BackgroundInsets>
 				<AbsInset left="5" right="5" top="5" bottom="5"/>
 			</BackgroundInsets>-->
-			<TileSize>
-				<AbsValue val="32"/>
-			</TileSize>
-			<EdgeSize>
-				<AbsValue val="5"/>
-			</EdgeSize>
-		</Backdrop>
-    <Layers>
-      <Layer level="OVERLAY">
-        <FontString name="KetzerischerLootverteilerTitleText" inherits="GameFontNormal"
-          text="Ketzerischer Lootverteiler" parentKey="TitleText"
-          wordwrap="false" justifyH="LEFT">
-  				<Anchors>
-  					<Anchor point="TOP" x="0" y="-5"/>
-  					<Anchor point="LEFT" x="10"/>
-  					<Anchor point="RIGHT" x="-10"/>
-  				</Anchors>
-  			</FontString>
-        <FontString name="KetzerischerLootverteilerStatusText" inherits="GameFontNormal" justifyH="LEFT" text="">
-          <Size>
-            <AbsDimension x="200" y="0"/>
-          </Size>
-          <Anchors>
-            <Anchor point="BOTTOM" x="0" y="10"/>
-            <Anchor point="LEFT" x="10"/>
-          </Anchors>
-        </FontString>
-      </Layer>
-    </Layers>
+            <TileSize>
+                <AbsValue val="32"/>
+            </TileSize>
+            <EdgeSize>
+                <AbsValue val="5"/>
+            </EdgeSize>
+        </Backdrop>
+        <Layers>
+            <Layer level="OVERLAY">
+                <FontString name="KetzerischerLootverteilerTitleText" inherits="GameFontNormal" text="Ketzerischer Lootverteiler" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
+                    <Anchors>
+                        <Anchor point="TOP" x="0" y="-5"/>
+                        <Anchor point="LEFT" x="10"/>
+                        <Anchor point="RIGHT" x="-10"/>
+                    </Anchors>
+                </FontString>
+                <FontString name="KetzerischerLootverteilerStatusText" inherits="GameFontNormal" justifyH="LEFT" text="">
+                    <Size>
+                        <AbsDimension x="200" y="0"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="BOTTOM" x="0" y="10"/>
+                        <Anchor point="LEFT" x="10"/>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
 
-    <Frames>
-      <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
-        <Size x="24" y="24"/>
-         <Anchors>
-           <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="KetzerischerLootverteilerFrame">
-             <Offset x="0" y="0"/>
-           </Anchor>
-         </Anchors>
-       </Button>
-			<Button name="MyLootButton1" inherits="MyLootButton" id="1">
-				<Anchors>
-					<Anchor point="TOPLEFT" x="20" y="-30"/>
-				</Anchors>
-      </Button>
-      <Button name="MyLootButton2" inherits="MyLootButton" id="2">
-				<Anchors>
-					<Anchor point="TOPLEFT" x="20" y="-70"/>
-				</Anchors>
-      </Button>
-      <Button name="MyLootButton3" inherits="MyLootButton" id="3">
-				<Anchors>
-					<Anchor point="TOPLEFT" x="20" y="-110"/>
-				</Anchors>
-      </Button>
-      <Button name="MyLootButton4" inherits="MyLootButton" id="4">
-				<Anchors>
-					<Anchor point="TOPLEFT" x="20" y="-150"/>
-				</Anchors>
-      </Button>
-      <Button name="MyLootButton5" inherits="MyLootButton" id="5">
-				<Anchors>
-					<Anchor point="TOPLEFT" x="20" y="-190"/>
-				</Anchors>
-      </Button>
-      <Button name="MyLootButton6" inherits="MyLootButton" id="6">
-				<Anchors>
-					<Anchor point="TOPLEFT" x="20" y="-230"/>
-				</Anchors>
-      </Button>
-      <Frame name="KetzerischerLootverteilerNavigationFrame" inherits="KetzerischerLootverteilerNavigationFrameTemplate"
-        visible="true" >
-        <Anchors>
-          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="KetzerischerLootverteilerFrame">
-            <Offset x="0" y="0"/>
-          </Anchor>
-        </Anchors>
+        <Frames>
+            <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
+                <Size x="24" y="24"/>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="KetzerischerLootverteilerFrame">
+                        <Offset x="0" y="0"/>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Button name="MyLootButton1" inherits="MyLootButton" id="1">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="20" y="-30"/>
+                </Anchors>
+            </Button>
+            <Button name="MyLootButton2" inherits="MyLootButton" id="2">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="20" y="-70"/>
+                </Anchors>
+            </Button>
+            <Button name="MyLootButton3" inherits="MyLootButton" id="3">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="20" y="-110"/>
+                </Anchors>
+            </Button>
+            <Button name="MyLootButton4" inherits="MyLootButton" id="4">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="20" y="-150"/>
+                </Anchors>
+            </Button>
+            <Button name="MyLootButton5" inherits="MyLootButton" id="5">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="20" y="-190"/>
+                </Anchors>
+            </Button>
+            <Button name="MyLootButton6" inherits="MyLootButton" id="6">
+                <Anchors>
+                    <Anchor point="TOPLEFT" x="20" y="-230"/>
+                </Anchors>
+            </Button>
+            <Button name="KetzerischerlootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate">
+                <Scripts>
+                    <OnLoad>
+                        UIDropDownMenu_Initialize(self, KetzerischerlootverteilerRarityDropDown_Initialize);
+                    </OnLoad>
+                    function=""/>
+                </Scripts>
+                <Anchors>
+                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
+                        <Offset x="-10" y="-2"/>
+                    </Anchor>
+                </Anchors>
+            </Button>
+            <Frame name="KetzerischerLootverteilerNavigationFrame" inherits="KetzerischerLootverteilerNavigationFrameTemplate" visible="true">
+                <Anchors>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="KetzerischerLootverteilerFrame">
+                        <Offset x="0" y="0"/>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnLoad>KetzerischerLootverteilerNavigationFrame_OnLoad(self);</OnLoad>
+                </Scripts>
+            </Frame>
+        </Frames>
         <Scripts>
-         <OnLoad>KetzerischerLootverteilerNavigationFrame_OnLoad(self);</OnLoad>
+            <OnLoad>KetzerischerLootverteilerFrame_OnLoad(self);</OnLoad>
+            <OnUpdate function="KetzerischerLootverteilerFrame_OnUpdate"/>
+            <OnDragStart>KetzerischerLootverteilerFrame_OnDragStart(self);</OnDragStart>
+            <OnDragStop>KetzerischerLootverteilerFrame_OnDragStop(self);</OnDragStop>
         </Scripts>
-      </Frame>
-    </Frames>
-    <Scripts>
-     <OnLoad>KetzerischerLootverteilerFrame_OnLoad(self);</OnLoad>
-     <OnUpdate function="KetzerischerLootverteilerFrame_OnUpdate" />
-     <OnDragStart>KetzerischerLootverteilerFrame_OnDragStart(self);</OnDragStart>
-     <OnDragStop>KetzerischerLootverteilerFrame_OnDragStop(self);</OnDragStop>
-    </Scripts>
-	</Frame>
+    </Frame>
 </Ui>
