@@ -57,7 +57,7 @@ local function updateButton(index)
     return
   end
   local itemIndex = (Addon.currentPage - 1) * Addon.ITEMS_PER_PAGE + index;
-  local itemLink = Addon:GetItemLink(itemIndex)
+  local itemLink, donator, _ = Addon.itemList:Get(itemIndex)
 
   if (itemLink == nil) then
     button:Hide()
@@ -65,10 +65,10 @@ local function updateButton(index)
   end
 
   button.itemLink = itemLink
-  button.itemDonor = Addon.fromList[itemIndex]
-  local donor, realm = DecomposeName(Addon.fromList[itemIndex])
+  button.itemDonor = donator
+  local name, realm = DecomposeName(donator)
   local from = _G["MyLootButton"..index.."FromText"];
-  from:SetText(donor);
+  from:SetText(name);
 
   local itemId = getItemIdFromLink(itemLink)
 
@@ -128,7 +128,7 @@ local function updateButton(index)
 end
 
 local function updatePageNavigation()
-  Addon.maxPages = max(ceil(Addon.itemNum / Addon.ITEMS_PER_PAGE), 1);
+  Addon.maxPages = max(ceil(Addon.itemList:Size() / Addon.ITEMS_PER_PAGE), 1);
 
   if ( Addon.currentPage == 1 ) then
     KetzerischerLootverteilerPrevPageButton:Disable();
@@ -165,7 +165,6 @@ function KetzerischerLootverteilerToggle()
     KetzerischerLootverteilerShow()
   end
 end
-
 
 function RaidInfo:Initialize()
   RaidInfo.unitids = {}
@@ -266,6 +265,80 @@ function RaidInfo:DebugPrint()
   for index,value in pairs(RaidInfo.unitids) do dbgprint(index," ",value) end
 end
 
+
+
+local ItemList = {};
+ItemList.__index = ItemList;
+function ItemList:New()
+   local self = {};
+   setmetatable(self, ItemList);
+
+   self.items = {}
+   self.donators = {}
+   self.senders = {}
+   self.size = 0
+   return self;
+end
+
+function ItemList:Size()
+  return self.size
+end
+
+function ItemList:Get(index)
+  if (index < 1 or index > self.size) then return nil end
+  return self.items[index], self.donators[index], self.senders[index]
+end
+
+function ItemList:GetItemLink(index)
+  if (index > self.size) then return nil end
+  return self.items[index]
+end
+
+function ItemList:Add(item, donator, sender)
+  local n = self.size+1
+  self.items[n] = item
+  self.donators[n] = donator
+  self.senders[n] = sender
+  self.size = n
+end
+
+function ItemList:Delete(index)
+  if index < 1 or index > self.size then return end
+  table.remove(self.items, index)
+  table.remove(self.donators, index)
+  table.remove(self.senders, index)
+  self.size = self.size-1
+end
+
+function ItemList:ItemById(item, donator, sender)
+  for i=1,self.size do
+    if (self.items[i] == item and
+        self.donators[i] == donator and
+        self.senders[i] == sender) then
+      return i
+    end
+  end
+  return nil
+end
+
+function ItemList:DeleteAllItems()
+  wipe(self.items)
+  wipe(self.donators)
+  wipe(self.senders)
+  self.size = 0
+end
+
+function ItemList:Validate()
+  for i=self.size,1,-1 do
+    if (self.items[i] == nil or
+        self.donators[i] == nil or
+        self.senders[i] == nil) then
+      self:Delete(i)
+    end
+  end
+end
+
+
 function Addon:Initialize()
   Addon.ITEMS_PER_PAGE = 6
   Addon.MSG_PREFIX = "KTZR_LT_VERT"
@@ -277,24 +350,13 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  if (Addon.itemList == nil) then
-    Addon.itemList = {}
-    Addon.fromList = {}
-    Addon.senderList = {}
-    Addon.itemNum = 0
-  end
+  Addon.itemList = ItemList:New()
+
   Addon.currentPage = 1
   Addon.maxPages = 1
   Addon.master = nil;
   Addon.lastForcedUpdate = 0;
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
-end
-
-function Addon:GetItemLink(index)
-  if (index > Addon.itemNum) then
-    return nil
-  end
-  return Addon.itemList[index]
 end
 
 local function showIfNotCombat()
@@ -318,10 +380,8 @@ function Addon:AddItem(itemString, from, sender)
     end
   end
 
-  Addon.itemList[Addon.itemNum+1] = itemString
-  Addon.fromList[Addon.itemNum+1] = from
-  Addon.senderList[Addon.itemNum+1] = sender
-  Addon.itemNum = Addon.itemNum+1
+  Addon.itemList:Add(itemString, from, sender)
+
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
     dbgprint("Announcing loot")
@@ -333,42 +393,14 @@ function Addon:AddItem(itemString, from, sender)
 end
 
 function Addon:DeleteItem(index)
+  item, donator, _ = Addon.itemList:Get(index)
   if Addon:IsMaster() then
-    local msg = Addon.MSG_DELETE_LOOT .. " " .. Addon.fromList[index] .. " " .. Addon.itemList[index]
+    local msg = Addon.MSG_DELETE_LOOT .. " " .. donator .. " " .. item
     dbgprint("Announcing loot deletion")
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
-  table.remove(Addon.itemList, index)
-  table.remove(Addon.fromList, index)
-  table.remove(Addon.senderList, index)
-  Addon.itemNum = Addon.itemNum-1
-  update()
-end
-
-function Addon:ItemById(itemString, from, sender)
-  for i=1,Addon.itemNum do
-    if (Addon.itemList[i] == itemString and
-        Addon.fromList[i] == from and
-        Addon.senderList[i] == sender) then
-      return i
-    end
-  end
-  return nil
-end
-
-function Addon:DeleteItemById(itemString, from, sender)
-  local index = Addon:ItemById(itemString, from, sender)
-  if (index) then
-    Addon:DeleteItem(index)
-  end
-end
-
-function Addon:DeleteAllItems()
-  wipe(Addon.itemList)
-  wipe(Addon.fromList)
-  wipe(Addon.senderList)
-  Addon.itemNum = 0
+  Addon.itemList:Delete(index)
   update()
 end
 
@@ -379,6 +411,10 @@ local function updateTitle()
   else
     KetzerischerLootverteilerTitleText:SetText(Addon.TITLE_TEXT)
   end
+end
+
+function Addon:IsMaster()
+  return GetFullUnitName("player") == Addon.master
 end
 
 function Addon:SetMaster(name)
@@ -434,12 +470,6 @@ function Addon:ProcessRenounceMaster(name)
   end
 end
 
-
-function Addon:IsMaster()
-  local fullName = GetFullUnitName("player")
-  return fullName == Addon.master
-end
-
 function KetzerischerLootverteilerFrame_OnUpdate(self, elapsed)
   Addon.lastForcedUpdate = Addon.lastForcedUpdate + elapsed
   if (Addon.lastForcedUpdate > 10) then
@@ -490,10 +520,8 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
 end
 
 local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.itemList = Addon.itemList
-  KetzerischerLootverteilerData.fromList = Addon.fromList
-  KetzerischerLootverteilerData.senderList = Addon.senderList
-  KetzerischerLootverteilerData.itemNum = Addon.itemNum
+  wipe(KetzerischerLootverteilerData)
+  KetzerischerLootverteilerData.itemList2 = Addon.itemList
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
   KetzerischerLootverteilerData.minRarity = Addon.minRarity
@@ -502,17 +530,11 @@ end
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
     RaidInfo:Update()
-    if KetzerischerLootverteilerData.itemList then
-      Addon.itemList = KetzerischerLootverteilerData.itemList
-    end
-    if KetzerischerLootverteilerData.fromList then
-      Addon.fromList = KetzerischerLootverteilerData.fromList
-    end
-    if KetzerischerLootverteilerData.senderList then
-      Addon.senderList = KetzerischerLootverteilerData.senderList
-    end
-    if KetzerischerLootverteilerData.itemNum then
-      Addon.itemNum = KetzerischerLootverteilerData.itemNum
+    if KetzerischerLootverteilerData.itemList2 then
+      for i,v in pairs(KetzerischerLootverteilerData.itemList2) do
+        Addon.itemList[i] = v
+      end
+      Addon.itemList:Validate()
     end
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
@@ -547,10 +569,11 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     end
   elseif (type == Addon.MSG_DELETE_LOOT) then
     if not msg then return end
-    local from, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
-    dbgprint ("Deletion: " .. from .. " " .. itemString)
+    local donator, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
+    dbgprint ("Deletion: " .. donator .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
-      Addon:DeleteItemById(itemString, from, sender)
+      local index = Addon.itemList:ItemById(itemString, donator, sender)
+      if (index) then Addon:DeleteItem(index) end
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
     SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", sender)
@@ -570,7 +593,7 @@ local function eventHandlerRaidRosterUpdate(self, event, arg)
   end
 end
 
-local function eventHandlerItem(self, event, msg, from)
+local function eventHandlerWhisper(self, event, msg, from)
   Addon:AddAllItems(msg, from, from)
 end
 
@@ -584,7 +607,7 @@ end
 
 local function eventHandler(self, event, ...)
   if event == "CHAT_MSG_WHISPER" then
-    eventHandlerItem(self, event, ...)
+    eventHandlerWhisper(self, event, ...)
   elseif event == "CHAT_MSG_BN_WHISPER" then
     eventHandlerBNChat(self, event, ...)
   elseif (event == "CHAT_MSG_SYSTEM") then
@@ -626,7 +649,8 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
       Addon:RenounceMaster();
     end
   elseif (msg:match("^%s*clear%s*$")) then
-    Addon:DeleteAllItems()
+    Addon.itemList:DeleteAllItems()
+    update()
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
     if KetzerischerLootverteilerData.debug then
@@ -680,7 +704,7 @@ end
 
 
 function MyLootItem_OnEnter(self, motion)
-  local itemLink = Addon:GetItemLink(self:GetID())
+  local itemLink = Addon.itemList:GetItemLink(self:GetID())
   if itemLink then
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
     GameTooltip:SetHyperlink(itemLink);
@@ -690,12 +714,12 @@ end
 
 function MyLootButton_OnClick(self, button)
   if (button == "LeftButton") then
-    local donor, _ = DecomposeName(self.itemDonor)
+    local name, _ = DecomposeName(self.itemDonor)
     local itemLink = select(2,GetItemInfo(self.itemLink))
     if ( IsModifiedClick() ) then
       HandleModifiedItemClick(itemLink);
     else
-      local msg = itemLink .. " (" .. donor .. ")";
+      local msg = itemLink .. " (" .. name .. ")";
       SendChatMessage(msg, "RAID")
     end
   elseif (button == "RightButton") then
