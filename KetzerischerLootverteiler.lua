@@ -311,7 +311,7 @@ function Addon:AddItem(itemString, from, sender)
   itemString = itemString:gsub("%s+", "")
 
   -- Do not filter if the item comes from the lootmaster.
-  if (source ~= Addon.master or Addon:IsMaster()) then
+  if (sender ~= Addon.master or Addon:IsMaster()) then
     local quality = select(3,GetItemInfo(itemString))
     if (Addon.minRarity and quality < Addon.minRarity[1]) then
       return
@@ -729,3 +729,4 @@ end
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
 --  Suffix, Unique, LinkLvl, reforging, Name = string.find(arg, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
 --print("Got item" .. Id);
+-- _G["GameTooltipTextLeft14"]
