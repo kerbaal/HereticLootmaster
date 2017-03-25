@@ -582,7 +582,10 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
 end
 
 function HereticLootButton_LootList_OnClick(self, button, down)
-  if self.index then Addon:DeleteItem(self.index) end
+  if (button == "RightButton" and IsModifiedClick()) then
+    if self.index then Addon:DeleteItem(self.index) end
+    return true
+  end
   return false
 end
 
