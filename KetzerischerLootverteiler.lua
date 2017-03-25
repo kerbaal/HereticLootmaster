@@ -21,6 +21,8 @@ local function update()
   updatePageNavigation()
 
   for i=1,Addon.ITEMS_PER_PAGE do
+    local itemIndex = Addon.itemListView:IdToIndex(i);
+    HereticLootButton_SetLoot(i, itemIndex, Addon.itemList:Get(itemIndex))
     HereticLootButton_Update(i)
   end
 end
@@ -579,6 +581,11 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   end
 end
 
+function HereticLootButton_LootList_OnClick(self, button, down)
+  if self.index then Addon:DeleteItem(self.index) end
+  return false
+end
+
 function KetzerischerLootverteilerFrame_OnLoad(self)
   Addon:Initialize()
   RaidInfo:Initialize()
@@ -593,6 +600,10 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_ADDON");
   KetzerischerLootverteilerFrame:RegisterEvent("RAID_ROSTER_UPDATE");
   KetzerischerLootverteilerFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
+  for i=1,Addon.ITEMS_PER_PAGE do
+    local button = _G["HereticLootButton"..i];
+    button.HereticOnClick = HereticLootButton_LootList_OnClick
+  end
   self:RegisterForDrag("LeftButton");
   update()
 end

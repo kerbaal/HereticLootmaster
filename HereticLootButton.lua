@@ -2,9 +2,13 @@ local ADDON, Addon = ...
 
 local Util = Addon.Util
 
-function HereticLootButton_OnClick(self, button)
+function HereticLootButton_OnClick(self, button, down)
+  if (self.HereticOnClick and self:HereticOnClick(button, down)) then
+    return
+  end
+
   if (button == "LeftButton") then
-    local name, _ = Util.DecomposeName(self.itemDonor)
+    local name, _ = Util.DecomposeName(self.donator)
     local itemLink = select(2,GetItemInfo(self.itemLink))
     if ( IsModifiedClick() ) then
       HandleModifiedItemClick(itemLink);
@@ -13,11 +17,8 @@ function HereticLootButton_OnClick(self, button)
       SendChatMessage(msg, "RAID")
     end
   elseif (button == "RightButton") then
-    if ( IsModifiedClick() ) then
-      local index = Addon.itemListView:IdToIndex(self:GetID())
-      Addon:DeleteItem(index)
-    else
-      ChatFrame_OpenChat("/w " .. self.itemDonor .. " ")
+    if ( not IsModifiedClick() ) then
+      ChatFrame_OpenChat("/w " .. self.donator .. " ")
     end
   end
 end
@@ -31,40 +32,44 @@ function HereticLootButton_OnEnter(self, motion)
   end
 end
 
-function HereticLootButton_Update(index)
-  local button = _G["HereticLootButton"..index];
+function HereticLootButton_SetLoot(id, index, itemLink, donator, sender)
+  local button = _G["HereticLootButton"..id];
+  button.index = index
+  button.itemLink = itemLink
+  button.donator = donator
+  button.sender = sender
+end
+
+function HereticLootButton_Update(id)
+  local button = _G["HereticLootButton"..id];
   if (button == nil) then
     return
   end
-  local itemIndex = Addon.itemListView:IdToIndex(index);
-  local itemLink, donator, _ = Addon.itemList:Get(itemIndex)
 
-  if (itemLink == nil) then
+  if (button.itemLink == nil or button.donator == nil) then
     button:Hide()
     return
   end
 
-  button.itemLink = itemLink
-  button.itemDonor = donator
-  local name, realm = Util.DecomposeName(donator)
-  local from = _G["HereticLootButton"..index.."FromText"];
+  local name, realm = Util.DecomposeName(button.donator)
+  local from = _G["HereticLootButton"..id.."FromText"];
   from:SetText(name);
 
-  local itemId = Util.GetItemIdFromLink(itemLink)
+  local itemId = Util.GetItemIdFromLink(button.itemLink)
 
   local itemName, itemLink, quality, itemLevel, itemMinLevel, itemType,
   itemSubType, itemStackCount, itemEquipLoc, itemTexture,
-  itemSellPrice = GetItemInfo(itemLink)
+  itemSellPrice = GetItemInfo(button.itemLink)
   local locked = false;
   local isQuestItem = false;
   local questId = nil;
   local isActive = false;
-  local text = _G["HereticLootButton"..index.."Text"];
+  local text = _G["HereticLootButton"..id.."Text"];
 
   if ( itemTexture ) then
     local color = ITEM_QUALITY_COLORS[quality];
     SetItemButtonQuality(button, quality, itemId);
-    _G["HereticLootButton"..index.."IconTexture"]:SetTexture(itemTexture);
+    _G["HereticLootButton"..id.."IconTexture"]:SetTexture(itemTexture);
     text:SetText(itemName);
     if( locked ) then
       SetItemButtonNameFrameVertexColor(button, 1.0, 0, 0);
@@ -76,7 +81,7 @@ function HereticLootButton_Update(index)
       SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
     end
 
-    local questTexture = _G["HereticLootButton"..index.."IconQuestTexture"];
+    local questTexture = _G["HereticLootButton"..id.."IconQuestTexture"];
     if ( questId and not isActive ) then
       questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
       questTexture:Show();
@@ -88,7 +93,7 @@ function HereticLootButton_Update(index)
     end
 
     text:SetVertexColor(color.r, color.g, color.b);
-    local countString = _G["HereticLootButton"..index.."Count"];
+    local countString = _G["HereticLootButton"..id.."Count"];
     if ( itemStackCount > 1 ) then
       countString:SetText(itemStackCount);
       countString:Show();
@@ -99,7 +104,7 @@ function HereticLootButton_Update(index)
     button:Enable();
   else
     text:SetText("");
-    _G["HereticLootButton"..index.."IconTexture"]:SetTexture(nil);
+    _G["HereticLootButton"..id.."IconTexture"]:SetTexture(nil);
     SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
     --LootFrame:SetScript("OnUpdate", LootFrame_OnUpdate);
     button:Disable();
