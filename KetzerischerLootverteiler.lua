@@ -405,6 +405,7 @@ local function eventHandlerSystem(self, event, msg)
 
   if (name and roll and minRoll and maxRoll) then
     Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
+    Addon.lastRoll = {name, roll, minRoll, maxRoll}
   end
 end
 
@@ -660,6 +661,7 @@ function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
   UIDropDownMenu_JustifyText(KetzerischerlootverteilerRarityDropDown, "LEFT")
   UIDropDownMenu_SetWidth(KetzerischerlootverteilerRarityDropDown, 100);
 end
+
 
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
 --  Suffix, Unique, LinkLvl, reforging, Name = string.find(arg, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")

@@ -1,7 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
   ..\FrameXML\UI.xsd">
     <Script file="KetzerischerLootverteiler.lua"/>
-
     <Frame name="KetzerischerLootverteilerNavigationFrameTemplate" setAllPoints="true" virtual="true">
         <Layers>
             <Layer level="OVERLAY">
@@ -74,8 +73,8 @@
         </Anchors>
         <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
             <!-- <BackgroundInsets>
-				<AbsInset left="5" right="5" top="5" bottom="5"/>
-			</BackgroundInsets>-->
+        <AbsInset left="5" right="5" top="5" bottom="5"/>
+      </BackgroundInsets>-->
             <TileSize>
                 <AbsValue val="32"/>
             </TileSize>
