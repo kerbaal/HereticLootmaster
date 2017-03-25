@@ -56,7 +56,7 @@ local function updateButton(index)
   if (button == nil) then
     return
   end
-  local itemIndex = (Addon.currentPage - 1) * Addon.ITEMS_PER_PAGE + index;
+  local itemIndex = Addon.itemListView:IdToIndex(index);
   local itemLink, donator, _ = Addon.itemList:Get(itemIndex)
 
   if (itemLink == nil) then
@@ -127,22 +127,14 @@ local function updateButton(index)
   button:Show();
 end
 
+
+
 local function updatePageNavigation()
-  Addon.maxPages = max(ceil(Addon.itemList:Size() / Addon.ITEMS_PER_PAGE), 1);
-
-  if ( Addon.currentPage == 1 ) then
-    KetzerischerLootverteilerPrevPageButton:Disable();
-  else
-    KetzerischerLootverteilerPrevPageButton:Enable();
-  end
-
-  if ( Addon.currentPage == Addon.maxPages ) then
-    KetzerischerLootverteilerNextPageButton:Disable();
-  else
-    KetzerischerLootverteilerNextPageButton:Enable();
-  end
-
-  KetzerischerLootverteilerPageText:SetFormattedText("%d / %d", Addon.currentPage, Addon.maxPages);
+  Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
+  local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
+  KetzerischerLootverteilerPrevPageButton:SetEnabled(prev);
+  KetzerischerLootverteilerNextPageButton:SetEnabled(next);
+  KetzerischerLootverteilerPageText:SetFormattedText("%d / %d", currentPage, maxPages);
 end
 
 local function update()
@@ -339,6 +331,41 @@ function ItemList:Validate()
 end
 
 
+
+local PagedView = {};
+PagedView.__index = PagedView;
+function PagedView:New(itemsPerPage)
+   local self = {};
+   setmetatable(self, PagedView);
+
+   self.itemsPerPage = itemsPerPage
+   self.currentPage = 1
+   self.maxPages = 1
+   return self;
+end
+
+function PagedView:Next()
+  self.currentPage = max(1, self.currentPage - 1)
+end
+
+function PagedView:Prev()
+  self.currentPage = min(self.maxPages, self.currentPage + 1)
+end
+
+function PagedView:IdToIndex(id)
+  return (self.currentPage - 1) * self.itemsPerPage + id
+end
+
+function PagedView:SetNumberOfItems(count)
+  self.maxPages = max(ceil(count / self.itemsPerPage), 1);
+end
+
+function PagedView:GetNavigationStatus()
+  return (self.currentPage ~= 1), (self.currentPage ~= self.maxPages), self.currentPage, self.maxPages
+end
+
+
+
 function Addon:Initialize()
   Addon.ITEMS_PER_PAGE = 6
   Addon.MSG_PREFIX = "KTZR_LT_VERT"
@@ -351,9 +378,7 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
   Addon.itemList = ItemList:New()
-
-  Addon.currentPage = 1
-  Addon.maxPages = 1
+  Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
   Addon.lastForcedUpdate = 0;
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
@@ -690,12 +715,12 @@ function KetzerischerLootverteilerFrame_OnDragStop()
 end
 
 function KetzerischerLootverteilerPrevPageButton_OnClick()
-  Addon.currentPage = max(1, Addon.currentPage - 1)
+  Addon.itemListView:Next()
   update()
 end
 
 function KetzerischerLootverteilerNextPageButton_OnClick()
-  Addon.currentPage = min(Addon.maxPages, Addon.currentPage + 1)
+  Addon.itemListView:Prev()
   update()
 end
 
@@ -712,6 +737,8 @@ function MyLootItem_OnEnter(self, motion)
   end
 end
 
+
+
 function MyLootButton_OnClick(self, button)
   if (button == "LeftButton") then
     local name, _ = DecomposeName(self.itemDonor)
@@ -724,8 +751,8 @@ function MyLootButton_OnClick(self, button)
     end
   elseif (button == "RightButton") then
     if ( IsModifiedClick() ) then
-      local id = (Addon.currentPage - 1) * Addon.ITEMS_PER_PAGE + self:GetID()
-      Addon:DeleteItem(id)
+      local index = Addon.itemListView:IdToIndex(self:GetID())
+      Addon:DeleteItem(index)
     else
       ChatFrame_OpenChat("/w " .. self.itemDonor .. " ")
     end
