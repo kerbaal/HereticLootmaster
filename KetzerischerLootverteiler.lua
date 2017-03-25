@@ -646,6 +646,11 @@ function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
     info.func = KetzerischerlootverteilerRarityDropDown_OnClick
     UIDropDownMenu_AddButton(info, level)
   end
+  local info = UIDropDownMenu_CreateInfo()
+  info.text = "|cFFFF0000" .. "Disable" .. "|r"
+  info.value = 1000
+  info.func = KetzerischerlootverteilerRarityDropDown_OnClick
+  UIDropDownMenu_AddButton(info, level)
   UIDropDownMenu_JustifyText(KetzerischerlootverteilerRarityDropDown, "LEFT")
   UIDropDownMenu_SetWidth(KetzerischerlootverteilerRarityDropDown, 100);
 end
