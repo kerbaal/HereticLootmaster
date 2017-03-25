@@ -506,10 +506,21 @@ end
 -- Eventhandler
 
 local function eventHandlerSystem(self, event, msg)
-  -- LOOT_ROLL_ROLLED  LOOT_ROLL_ROLLED_SELF
-  local name, roll, minRoll, maxRoll = msg:match("^(.+) würfelt. Ergebnis: (%d+) %((%d+)%-(%d+)%)$")
+  local ROLL_REGEX = RANDOM_ROLL_RESULT
+  ROLL_REGEX = gsub(ROLL_REGEX, "%(", "%%(")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%-", "%%-")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%)", "%%)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%1%$s", "(.+)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%1%$s", "(.+)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%2%$d", "(%%d+)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%3%$d", "(%%d+)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%4%$d", "(%%d+)")
+
+  local name, roll, minRoll, maxRoll = msg:match(ROLL_REGEX)
+  roll, minRoll, maxRoll = tonumber(roll), tonumber(minRoll), tonumber(maxRoll)
+
   if (name and roll and minRoll and maxRoll) then
-    dbgprint (name .. " " .. roll);
+    dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
   end
 end
 
@@ -545,7 +556,6 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
 end
 
 local function eventHandlerLogout(self, event)
-  wipe(KetzerischerLootverteilerData)
   KetzerischerLootverteilerData.itemList2 = Addon.itemList
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
