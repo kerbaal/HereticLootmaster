@@ -1,131 +1,11 @@
 local ADDON, Addon = ...
 
+local Util = Addon.Util
+
 KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
-local function dbgprint(...)
-  if KetzerischerLootverteilerData.debug then
-    print(...)
-  end
-end
 
-local function FormatLink(linkType, linkDisplayText, ...)
-  local linkFormatTable = { ("|H%s"):format(linkType), ... };
-  return table.concat(linkFormatTable, ":") .. ("|h%s|h"):format(linkDisplayText);
-end
-
-local function GetPlayerLink(characterName, linkDisplayText, lineID, chatType, chatTarget)
-  -- Use simplified link if possible.
-  if lineID or chatType or chatTarget then
-    return FormatLink("player", linkDisplayText, characterName, lineID or 0, chatType or 0, chatTarget or "");
-  else
-    return FormatLink("player", linkDisplayText, characterName);
-  end
-end
-
-local function DecomposeName(name)
-  return name:match("^([^-]*)-?(.*)$")
-end
-
-local function MergeFullName(name, realm)
-  if (realm == nil or realm == "") then
-    realm = GetRealmName():gsub("%s+", "")
-  end
-  return name .. "-" .. realm
-end
-
-local function CompleteUnitName(unitName)
-  local name, realm = DecomposeName(unitName)
-  return MergeFullName(name, realm)
-end
-
-local function GetFullUnitName(unitId)
-  local name, realm = UnitName(unitId)
-  return MergeFullName(name, realm)
-end
-
-local function getItemIdFromLink(itemLink)
-  local _, _, color, Ltype, itemId, Enchant, Gem1, Gem2, Gem3, Gem4,
-  Suffix, Unique, LinkLvl, reforging, Name =
-  string.find(itemLink,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-  return itemId
-end
-
-local function updateButton(index)
-  local button = _G["MyLootButton"..index];
-  if (button == nil) then
-    return
-  end
-  local itemIndex = Addon.itemListView:IdToIndex(index);
-  local itemLink, donator, _ = Addon.itemList:Get(itemIndex)
-
-  if (itemLink == nil) then
-    button:Hide()
-    return
-  end
-
-  button.itemLink = itemLink
-  button.itemDonor = donator
-  local name, realm = DecomposeName(donator)
-  local from = _G["MyLootButton"..index.."FromText"];
-  from:SetText(name);
-
-  local itemId = getItemIdFromLink(itemLink)
-
-  local itemName, itemLink, quality, itemLevel, itemMinLevel, itemType,
-  itemSubType, itemStackCount, itemEquipLoc, itemTexture,
-  itemSellPrice = GetItemInfo(itemLink)
-  local locked = false;
-  local isQuestItem = false;
-  local questId = nil;
-  local isActive = false;
-  local text = _G["MyLootButton"..index.."Text"];
-
-  if ( itemTexture ) then
-    local color = ITEM_QUALITY_COLORS[quality];
-    SetItemButtonQuality(button, quality, itemId);
-    _G["MyLootButton"..index.."IconTexture"]:SetTexture(itemTexture);
-    text:SetText(itemName);
-    if( locked ) then
-      SetItemButtonNameFrameVertexColor(button, 1.0, 0, 0);
-      SetItemButtonTextureVertexColor(button, 0.9, 0, 0);
-      SetItemButtonNormalTextureVertexColor(button, 0.9, 0, 0);
-    else
-      SetItemButtonNameFrameVertexColor(button, 0.5, 0.5, 0.5);
-      SetItemButtonTextureVertexColor(button, 1.0, 1.0, 1.0);
-      SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
-    end
-
-    local questTexture = _G["MyLootButton"..index.."IconQuestTexture"];
-    if ( questId and not isActive ) then
-      questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
-      questTexture:Show();
-    elseif ( questId or isQuestItem ) then
-      questTexture:SetTexture(TEXTURE_ITEM_QUEST_BORDER);
-      questTexture:Show();
-    else
-      questTexture:Hide();
-    end
-
-    text:SetVertexColor(color.r, color.g, color.b);
-    local countString = _G["MyLootButton"..index.."Count"];
-    if ( itemStackCount > 1 ) then
-      countString:SetText(itemStackCount);
-      countString:Show();
-    else
-      countString:Hide();
-    end
-    button.quality = quality;
-    button:Enable();
-  else
-    text:SetText("");
-    _G["MyLootButton"..index.."IconTexture"]:SetTexture(nil);
-    SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
-    --LootFrame:SetScript("OnUpdate", LootFrame_OnUpdate);
-    button:Disable();
-  end
-  button:Show();
-end
 
 
 
@@ -141,7 +21,7 @@ local function update()
   updatePageNavigation()
 
   for i=1,Addon.ITEMS_PER_PAGE do
-    updateButton(i)
+    HereticLootButton_Update(i)
   end
 end
 
@@ -166,7 +46,7 @@ function RaidInfo:Initialize()
 end
 
 local function RaidInfoUpdate()
-  dbgprint("Reindexing Raid through timer...")
+  Util.dbgprint("Reindexing Raid through timer...")
   RaidInfo:Update()
 end
 
@@ -177,7 +57,7 @@ end
 
 function RaidInfo:RequestReindexing()
   if (RaidInfo.timer == nil) then
-    dbgprint("Request Reindexing...")
+    Util.dbgprint("Request Reindexing...")
     RaidInfo.timer = C_Timer.NewTimer(2, RaidInfoUpdate)
   end
 end
@@ -197,8 +77,8 @@ function RaidInfo:clearStale()
 end
 
 function RaidInfo:recordByUnitId(unitId)
-  local fullName = GetFullUnitName(unitId)
-  local first, _ = DecomposeName(fullName)
+  local fullName = Util.GetFullUnitName(unitId)
+  local first, _ = Util.DecomposeName(fullName)
   if (first == UNKNOWNOBJECT) then
      RaidInfo:RequestReindexing()
      return
@@ -214,7 +94,7 @@ function RaidInfo:printNewPlayers(unitId)
   for i,v in pairs(RaidInfo.newPlayers) do
     players = players .. " " .. v
   end
-  dbgprint ("New players (" .. table.getn(RaidInfo.newPlayers) .. "):" .. players)
+  Util.dbgprint ("New players (" .. table.getn(RaidInfo.newPlayers) .. "):" .. players)
 end
 
 function RaidInfo:GetNewPlayers()
@@ -226,7 +106,7 @@ function RaidInfo:Update()
 
   RaidInfo:markStale()
   wipe(RaidInfo.newPlayers)
-  RaidInfo.unitids [GetFullUnitName("player")] = "player";
+  RaidInfo.unitids [Util.GetFullUnitName("player")] = "player";
   local numMembers = GetNumGroupMembers(LE_PARTY_CATEGORY_HOME)
   if (numMembers > 0) then
     local prefix = "raid"
@@ -254,7 +134,7 @@ function RaidInfo:GetUnitId(name)
 end
 
 function RaidInfo:DebugPrint()
-  for index,value in pairs(RaidInfo.unitids) do dbgprint(index," ",value) end
+  for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
 end
 
 
@@ -409,7 +289,7 @@ function Addon:AddItem(itemString, from, sender)
 
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
-    dbgprint("Announcing loot")
+    Util.dbgprint("Announcing loot")
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
@@ -421,7 +301,7 @@ function Addon:DeleteItem(index)
   item, donator, _ = Addon.itemList:Get(index)
   if Addon:IsMaster() then
     local msg = Addon.MSG_DELETE_LOOT .. " " .. donator .. " " .. item
-    dbgprint("Announcing loot deletion")
+    Util.dbgprint("Announcing loot deletion")
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
@@ -431,15 +311,16 @@ end
 
 local function updateTitle()
   if (Addon.master) then
-    local name, _ = DecomposeName(Addon.master)
-    KetzerischerLootverteilerTitleText:SetText(Addon.TITLE_TEXT .. ": " .. GetPlayerLink(Addon.master, name))
+    local name, _ = Util.DecomposeName(Addon.master)
+    KetzerischerLootverteilerTitleText:SetText(Addon.TITLE_TEXT .. ": "
+      .. Util.GetPlayerLink(Addon.master, name))
   else
     KetzerischerLootverteilerTitleText:SetText(Addon.TITLE_TEXT)
   end
 end
 
 function Addon:IsMaster()
-  return GetFullUnitName("player") == Addon.master
+  return Util.GetFullUnitName("player") == Addon.master
 end
 
 function Addon:SetMaster(name)
@@ -454,7 +335,7 @@ end
 function Addon:IsAuthorizedToClaimMaster(unitId)
   -- Reject master claims from instance groups.
   if not unitId then return false end
-  if (GetFullUnitName(unitId) == GetFullUnitName("player")
+  if (Util.GetFullUnitName(unitId) == Util.GetFullUnitName("player")
       and not IsPlayerInPartyOrRaid()) then
     return true
   end
@@ -465,7 +346,7 @@ function Addon:ClaimMaster()
   if Addon:IsAuthorizedToClaimMaster("player") then
     print ("You proclaim yourself Ketzerischer Lootverteiler.")
     SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "RAID")
-    SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", GetFullUnitName("player"))
+    SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", Util.GetFullUnitName("player"))
   else
     print ("Only leader or assistant may become Ketzerischer Lootverteiler.")
   end
@@ -474,7 +355,7 @@ end
 function Addon:ProcessClaimMaster(name)
   if (name == nil) then return end
   if (Addon.master == name) then return end
-  dbgprint(name .. " claims lootmastership")
+  Util.dbgprint(name .. " claims lootmastership")
 
   local unitId = RaidInfo:GetUnitId(name)
   if (Addon:IsAuthorizedToClaimMaster(unitId)) then
@@ -484,7 +365,7 @@ function Addon:ProcessClaimMaster(name)
 end
 
 function Addon:RenounceMaster()
-  if (Addon.master ~= GetFullUnitName("player")) then return end
+  if (Addon.master ~= Util.GetFullUnitName("player")) then return end
   print ("You renounce your title of Ketzerischer Lootverteiler.")
   SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_RENOUNCE_MASTER, "RAID")
 end
@@ -520,7 +401,7 @@ local function eventHandlerSystem(self, event, msg)
   roll, minRoll, maxRoll = tonumber(roll), tonumber(minRoll), tonumber(maxRoll)
 
   if (name and roll and minRoll and maxRoll) then
-    dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
+    Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
   end
 end
 
@@ -530,13 +411,13 @@ local function eventHandlerLoot(self, event, message, sender)
   local _, _, sPlayer, itemlink = string.find(message, LOOT_REGEX)
   if not sPlayer then
     _, _, itemlink = string.find(message, LOOT_SELF_REGEX)
-    sPlayer = GetFullUnitName("player")
+    sPlayer = Util.GetFullUnitName("player")
   else
-    sPlayer = CompleteUnitName(sPlayer)
+    sPlayer = Util.CompleteUnitName(sPlayer)
   end
   if itemlink then
     local _, _, itemId = string.find(itemlink, "item:(%d+):")
-    dbgprint(sPlayer .. " got " .. itemlink)
+    Util.dbgprint(sPlayer .. " got " .. itemlink)
   end
 end
 
@@ -590,7 +471,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
   if (prefix ~= Addon.MSG_PREFIX) then return end
   local type, msg = message:match("^%s*([^ ]+)(.*)$")
   if (type == nil) then return end
-  dbgprint ("Addon message: " .. type)
+  Util.dbgprint ("Addon message: " .. type)
   if (type == Addon.MSG_CLAIM_MASTER) then
     Addon:ProcessClaimMaster(sender)
   elseif (type == Addon.MSG_RENOUNCE_MASTER) then
@@ -598,14 +479,14 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
   elseif (type == Addon.MSG_ANNOUNCE_LOOT) then
     if not msg then return end
     local from, itemString = msg:match(Addon.MSG_ANNOUNCE_LOOT_PATTERN)
-    dbgprint ("Announcement: " .. from .. " " .. itemString)
+    Util.dbgprint ("Announcement: " .. from .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
       Addon:AddItem(itemString, from, sender)
     end
   elseif (type == Addon.MSG_DELETE_LOOT) then
     if not msg then return end
     local donator, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
-    dbgprint ("Deletion: " .. donator .. " " .. itemString)
+    Util.dbgprint ("Deletion: " .. donator .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
       local index = Addon.itemList:ItemById(itemString, donator, sender)
       if (index) then Addon:DeleteItem(index) end
@@ -635,7 +516,7 @@ end
 local function eventHandlerBNChat(self, event, msg, sender, u1, u2, u3, u4, u5, u6, u7, u8, cnt, u9, bnetIDAccount)
   local bnetIDGameAccount = select(6,BNGetFriendInfoByID(bnetIDAccount))
   local _, name, client, realm = BNGetGameAccountInfo(bnetIDGameAccount)
-  dbgprint("BN: " .. sender .. " " .. bnetIDAccount .. " " .. name .. "-" .. realm)
+  Util.dbgprint("BN: " .. sender .. " " .. bnetIDAccount .. " " .. name .. "-" .. realm)
 
   Addon:AddAllItems(msg, name .. "-" .. realm, sender)
 end
@@ -735,38 +616,6 @@ function KetzerischerLootverteilerNextPageButton_OnClick()
 end
 
 function KetzerischerLootverteilerNavigationFrame_OnLoad()
-end
-
-
-function MyLootItem_OnEnter(self, motion)
-  local itemLink = Addon.itemList:GetItemLink(self:GetID())
-  if itemLink then
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-    GameTooltip:SetHyperlink(itemLink);
-    CursorUpdate(self);
-  end
-end
-
-
-
-function MyLootButton_OnClick(self, button)
-  if (button == "LeftButton") then
-    local name, _ = DecomposeName(self.itemDonor)
-    local itemLink = select(2,GetItemInfo(self.itemLink))
-    if ( IsModifiedClick() ) then
-      HandleModifiedItemClick(itemLink);
-    else
-      local msg = itemLink .. " (" .. name .. ")";
-      SendChatMessage(msg, "RAID")
-    end
-  elseif (button == "RightButton") then
-    if ( IsModifiedClick() ) then
-      local index = Addon.itemListView:IdToIndex(self:GetID())
-      Addon:DeleteItem(index)
-    else
-      ChatFrame_OpenChat("/w " .. self.itemDonor .. " ")
-    end
-  end
 end
 
 local function KetzerischerlootverteilerRarityDropDown_OnClick(self)

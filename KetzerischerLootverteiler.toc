@@ -5,6 +5,7 @@
 ## SavedVariables:
 ## SavedVariablesPerCharacter: KetzerischerLootverteilerData
 
-#KetzerischerLootverteiler.lua
+HereticUtils.lua
+HereticLootButton.xml
 KetzerischerLootverteiler.xml
 Bindings.xml

@@ -1,0 +1,40 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+  ..\FrameXML\UI.xsd">
+  <Script file="HereticLootButton.lua"/>
+  <Button name="HereticLootButton" inherits="LootButtonTemplate" virtual="true">
+      <Layers>
+          <Layer level="ARTWORK">
+              <Texture name="$parentFromNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
+                  <Size x="130" y="62"/>
+                  <Anchors>
+                      <Anchor point="LEFT" x="140" y="0"/>
+                  </Anchors>
+              </Texture>
+              <FontString name="$parentFromText" inherits="GameFontNormal" justifyH="LEFT">
+                  <Size x="93" y="38"/>
+                  <Anchors>
+                      <Anchor point="LEFT" relativePoint="RIGHT" x="138" y="0"/>
+                  </Anchors>
+              </FontString>
+          </Layer>
+      </Layers>
+      <Scripts>
+          <OnLoad>
+              self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+              self.hasItem = 1;
+          </OnLoad>
+          <OnEnter>
+              HereticLootButton_OnEnter(self, motion)
+          </OnEnter>
+          <OnLeave>
+              GameTooltip:Hide();
+              ResetCursor();
+          </OnLeave>
+          <OnUpdate>
+              if ( GameTooltip:IsOwned(self) ) then HereticLootButton_OnEnter(self) end
+              CursorOnUpdate(self);
+          </OnUpdate>
+          <OnClick function="HereticLootButton_OnClick"/>
+      </Scripts>
+  </Button>
+</Ui>
