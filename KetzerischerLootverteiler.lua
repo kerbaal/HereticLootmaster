@@ -18,6 +18,7 @@ local function updatePageNavigation()
 end
 
 local function update()
+  Util.dbgprint("Updating UI...")
   updatePageNavigation()
 
   for i=1,Addon.ITEMS_PER_PAGE do
@@ -542,6 +543,8 @@ local function eventHandler(self, event, ...)
     eventHandlerAddonMessage(self, event, ...)
   elseif (event == "GROUP_ROSTER_UPDATE") then
     eventHandlerRaidRosterUpdate(self, event, ...)
+  elseif (event == "GET_ITEM_INFO_RECEIVED") then
+    update()
   end
 end
 
@@ -603,10 +606,13 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_ADDON");
   KetzerischerLootverteilerFrame:RegisterEvent("RAID_ROSTER_UPDATE");
   KetzerischerLootverteilerFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
+  KetzerischerLootverteilerFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
+
   for i=1,Addon.ITEMS_PER_PAGE do
     local button = _G["HereticLootButton"..i];
     button.HereticOnClick = HereticLootButton_LootList_OnClick
   end
+
   self:RegisterForDrag("LeftButton");
   update()
 end
