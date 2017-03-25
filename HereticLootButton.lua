@@ -13,8 +13,15 @@ function HereticLootButton_OnClick(self, button, down)
     if ( IsModifiedClick() ) then
       HandleModifiedItemClick(itemLink);
     else
-      local msg = itemLink .. " (" .. name .. ")";
-      SendChatMessage(msg, "RAID")
+      ShowUIPanel(ItemRefTooltip);
+		  if ( not ItemRefTooltip:IsShown() ) then
+			  ItemRefTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE");
+		  end
+		  ItemRefTooltip:SetHyperlink(self.itemLink);
+      ItemRefTooltipTextRight1:SetText(name .. " ")
+      ItemRefTooltipTextRight1:SetTextColor(FRIENDS_BNET_NAME_COLOR.r, FRIENDS_BNET_NAME_COLOR.g, FRIENDS_BNET_NAME_COLOR.b);
+      ItemRefTooltipTextRight1:Show()
+      ItemRefTooltip:Show();
     end
   elseif (button == "RightButton") then
     if ( not IsModifiedClick() ) then
