@@ -43,17 +43,18 @@ function HereticRollFrame_SetRoll(self, id, roll)
   nameText:SetText(Util.ShortenFullName(roll.name))
   local rollText = _G[rollFrameName .. "Roll"]
   rollText:SetText(""..roll.roll)
+  rollText:SetTextColor(roll:GetColor())
   rollFrame:Show()
 end
 
 function HereticRollCollectorFrame_Update(self, ...)
-  print("Rollcollector update")
   local scrollBarName = self:GetName().."ScrollBar"
   local scrollBar = _G[scrollBarName]
   local numRolls = #self.rolls
   FauxScrollFrame_Update(scrollBar, numRolls, 8, 20,
     self:GetName() .. "RollFrame", 170, 190);
   local offset = FauxScrollFrame_GetOffset(scrollBar)
+  table.sort(self.rolls, HereticRoll.Compare)
   for id=1,8 do
     HereticRollFrame_SetRoll(self, id, self.rolls[id+offset])
   end
@@ -76,7 +77,6 @@ function HereticRollCollectorFrame_OnLoad(self)
 end
 
 function RollsScrollBar_Update(self)
-  print("RollsScrollBar Update")
   HereticRollCollectorFrame_Update(self:GetParent())
 end
 
