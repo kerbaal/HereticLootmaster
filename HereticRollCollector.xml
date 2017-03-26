@@ -87,7 +87,7 @@
             <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
                 <Size x="24" y="24"/>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="HereticFrame">
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
                         <Offset x="0" y="0"/>
                     </Anchor>
                 </Anchors>
