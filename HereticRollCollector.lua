@@ -59,12 +59,20 @@ function HereticRollCollectorFrame_Update(self, ...)
   end
 end
 
+function HereticRollCollectorFrame_Toggle(self)
+  if self:IsVisible() then return end
+  wipe(self.rolls)
+  HereticRollCollectorFrame_Update(self)
+  self:Show()
+end
+
 function HereticRollCollectorFrame_OnLoad(self)
   self.rolls = {}
   self:RegisterForDrag("LeftButton");
   self:SetScript("OnEvent", eventHandler);
   self:RegisterEvent("CHAT_MSG_SYSTEM");
   HereticRollCollectorFrame_Update(self)
+  self.Toggle = HereticRollCollectorFrame_Toggle
 end
 
 function RollsScrollBar_Update(self)
