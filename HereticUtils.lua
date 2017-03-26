@@ -43,6 +43,14 @@ function Util.GetFullUnitName(unitId)
   return Util.MergeFullName(name, realm)
 end
 
+function Util.ShortenFullName(fullName)
+  local name, realm = Util.DecomposeName(fullName)
+  if (realm == GetRealmName():gsub("%s+", "")) then
+    return name
+  end
+  return fullName
+end
+
 function Util.GetItemIdFromLink(itemLink)
   local _, _, color, Ltype, itemId, Enchant, Gem1, Gem2, Gem3, Gem4,
   Suffix, Unique, LinkLvl, reforging, Name =
