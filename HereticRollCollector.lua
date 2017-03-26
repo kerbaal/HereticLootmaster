@@ -31,17 +31,14 @@ local function eventHandler(self, event, ...)
   end
 end
 
-function HereticRollCollectorFrame_OnLoad(self)
-  self.rolls = {}
-  self:RegisterForDrag("LeftButton");
-  self:SetScript("OnEvent", eventHandler);
-  self:RegisterEvent("CHAT_MSG_SYSTEM");
-end
-
 function HereticRollFrame_SetRoll(self, id, roll)
   local rollFrameName = self:GetName() .. "RollFrame" .. id
   local rollFrame = _G[rollFrameName]
   if not rollFrame then return end
+  if not roll then
+    rollFrame:Hide()
+    return
+  end
   local nameText = _G[rollFrameName .. "Name"]
   nameText:SetText(Util.ShortenFullName(roll.name))
   local rollText = _G[rollFrameName .. "Roll"]
@@ -49,11 +46,30 @@ function HereticRollFrame_SetRoll(self, id, roll)
   rollFrame:Show()
 end
 
-function HereticRollCollectorFrame_Update(self)
+function HereticRollCollectorFrame_Update(self, ...)
   print("Rollcollector update")
-  for i,roll in ipairs(self.rolls) do
-    HereticRollFrame_SetRoll(self, i, roll)
+  local scrollBarName = self:GetName().."ScrollBar"
+  local scrollBar = _G[scrollBarName]
+  local numRolls = #self.rolls
+  FauxScrollFrame_Update(scrollBar, numRolls, 8, 20,
+    self:GetName() .. "RollFrame", 170, 190);
+  local offset = FauxScrollFrame_GetOffset(scrollBar)
+  for id=1,8 do
+    HereticRollFrame_SetRoll(self, id, self.rolls[id+offset])
   end
+end
+
+function HereticRollCollectorFrame_OnLoad(self)
+  self.rolls = {}
+  self:RegisterForDrag("LeftButton");
+  self:SetScript("OnEvent", eventHandler);
+  self:RegisterEvent("CHAT_MSG_SYSTEM");
+  HereticRollCollectorFrame_Update(self)
+end
+
+function RollsScrollBar_Update(self)
+  print("RollsScrollBar Update")
+  HereticRollCollectorFrame_Update(self:GetParent())
 end
 
 function HereticRollCollectorFrame_OnUpdate(self, elapsed)
