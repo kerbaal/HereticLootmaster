@@ -264,6 +264,7 @@ function Addon:Initialize()
   Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
   Addon.lastForcedUpdate = 0;
+  Addon.rolls = {};
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
 end
 
@@ -405,7 +406,7 @@ local function eventHandlerSystem(self, event, msg)
 
   if (name and roll and minRoll and maxRoll) then
     Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
-    Addon.lastRoll = {name, roll, minRoll, maxRoll}
+    table.insert(Addon.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, minRoll, maxRoll))
   end
 end
 
