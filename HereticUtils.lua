@@ -50,4 +50,11 @@ function Util.GetItemIdFromLink(itemLink)
   return itemId
 end
 
+function Util.pack(...)
+  return {n = select("#", ...), ...}
+end
+function Util.unpack(t)
+  return unpack(t, 1, t.n)
+end
+
 Addon.Util = Util
