@@ -2,8 +2,37 @@ local ADDON, Addon = ...
 
 local Util = Addon.Util
 
+local function eventHandlerSystem(self, event, msg)
+  local ROLL_REGEX = RANDOM_ROLL_RESULT
+  ROLL_REGEX = gsub(ROLL_REGEX, "%(", "%%(")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%-", "%%-")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%)", "%%)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%1%$s", "(.+)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%1%$s", "(.+)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%2%$d", "(%%d+)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%3%$d", "(%%d+)")
+  ROLL_REGEX = gsub(ROLL_REGEX, "%%4%$d", "(%%d+)")
+
+  local name, roll, minRoll, maxRoll = msg:match(ROLL_REGEX)
+  roll, minRoll, maxRoll = tonumber(roll), tonumber(minRoll), tonumber(maxRoll)
+
+  if (name and roll and minRoll and maxRoll) then
+    Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
+    table.insert(self.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, minRoll, maxRoll))
+  end
+end
+
+local function eventHandler(self, event, ...)
+  if (event == "CHAT_MSG_SYSTEM") then
+    eventHandlerSystem(self, event, ...)
+  end
+end
+
 function HereticRollCollectorFrame_OnLoad(self)
+  self.rolls = {}
   self:RegisterForDrag("LeftButton");
+  self:SetScript("OnEvent", eventHandler);
+  self:RegisterEvent("CHAT_MSG_SYSTEM");
 end
 
 function HereticRollFrame_SetRoll(self, id, roll)
@@ -22,7 +51,7 @@ function HereticRollCollectorFrame_OnUpdate(self, elapsed)
   if (self.lastUpdate > 1) then
     self.lastUpdate = 0
     print("Rollcollector update")
-    for i,roll in ipairs(Addon.rolls) do
+    for i,roll in ipairs(self.rolls) do
       HereticRollFrame_SetRoll(self, i, roll)
     end
   end

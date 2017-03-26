@@ -390,26 +390,6 @@ end
 
 -- Eventhandler
 
-local function eventHandlerSystem(self, event, msg)
-  local ROLL_REGEX = RANDOM_ROLL_RESULT
-  ROLL_REGEX = gsub(ROLL_REGEX, "%(", "%%(")
-  ROLL_REGEX = gsub(ROLL_REGEX, "%-", "%%-")
-  ROLL_REGEX = gsub(ROLL_REGEX, "%)", "%%)")
-  ROLL_REGEX = gsub(ROLL_REGEX, "%%1%$s", "(.+)")
-  ROLL_REGEX = gsub(ROLL_REGEX, "%%1%$s", "(.+)")
-  ROLL_REGEX = gsub(ROLL_REGEX, "%%2%$d", "(%%d+)")
-  ROLL_REGEX = gsub(ROLL_REGEX, "%%3%$d", "(%%d+)")
-  ROLL_REGEX = gsub(ROLL_REGEX, "%%4%$d", "(%%d+)")
-
-  local name, roll, minRoll, maxRoll = msg:match(ROLL_REGEX)
-  roll, minRoll, maxRoll = tonumber(roll), tonumber(minRoll), tonumber(maxRoll)
-
-  if (name and roll and minRoll and maxRoll) then
-    Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
-    table.insert(Addon.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, minRoll, maxRoll))
-  end
-end
-
 local function eventHandlerLoot(self, event, message, sender)
   local LOOT_SELF_REGEX = gsub(LOOT_ITEM_SELF, "%%s", "(.+)")
   local LOOT_REGEX = gsub(LOOT_ITEM, "%%s", "(.+)")
@@ -531,8 +511,6 @@ local function eventHandler(self, event, ...)
     eventHandlerWhisper(self, event, ...)
   elseif event == "CHAT_MSG_BN_WHISPER" then
     eventHandlerBNChat(self, event, ...)
-  elseif (event == "CHAT_MSG_SYSTEM") then
-    eventHandlerSystem(self, event, ...)
   elseif (event == "ENCOUNTER_END") then
     eventHandlerEncounterEnd(self, event, ...)
   elseif (event == "CHAT_MSG_LOOT") then
@@ -600,7 +578,6 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:SetScript("OnEvent", eventHandler);
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_WHISPER");
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_BN_WHISPER");
-  KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_SYSTEM");
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_LOOT");
   KetzerischerLootverteilerFrame:RegisterEvent("ENCOUNTER_END");
   KetzerischerLootverteilerFrame:RegisterEvent("ADDON_LOADED");
