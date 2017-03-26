@@ -19,6 +19,7 @@ local function eventHandlerSystem(self, event, msg)
   if (name and roll and minRoll and maxRoll) then
     Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
     table.insert(self.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, minRoll, maxRoll))
+    HereticRollCollectorFrame_Update(self)
   end
 end
 
@@ -46,15 +47,14 @@ function HereticRollFrame_SetRoll(self, id, roll)
   rollFrame:Show()
 end
 
-function HereticRollCollectorFrame_OnUpdate(self, elapsed)
-  self.lastUpdate = (self.lastUpdate or 0) + elapsed
-  if (self.lastUpdate > 1) then
-    self.lastUpdate = 0
-    print("Rollcollector update")
-    for i,roll in ipairs(self.rolls) do
-      HereticRollFrame_SetRoll(self, i, roll)
-    end
+function HereticRollCollectorFrame_Update(self)
+  print("Rollcollector update")
+  for i,roll in ipairs(self.rolls) do
+    HereticRollFrame_SetRoll(self, i, roll)
   end
+end
+
+function HereticRollCollectorFrame_OnUpdate(self, elapsed)
 end
 
 function HereticRollCollectorFrame_OnDragStart()
