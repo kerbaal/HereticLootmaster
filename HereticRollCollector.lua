@@ -27,15 +27,19 @@ end
 function HereticRollFrame_OnDragStart(button)
 	local cursorX, cursorY = GetCursorPosition();
 	local uiScale = UIParent:GetScale();
-  button.dragSavedPoint = Util.pack(button:GetPoint())
-	button:StartMoving();
-	button:ClearAllPoints();
-	button:SetPoint("CENTER", UIPARENT, "BOTTOMLEFT", cursorX / uiScale, cursorY / uiScale);
+  button:SetAlpha(.5);
+  HereticRollDragFrame:StartMoving();
+	HereticRollDragFrame:ClearAllPoints();
+  HereticRollDragFrame:SetParent(button:GetParent());
+	HereticRollDragFrame:SetPoint("CENTER", UIPARENT, "BOTTOMLEFT",
+    cursorX / uiScale, cursorY / uiScale);
+  HereticRollDragFrame:Show()
 end
 
 function HereticRollFrame_OnDragStop(button)
-	button:StopMovingOrSizing();
-  button:ClearAllPoints();
-	button:SetPoint(Util.unpack(button.dragSavedPoint));
-  button:SetUserPlaced(false)
+  button:SetAlpha(1.0);
+	HereticRollDragFrame:StopMovingOrSizing();
+  HereticRollDragFrame:ClearAllPoints();
+  HereticRollDragFrame:Hide();
+  HereticRollDragFrame:SetUserPlaced(false);
 end

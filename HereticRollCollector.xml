@@ -54,6 +54,8 @@
         </Scripts>
     </Button>
 
+    <Button name="HereticRollDragFrame" inherits="HereticRollFrameTemplate" hidden="true"/>
+
     <Frame name="HereticRollCollectorFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="false">
         <Size x="190" y="200"/>
         <Anchors>
