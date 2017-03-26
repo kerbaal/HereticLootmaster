@@ -71,7 +71,9 @@
         </Backdrop>
         <Layers>
             <Layer level="OVERLAY">
-                <FontString name="HereticRollCollectorTitleText" inherits="GameFontNormal" text="Ketzerischer Wurfsammler" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
+                <FontString name="$parentTitleText" inherits="GameFontNormal"
+                  text="Ketzerischer Wurfsammler" parentKey="TitleText" wordwrap="false"
+                  justifyH="LEFT">
                     <Anchors>
                         <Anchor point="TOP" x="0" y="-5"/>
                         <Anchor point="LEFT" x="10"/>
@@ -90,22 +92,22 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="HereticRollFrame1" inherits="HereticRollFrameTemplate" id="1">
+            <Button name="$parentRollFrame1" inherits="HereticRollFrameTemplate" id="1">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-20"/>
                 </Anchors>
             </Button>
-            <Button name="HereticRollFrame2" inherits="HereticRollFrameTemplate" id="2">
+            <Button name="$parentRollFrame2" inherits="HereticRollFrameTemplate" id="2">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-40"/>
                 </Anchors>
             </Button>
-            <Button name="HereticRollFrame3" inherits="HereticRollFrameTemplate" id="3">
+            <Button name="$parentRollFrame3" inherits="HereticRollFrameTemplate" id="3">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-60"/>
                 </Anchors>
             </Button>
-            <Button name="HereticRollFrame4" inherits="HereticRollFrameTemplate" id="4">
+            <Button name="$parentRollFrame4" inherits="HereticRollFrameTemplate" id="4">
                 <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-80"/>
                 </Anchors>

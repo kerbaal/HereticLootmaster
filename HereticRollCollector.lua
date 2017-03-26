@@ -7,10 +7,10 @@ function HereticRollCollectorFrame_OnLoad(self)
 end
 
 function HereticRollFrame_SetRoll(id, name, roll, min, max)
-  local nameText = _G["HereticRollFrame" .. id .. "Name"]
-  nameText:SetText(name)
-  local rollText = _G["HereticRollFrame" .. id .. "Roll"]
-  rollText:SetText(""..roll)
+  --local nameText = _G["HereticRollFrame" .. id .. "Name"]
+  --nameText:SetText(name)
+  --local rollText = _G["HereticRollFrame" .. id .. "Roll"]
+  --rollText:SetText(""..roll)
 end
 
 function HereticRollCollectorFrame_OnUpdate(self, elapsed)
