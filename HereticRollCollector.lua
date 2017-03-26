@@ -3,6 +3,8 @@ local ADDON, Addon = ...
 local Util = Addon.Util
 
 local function eventHandlerSystem(self, event, msg)
+  -- Don't track rolls if collector frame is invisible.
+  if not self:IsVisible() then return end
   local ROLL_REGEX = RANDOM_ROLL_RESULT
   ROLL_REGEX = gsub(ROLL_REGEX, "%(", "%%(")
   ROLL_REGEX = gsub(ROLL_REGEX, "%-", "%%-")
@@ -16,7 +18,7 @@ local function eventHandlerSystem(self, event, msg)
   local name, roll, minRoll, maxRoll = msg:match(ROLL_REGEX)
   roll, minRoll, maxRoll = tonumber(roll), tonumber(minRoll), tonumber(maxRoll)
 
-  if (name and roll and minRoll and maxRoll) then
+  if name and roll and minRoll and maxRoll then
     Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
     table.insert(self.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, minRoll, maxRoll))
     HereticRollCollectorFrame_Update(self)
