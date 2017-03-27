@@ -14,10 +14,10 @@ function HereticLootButton_OnClick(self, button, down)
       HandleModifiedItemClick(itemLink);
     else
       ShowUIPanel(ItemRefTooltip);
-		  if ( not ItemRefTooltip:IsShown() ) then
-			  ItemRefTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE");
-		  end
-		  ItemRefTooltip:SetHyperlink(self.itemLink);
+      if ( not ItemRefTooltip:IsShown() ) then
+        ItemRefTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE");
+      end
+      ItemRefTooltip:SetHyperlink(self.itemLink);
       ItemRefTooltipTextRight1:SetText(name .. " ")
       ItemRefTooltipTextRight1:SetTextColor(FRIENDS_BNET_NAME_COLOR.r, FRIENDS_BNET_NAME_COLOR.g, FRIENDS_BNET_NAME_COLOR.b);
       ItemRefTooltipTextRight1:Show()

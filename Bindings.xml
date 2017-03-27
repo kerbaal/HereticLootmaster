@@ -1,7 +1,7 @@
 <Bindings>
-	<Binding name="KETZERISCHER_LOOTVERTEILER_TOGGLE"
+  <Binding name="KETZERISCHER_LOOTVERTEILER_TOGGLE"
     header="KETZERISCHER_LOOTVERTEILER"
     category="ADDONS">
-		KetzerischerLootverteilerToggle()
-	</Binding>
+    KetzerischerLootverteilerToggle()
+  </Binding>
 </Bindings>
