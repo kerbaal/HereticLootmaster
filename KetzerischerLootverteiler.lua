@@ -263,7 +263,6 @@ function Addon:Initialize()
   Addon.itemList = ItemList:New()
   Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
-  Addon.lastForcedUpdate = 0;
   Addon.rolls = {};
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
 end
@@ -381,11 +380,6 @@ function Addon:ProcessRenounceMaster(name)
 end
 
 function KetzerischerLootverteilerFrame_OnUpdate(self, elapsed)
-  Addon.lastForcedUpdate = Addon.lastForcedUpdate + elapsed
-  if (Addon.lastForcedUpdate > 10) then
-    update()
-    Addon.lastForcedUpdate = 0;
-  end
 end
 
 -- Eventhandler
