@@ -17,8 +17,8 @@ local function updatePageNavigation()
   KetzerischerLootverteilerPageText:SetFormattedText("%d / %d", currentPage, maxPages);
 end
 
-local function update()
-  Util.dbgprint("Updating UI...")
+local function update(reason)
+  Util.dbgprint("Updating UI... (" .. (reason or "") .. ")")
   updatePageNavigation()
 
   for i=1,Addon.ITEMS_PER_PAGE do
@@ -29,7 +29,7 @@ local function update()
 end
 
 function KetzerischerLootverteilerShow()
-  update()
+  update("show")
   KetzerischerLootverteilerFrame:Show()
 end
 
@@ -296,7 +296,7 @@ function Addon:AddItem(itemString, from, sender)
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
-  update()
+  update("AddItem")
   showIfNotCombat()
 end
 
@@ -309,7 +309,7 @@ function Addon:DeleteItem(index)
   end
 
   Addon.itemList:Delete(index)
-  update()
+  update("DeleteItem")
 end
 
 local function updateTitle()
@@ -518,7 +518,7 @@ local function eventHandler(self, event, ...)
   elseif (event == "GROUP_ROSTER_UPDATE") then
     eventHandlerRaidRosterUpdate(self, event, ...)
   elseif (event == "GET_ITEM_INFO_RECEIVED") then
-    update()
+    update("ItemInfoReceived")
   end
 end
 
@@ -545,7 +545,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     end
   elseif (msg:match("^%s*clear%s*$")) then
     Addon.itemList:DeleteAllItems()
-    update()
+    update("DeleteAllItems")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
     if KetzerischerLootverteilerData.debug then
@@ -591,7 +591,7 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   end
 
   self:RegisterForDrag("LeftButton");
-  update()
+  update("Load")
 end
 
 function KetzerischerLootverteilerFrame_OnDragStart()
@@ -604,12 +604,12 @@ end
 
 function KetzerischerLootverteilerPrevPageButton_OnClick()
   Addon.itemListView:Next()
-  update()
+  update("PrevPage")
 end
 
 function KetzerischerLootverteilerNextPageButton_OnClick()
   Addon.itemListView:Prev()
-  update()
+  update("NextPage")
 end
 
 function KetzerischerLootverteilerNavigationFrame_OnLoad()
