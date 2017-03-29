@@ -39,6 +39,7 @@ function HereticRollFrame_SetRoll(self, id, roll)
     rollFrame:Hide()
     return
   end
+  rollFrame.roll = roll
   local nameText = _G[rollFrameName .. "Name"]
   nameText:SetText(Util.ShortenFullName(roll.name))
   local rollText = _G[rollFrameName .. "Roll"]
@@ -104,6 +105,7 @@ function HereticRollFrame_OnDragStart(button)
 end
 
 function HereticRollFrame_OnDragStop(button)
+  KetzerischerLootverteilerFrame:OnDropRoll(button.roll)
   button:SetAlpha(1.0);
   HereticRollDragFrame:StopMovingOrSizing();
   HereticRollDragFrame:ClearAllPoints();

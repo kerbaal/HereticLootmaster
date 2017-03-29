@@ -570,6 +570,15 @@ function HereticLootButton_LootList_OnClick(self, button, down)
   return false
 end
 
+function KetzerischerLootverteilerFrame_OnDropRoll(self, roll)
+  for id=1,Addon.ITEMS_PER_PAGE do
+    local button = HereticLootButton_FromId(id)
+    if (button and button:IsMouseOver()) then
+      print("Dropped " .. tostring(roll) .. " on " .. button:GetName())
+    end
+  end
+end
+
 function KetzerischerLootverteilerFrame_OnLoad(self)
   Addon:Initialize()
   RaidInfo:Initialize()
@@ -592,6 +601,8 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
 
   self:RegisterForDrag("LeftButton");
   update("Load")
+
+  KetzerischerLootverteilerFrame.OnDropRoll = KetzerischerLootverteilerFrame_OnDropRoll
 end
 
 function KetzerischerLootverteilerFrame_OnDragStart()
