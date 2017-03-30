@@ -1,39 +1,68 @@
-local ItemList = {};
-ItemList.__index = ItemList;
-function ItemList:New()
-   local self = {};
-   setmetatable(self, ItemList);
+local helpTable = {}
+local HereticItemAllocation = {
+	itemLink = "",
+	donator = "",
+	winner = {},
+	rollActionID = 0
+}
 
-   self.items = {}
-   self.donators = {}
-   self.senders = {}
-   self.size = 0
-   return self;
+local HereticItemList = {
+	instanceID = 0,
+	master = "",
+	entries = {},
+	size = 0
+}
+
+function HereticItemList:New(obj)
+	obj = obj or {}
+	setmetatable(obj, self)
+	self.__index = self
+	return obj
 end
 
-function ItemList:Size()
-  return self.size
+HereticItemAllocation = HereticItemList:New(HereticItemAllocation)
+
+function HereticItemAllocation:Add(itemLink, donator, winner, rollActionID)
+	self.itemLink = itemLink
+	self.donators = donator
+	self.winner = winner
+	self.rollActionID = rollActionID
+	self.size = self.size + 1
+return self
 end
 
-function ItemList:Get(index)
-  if (index < 1 or index > self.size) then return nil end
-  return self.items[index], self.donators[index], self.senders[index]
+for i = 1, 5 do
+a = HereticItemAllocation:Add("Link"..i, "Donator"..i, {"Name"..i,i,i+i},"RollID"..i)
+table.insert(helpTable, a)
+print(HereticItemAllocation.itemLink)
 end
 
-function ItemList:GetItemLink(index)
+--print(HereticItemAllocation.itemLink)
+
+print(helpTable[1].itemLink)
+print(helpTable[1].itemLink)
+
+--[[
+
+function HereticItemAllocation:Get(objID)
+  if not objID then return nil end
+  return self.itemLink, self.donator, self.winner
+end
+
+function HereticItemList:GetItemLink(index)
   if (index > self.size) then return nil end
   return self.items[index]
 end
 
-function ItemList:Add(item, donator, sender)
-  local n = self.size+1
-  self.items[n] = item
-  self.donators[n] = donator
-  self.senders[n] = sender
-  self.size = n
+function HereticItemAllocation:Add(itemLink, donator, winner, rollActionID)
+	self.itemLink = itemLink
+	self.donators = donator
+	self.winner = winner
+	self.rollActionID = rollActionID
+	self.size = self.size + 1
 end
 
-function ItemList:Delete(index)
+function HereticItemList:Delete(index)
   if index < 1 or index > self.size then return end
   table.remove(self.items, index)
   table.remove(self.donators, index)
@@ -41,7 +70,7 @@ function ItemList:Delete(index)
   self.size = self.size-1
 end
 
-function ItemList:ItemById(item, donator, sender)
+function HereticItemList:ItemById(item, donator, sender)
   for i=1,self.size do
     if (self.items[i] == item and
         self.donators[i] == donator and
@@ -52,14 +81,14 @@ function ItemList:ItemById(item, donator, sender)
   return nil
 end
 
-function ItemList:DeleteAllItems()
+function HereticItemList:DeleteAllItems()
   wipe(self.items)
   wipe(self.donators)
   wipe(self.senders)
   self.size = 0
 end
 
-function ItemList:Validate()
+function HereticItemList:Validate()
   for i=self.size,1,-1 do
     if (self.items[i] == nil or
         self.donators[i] == nil or
@@ -68,3 +97,4 @@ function ItemList:Validate()
     end
   end
 end
+]]
