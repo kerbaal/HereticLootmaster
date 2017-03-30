@@ -129,6 +129,20 @@ function HereticLootFrame_SetWinner(frame, roll)
   HereticLootFrame_UpdateFrame(frame)
 end
 
+function HereticLootFrameWinnerFrame_HereticOnDragStart(self,dragFrame)
+  local from = _G[self:GetParent():GetName() .. "SlotButton"];
+  --self:Hide()
+  --from:Show()
+end
+
+function HereticLootFrame_OnLoad(frame)
+  local slotText = _G[frame:GetName() .. "SlotButtonText"];
+  slotText:SetText("|cFF333311Drag Roll Here|r");
+  slotText:SetJustifyH("CENTER")
+  local winner = _G[frame:GetName() .. "WinnerFrame"];
+  winner.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
+end
+
 function HereticLootFrame_UpdateFrame(frame)
   if frame.donator == nil then
     frame:Hide()
@@ -140,13 +154,11 @@ function HereticLootFrame_UpdateFrame(frame)
   from:SetText(name);
   frame:Show();
   local from = _G[frame:GetName() .. "SlotButton"];
-  local fromText = _G[frame:GetName() .. "SlotButtonText"];
   local winner = _G[frame:GetName() .. "WinnerFrame"];
   if (frame.winner == nil) then
     winner:Hide()
     from:Show()
-    fromText:SetText("|cFF333311Drag Roll Here|r");
-    fromText:SetJustifyH("CENTER")
+
   else
     from:Hide()
     HereticRollFrame_SetRoll(winner, frame.winner)

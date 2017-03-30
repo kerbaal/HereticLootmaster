@@ -78,5 +78,8 @@
         </Anchors>
       </Button>
     </Frames>
+    <Scripts>
+      <OnLoad function="HereticLootFrame_OnLoad"/>
+    </Scripts>
   </Frame>
 </Ui>

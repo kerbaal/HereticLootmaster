@@ -101,10 +101,13 @@ function HereticRollFrame_OnDragStart(button)
     cursorX / uiScale, cursorY / uiScale);
   HereticRollDragFrame:StartMoving();
   HereticRollDragFrame:ClearAllPoints();
+  HereticRollFrame_SetRoll(HereticRollDragFrame, button.roll)
+  if button.HereticOnDragStart then button:HereticOnDragStart(HereticRollDragFrame) end
   HereticRollDragFrame:Show()
 end
 
 function HereticRollFrame_OnDragStop(button)
+  if button.HereticOnDragStop then button:HereticOnDragStop(HereticRollDragFrame) end
   KetzerischerLootverteilerFrame:OnDropRoll(button.roll)
   button:SetAlpha(1.0);
   HereticRollDragFrame:StopMovingOrSizing();
