@@ -23,8 +23,8 @@ local function update(reason)
 
   for i=1,Addon.ITEMS_PER_PAGE do
     local itemIndex = Addon.itemListView:IdToIndex(i);
-    HereticLootButton_SetLoot(i, itemIndex, Addon.itemList:Get(itemIndex))
-    HereticLootButton_Update(i)
+    HereticLootFrame_SetLoot(i, itemIndex, Addon.itemList:Get(itemIndex))
+    HereticLootFrame_Update(i)
   end
 end
 
@@ -558,7 +558,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   end
 end
 
-function HereticLootButton_LootList_OnClick(self, button, down)
+function LootItem_OnClick(self, button, down)
   if (button == "RightButton" and IsModifiedClick()) then
     if self.index then Addon:DeleteItem(self.index) end
     return true
@@ -572,9 +572,10 @@ end
 
 function KetzerischerLootverteilerFrame_OnDropRoll(self, roll)
   for id=1,Addon.ITEMS_PER_PAGE do
-    local button = HereticLootButton_FromId(id)
-    if (button and button:IsMouseOver()) then
-      print("Dropped " .. tostring(roll) .. " on " .. button:GetName())
+    local frame = HereticLootFrame_FromId(id)
+    if (frame and frame:IsMouseOver()) then
+      print("Dropped " .. tostring(roll) .. " on " .. frame:GetName())
+      HereticLootFrame_SetWinner(frame, roll)
     end
   end
 end
@@ -594,9 +595,9 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
   KetzerischerLootverteilerFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
 
-  for i=1,Addon.ITEMS_PER_PAGE do
-    local button = _G["HereticLootButton"..i];
-    button.HereticOnClick = HereticLootButton_LootList_OnClick
+  for id=1,Addon.ITEMS_PER_PAGE do
+    local frame = HereticLootFrame_FromId(id)
+    frame.HereticOnClick = LootItem_OnClick
   end
 
   self:RegisterForDrag("LeftButton");

@@ -2,22 +2,6 @@
   ..\FrameXML\UI.xsd">
   <Script file="HereticLootButton.lua"/>
   <Button name="HereticLootButton" inherits="LootButtonTemplate" virtual="true">
-      <Layers>
-          <Layer level="ARTWORK">
-              <Texture name="$parentFromNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
-                  <Size x="130" y="62"/>
-                  <Anchors>
-                      <Anchor point="LEFT" x="140" y="0"/>
-                  </Anchors>
-              </Texture>
-              <FontString name="$parentFromText" inherits="GameFontNormal" justifyH="LEFT">
-                  <Size x="93" y="38"/>
-                  <Anchors>
-                      <Anchor point="LEFT" relativePoint="RIGHT" x="138" y="0"/>
-                  </Anchors>
-              </FontString>
-          </Layer>
-      </Layers>
       <Scripts>
           <OnLoad>
               self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
@@ -37,4 +21,62 @@
           <OnClick function="HereticLootButton_OnClick"/>
       </Scripts>
   </Button>
+
+  <Button name="HereticSlotButtonTemplate" virtual="true" hidden="true">
+      <Size x="170" y="20"/>
+      <Backdrop bgFile="Interface\ChatFrame\ChatFrameBackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+          <TileSize>
+              <AbsValue val="32"/>
+          </TileSize>
+          <EdgeSize>
+              <AbsValue val="10"/>
+          </EdgeSize>
+          <Color r="0" g="0" b="0"/>
+          <Bordercolor r="0.03" g="0.03" b="0.03"/>
+          <BackgroundInsets>
+              <AbsInset left="1" right="1" top="1" bottom="1"/>
+          </BackgroundInsets>
+      </Backdrop>
+
+      <Layers>
+          <Layer level="ARTWORK">
+              <FontString name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
+                  <Size x="154" y="8"/>
+                  <Anchors>
+                      <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="10" y="0"/>
+                  </Anchors>
+              </FontString>
+          </Layer>
+      </Layers>
+  </Button>
+
+  <Frame name="HereticLootFrame" virtual="true">
+    <Size>
+      <AbsDimension x="330" y="40"/>
+    </Size>
+    <Frames>
+      <Button name="$parentButton" inherits="HereticLootButton" virtual="true">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
+              <Offset x="0" y="0"/>
+          </Anchor>
+        </Anchors>
+      </Button>
+      <Button name="$parentFromButton" inherits="HereticSlotButtonTemplate" hidden="false">
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="1"/>
+        </Anchors>
+      </Button>
+      <Button name="$parentSlotButton" inherits="HereticSlotButtonTemplate" hidden="false">
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-19"/>
+        </Anchors>
+      </Button>
+      <Button name="$parentWinnerFrame" inherits="HereticRollFrameTemplate" hidden="true">
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-19"/>
+        </Anchors>
+      </Button>
+    </Frames>
+  </Frame>
 </Ui>
