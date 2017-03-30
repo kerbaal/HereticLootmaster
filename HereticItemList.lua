@@ -1,40 +1,27 @@
-local helpTable = {}
-local HereticItemAllocation = {}
+local HereticItem = {}
 
-HereticItemAllocation.__index = HereticItemAllocation
-function HereticItemAllocation:New()
+HereticItem.__index = HereticItem
+function HereticItem:New(itemLink, donator, winner, rollActionID)
 	local obj = {
-	itemLink = "",
-	donator = "",
-	winner = {},
-	rollActionID = 0,
-	size = 0
+	itemLink = itemLink,
+	donator = donator,
+	winner = winner,
+	rollActionID = rollActionID,
 	}
 	setmetatable(obj, self)
-	return self
+	return obj
 end
 
-function HereticItemAllocation:Add(itemLink, donator, winner, rollActionID)
-	self.itemLink = itemLink
-	self.donators = donator
-	self.winner = winner
-	self.rollActionID = rollActionID
-	--self.size = self.size + 1
-return self
+function HereticItem:EntryTest()
+	local helpTable = {}
+	for i = 1, 5 do
+		local newObj = HereticItem:New("Link"..i, "Donator"..i, {"Name"..i,i,i+i},"RollID"..i)
+		table.insert(helpTable, newObj)
+		print(newObj)
+	end
+	print(helpTable[1].itemLink)
+	print(helpTable[2].itemLink)
 end
-
-
-for i = 1, 5 do
-local newObj = HereticItemAllocation:New()
-local newObj = newObj:Add("Link"..i, "Donator"..i, {"Name"..i,i,i+i},"RollID"..i)
-table.insert(helpTable, newObj)
-print(newObj.itemLink)
-end
-
---print(HereticItemAllocation.itemLink)
-
-print(helpTable[1].itemLink)
-print(helpTable[2].itemLink)
 
 --[[
 local HereticItemList = {
@@ -46,7 +33,7 @@ local HereticItemList = {
 ]]
 --[[
 
-function HereticItemAllocation:Get(objID)
+function HereticItem:Get(objID)
   if not objID then return nil end
   return self.itemLink, self.donator, self.winner
 end
@@ -56,7 +43,7 @@ function HereticItemList:GetItemLink(index)
   return self.items[index]
 end
 
-function HereticItemAllocation:Add(itemLink, donator, winner, rollActionID)
+function HereticItem:Add(itemLink, donator, winner, rollActionID)
 	self.itemLink = itemLink
 	self.donators = donator
 	self.winner = winner
