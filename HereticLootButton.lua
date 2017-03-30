@@ -135,12 +135,22 @@ function HereticLootFrameWinnerFrame_HereticOnDragStart(self,dragFrame)
   --from:Show()
 end
 
+function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame)
+  local frame = self:GetParent()
+  if not frame:IsMouseOver() and
+     not KetzerischerLootverteilerFrame:IsMouseOver() then
+    frame.winner = nil
+    HereticLootFrame_UpdateFrame(frame)
+  end
+end
+
 function HereticLootFrame_OnLoad(frame)
   local slotText = _G[frame:GetName() .. "SlotButtonText"];
   slotText:SetText("|cFF333311Drag Roll Here|r");
   slotText:SetJustifyH("CENTER")
   local winner = _G[frame:GetName() .. "WinnerFrame"];
   winner.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
+  winner.HereticOnDragStop = HereticLootFrameWinnerFrame_HereticOnDragStop
 end
 
 function HereticLootFrame_UpdateFrame(frame)
