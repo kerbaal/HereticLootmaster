@@ -31,18 +31,16 @@ local function eventHandler(self, event, ...)
   end
 end
 
-function HereticRollFrame_SetRoll(self, id, roll)
-  local rollFrameName = self:GetName() .. "RollFrame" .. id
-  local rollFrame = _G[rollFrameName]
+function HereticRollFrame_SetRoll(rollFrame, roll)
   if not rollFrame then return end
   if not roll then
     rollFrame:Hide()
     return
   end
   rollFrame.roll = roll
-  local nameText = _G[rollFrameName .. "Name"]
+  local nameText = _G[rollFrame:GetName() .. "Name"]
   nameText:SetText(Util.ShortenFullName(roll.name))
-  local rollText = _G[rollFrameName .. "Roll"]
+  local rollText = _G[rollFrame:GetName() .. "Roll"]
   rollText:SetText(""..roll.roll)
   rollText:SetTextColor(roll:GetColor())
   rollFrame:Show()
@@ -57,7 +55,9 @@ function HereticRollCollectorFrame_Update(self, ...)
   local offset = FauxScrollFrame_GetOffset(scrollBar)
   table.sort(self.rolls, HereticRoll.Compare)
   for id=1,8 do
-    HereticRollFrame_SetRoll(self, id, self.rolls[id+offset])
+    local rollFrameName = self:GetName() .. "RollFrame" .. id
+    local rollFrame = _G[rollFrameName]
+    HereticRollFrame_SetRoll(rollFrame, self.rolls[id+offset])
   end
 end
 
