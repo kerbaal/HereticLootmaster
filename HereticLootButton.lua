@@ -32,7 +32,7 @@ function HereticLootButton_OnClick(self, button, down)
 end
 
 function HereticLootButton_OnEnter(self, motion)
-  local itemLink = Addon.itemList:GetItemLink(self:GetID())
+  local itemLink = Addon.itemList:GetItemLink(self:GetParent():GetID())
   if itemLink then
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
     GameTooltip:SetHyperlink(itemLink);
