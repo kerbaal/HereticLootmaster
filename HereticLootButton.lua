@@ -47,8 +47,13 @@ function HereticLootButton_SetLoot(id, index, itemLink, donator, sender)
   button.sender = sender
 end
 
-function HereticLootButton_Update(id)
+function HereticLootButton_FromId(id)
   local button = _G["HereticLootButton"..id];
+  return button
+end
+
+function HereticLootButton_Update(id)
+  local button = HereticLootButton_FromId(id);
   if (button == nil) then
     return
   end

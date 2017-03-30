@@ -43,3 +43,7 @@ function HereticRoll.Compare(rollA, rollB)
   end
   return catA > catB
 end
+
+function HereticRoll.__tostring(self)
+  return "" .. self.name .. " rolled " .. self.roll .. " / " .. self.max;
+end
