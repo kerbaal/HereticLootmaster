@@ -570,13 +570,20 @@ function LootItem_OnClick(self, button, down)
   return false
 end
 
-function KetzerischerLootverteilerFrame_OnDropRoll(self, roll)
+function KetzerischerLootverteilerFrame_GetItemAtCursor()
   for id=1,Addon.ITEMS_PER_PAGE do
     local frame = HereticLootFrame_FromId(id)
-    if (frame and frame:IsMouseOver()) then
-      print("Dropped " .. tostring(roll) .. " on " .. frame:GetName())
-      HereticLootFrame_SetWinner(frame, roll)
+    if (frame and frame:IsMouseOver() and frame:IsVisible()) then
+      return frame
     end
+  end
+  return nil
+end
+
+function KetzerischerLootverteilerFrame_OnDropRoll(self, roll)
+  local frame = KetzerischerLootverteilerFrame_GetItemAtCursor()
+  if frame then
+    HereticLootFrame_SetWinner(frame, roll)
   end
 end
 

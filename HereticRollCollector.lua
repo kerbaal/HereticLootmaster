@@ -107,8 +107,9 @@ function HereticRollFrame_OnDragStart(button)
 end
 
 function HereticRollFrame_OnDragStop(button)
+  local roll = button.roll
   if button.HereticOnDragStop then button:HereticOnDragStop(HereticRollDragFrame) end
-  KetzerischerLootverteilerFrame:OnDropRoll(button.roll)
+  KetzerischerLootverteilerFrame:OnDropRoll(roll)
   button:SetAlpha(1.0);
   HereticRollDragFrame:StopMovingOrSizing();
   HereticRollDragFrame:ClearAllPoints();

@@ -141,6 +141,12 @@ function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame)
      not KetzerischerLootverteilerFrame:IsMouseOver() then
     frame.winner = nil
     HereticLootFrame_UpdateFrame(frame)
+  else
+    local lootFrame = KetzerischerLootverteilerFrame_GetItemAtCursor()
+    if lootFrame then
+      frame.winner = lootFrame.winner
+      HereticLootFrame_UpdateFrame(frame)
+    end
   end
 end
 
