@@ -6,7 +6,7 @@ function HereticItemList:New(instanceID, master, entries)
 	local obj = {
 	instanceID = instanceID,
 	master = master,
-	entries = entries,
+	entries = {},
 	}
 	setmetatable(obj, self)
 	return obj
@@ -38,10 +38,14 @@ end
 function HereticItemList:EntryTest()
 	local helpTable = {}
 	for i = 1, 5 do
-		local newEntry = HereticItem:New("Link"..i, "Donator"..i, {"Name"..i,i,i+i},"RollID"..i)
-		local newObj = HereticItemList:New(10000+i, "Nagisa-DieAldor", newEntry)
-		table.insert(helpTable, newObj)
-		print(newObj.entries.itemLink)
+		newObj = HereticItemList:New(10000+i, "Nagisa-DieAldor")
+		for j = 1, 5 do
+			newEntry = HereticItem:New("Link"..i*j, "Donator"..j, {"Name"..j,j,j+j},"RollID"..j)
+			table.insert(newObj.entries, newEntry)
+		end
+		for k,v in ipairs(newObj.entries) do
+		print(v.itemLink .. " posted by " .. v.donator .. " rolledID: " .. v.rollActionID)
+		end
 	end
 end
 
