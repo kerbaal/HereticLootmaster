@@ -7,7 +7,8 @@
 
 HereticUtils.lua
 HereticRoll.lua
+HereticRollCollector.xml
 HereticLootButton.xml
 KetzerischerLootverteiler.xml
-HereticRollCollector.xml
+
 Bindings.xml

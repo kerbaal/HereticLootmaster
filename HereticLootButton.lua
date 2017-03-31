@@ -3,13 +3,14 @@ local ADDON, Addon = ...
 local Util = Addon.Util
 
 function HereticLootButton_OnClick(self, button, down)
-  if (self.HereticOnClick and self:HereticOnClick(button, down)) then
+  local parent = self:GetParent()
+  if (parent.HereticOnClick and parent:HereticOnClick(button, down)) then
     return
   end
 
   if (button == "LeftButton") then
-    local name, _ = Util.DecomposeName(self.donator)
-    local itemLink = select(2,GetItemInfo(self.itemLink))
+    local name, _ = Util.DecomposeName(parent.donator)
+    local itemLink = select(2,GetItemInfo(parent.itemLink))
     if ( IsModifiedClick() ) then
       HandleModifiedItemClick(itemLink);
     else
@@ -17,7 +18,7 @@ function HereticLootButton_OnClick(self, button, down)
       if ( not ItemRefTooltip:IsShown() ) then
         ItemRefTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE");
       end
-      ItemRefTooltip:SetHyperlink(self.itemLink);
+      ItemRefTooltip:SetHyperlink(parent.itemLink);
       ItemRefTooltipTextRight1:SetText(name .. " ")
       ItemRefTooltipTextRight1:SetTextColor(FRIENDS_BNET_NAME_COLOR.r, FRIENDS_BNET_NAME_COLOR.g, FRIENDS_BNET_NAME_COLOR.b);
       ItemRefTooltipTextRight1:Show()
@@ -25,13 +26,13 @@ function HereticLootButton_OnClick(self, button, down)
     end
   elseif (button == "RightButton") then
     if ( not IsModifiedClick() ) then
-      ChatFrame_OpenChat("/w " .. self.donator .. " ")
+      ChatFrame_OpenChat("/w " .. parent.donator .. " ")
     end
   end
 end
 
 function HereticLootButton_OnEnter(self, motion)
-  local itemLink = Addon.itemList:GetItemLink(self:GetID())
+  local itemLink = Addon.itemList:GetItemLink(self:GetParent():GetID())
   if itemLink then
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
     GameTooltip:SetHyperlink(itemLink);
@@ -39,49 +40,36 @@ function HereticLootButton_OnEnter(self, motion)
   end
 end
 
-function HereticLootButton_SetLoot(id, index, itemLink, donator, sender)
-  local button = _G["HereticLootButton"..id];
-  button.index = index
-  button.itemLink = itemLink
-  button.donator = donator
-  button.sender = sender
-end
-
 function HereticLootButton_FromId(id)
-  local button = _G["HereticLootButton"..id];
-  return button
+  return _G["HereticLootFrame"..id.."Button"];
 end
 
-function HereticLootButton_Update(id)
-  local button = HereticLootButton_FromId(id);
+function HereticLootButton_Update(parent)
+  local button = _G[parent:GetName() .. "Button"]
   if (button == nil) then
     return
   end
 
-  if (button.itemLink == nil or button.donator == nil) then
+  if (parent == nil or parent.itemLink == nil or parent.donator == nil) then
     button:Hide()
     return
   end
 
-  local name, realm = Util.DecomposeName(button.donator)
-  local from = _G["HereticLootButton"..id.."FromText"];
-  from:SetText(name);
-
-  local itemId = Util.GetItemIdFromLink(button.itemLink)
+  local itemId = Util.GetItemIdFromLink(parent.itemLink)
 
   local itemName, itemLink, quality, itemLevel, itemMinLevel, itemType,
   itemSubType, itemStackCount, itemEquipLoc, itemTexture,
-  itemSellPrice = GetItemInfo(button.itemLink)
+  itemSellPrice = GetItemInfo(parent.itemLink)
   local locked = false;
   local isQuestItem = false;
   local questId = nil;
   local isActive = false;
-  local text = _G["HereticLootButton"..id.."Text"];
+  local text = _G[parent:GetName() .. "ButtonText"];
 
   if ( itemTexture ) then
     local color = ITEM_QUALITY_COLORS[quality];
     SetItemButtonQuality(button, quality, itemId);
-    _G["HereticLootButton"..id.."IconTexture"]:SetTexture(itemTexture);
+    _G[parent:GetName() .. "ButtonIconTexture"]:SetTexture(itemTexture);
     text:SetText(itemName);
     if( locked ) then
       SetItemButtonNameFrameVertexColor(button, 1.0, 0, 0);
@@ -93,7 +81,7 @@ function HereticLootButton_Update(id)
       SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
     end
 
-    local questTexture = _G["HereticLootButton"..id.."IconQuestTexture"];
+    local questTexture = _G[parent:GetName() .. "ButtonIconQuestTexture"];
     if ( questId and not isActive ) then
       questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
       questTexture:Show();
@@ -105,7 +93,7 @@ function HereticLootButton_Update(id)
     end
 
     text:SetVertexColor(color.r, color.g, color.b);
-    local countString = _G["HereticLootButton"..id.."Count"];
+    local countString = _G[parent:GetName() .. "ButtonCount"];
     if ( itemStackCount > 1 ) then
       countString:SetText(itemStackCount);
       countString:Show();
@@ -116,10 +104,90 @@ function HereticLootButton_Update(id)
     button:Enable();
   else
     text:SetText("");
-    _G["HereticLootButton"..id.."IconTexture"]:SetTexture(nil);
+    _G[parent:GetName() .. "ButtonIconTexture"]:SetTexture(nil);
     SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
     --LootFrame:SetScript("OnUpdate", LootFrame_OnUpdate);
     button:Disable();
   end
   button:Show();
+end
+
+function HereticLootFrame_FromId(id)
+  return _G["HereticLootFrame"..id];
+end
+
+function HereticLootFrame_SetLoot(id, index, itemLink, donator, sender)
+  local frame = HereticLootFrame_FromId(id);
+  frame.index = index
+  frame.itemLink = itemLink
+  frame.donator = donator
+  frame.sender = sender
+end
+
+function HereticLootFrame_SetWinner(frame, roll)
+  frame.winner = roll
+  HereticLootFrame_UpdateFrame(frame)
+end
+
+function HereticLootFrameWinnerFrame_HereticOnDragStart(self,dragFrame)
+  local from = _G[self:GetParent():GetName() .. "SlotButton"];
+  --self:Hide()
+  --from:Show()
+end
+
+function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame)
+  local frame = self:GetParent()
+  if not frame:IsMouseOver() and
+     not KetzerischerLootverteilerFrame:IsMouseOver() then
+    frame.winner = nil
+    HereticLootFrame_UpdateFrame(frame)
+  else
+    local lootFrame = KetzerischerLootverteilerFrame_GetItemAtCursor()
+    if lootFrame then
+      frame.winner = lootFrame.winner
+      HereticLootFrame_UpdateFrame(frame)
+    end
+  end
+end
+
+function HereticLootFrame_OnLoad(frame)
+  local slotText = _G[frame:GetName() .. "SlotButtonText"];
+  slotText:SetText("|cFF333311Drag Roll Here|r");
+  slotText:SetJustifyH("CENTER")
+  local winner = _G[frame:GetName() .. "WinnerFrame"];
+  winner.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
+  winner.HereticOnDragStop = HereticLootFrameWinnerFrame_HereticOnDragStop
+  local from = _G[frame:GetName() .. "FromButton"];
+  from:SetBackdropColor(0,0,0,0)
+  from:SetBackdropBorderColor(0,0,0,0)
+  local slot = _G[frame:GetName() .. "SlotButton"];
+  slot:SetBackdropColor(0,0,0,0)
+end
+
+function HereticLootFrame_UpdateFrame(frame)
+  if frame.donator == nil then
+    frame:Hide()
+    return
+  end
+  HereticLootButton_Update(frame)
+  local name, realm = Util.DecomposeName(frame.donator)
+  local from = _G[frame:GetName() .. "FromButtonText"];
+  from:SetText(name);
+  frame:Show();
+  local slot = _G[frame:GetName() .. "SlotButton"];
+  local winner = _G[frame:GetName() .. "WinnerFrame"];
+  if (frame.winner == nil) then
+    winner:Hide()
+    slot:Show()
+  else
+    slot:Hide()
+    HereticRollFrame_SetRoll(winner, frame.winner)
+  end
+end
+
+function HereticLootFrame_Update(id)
+  local frame = HereticLootFrame_FromId(id);
+  if frame == nil then return end
+
+  HereticLootFrame_UpdateFrame(frame)
 end
