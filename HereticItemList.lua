@@ -1,4 +1,16 @@
 local HereticItem = {}
+local HereticItemList = {}
+
+HereticItemList.__index = HereticItemList
+function HereticItemList:New(instanceID, master, entries)
+	local obj = {
+	instanceID = instanceID,
+	master = master,
+	entries = entries,
+	}
+	setmetatable(obj, self)
+	return obj
+end
 
 HereticItem.__index = HereticItem
 function HereticItem:New(itemLink, donator, winner, rollActionID)
@@ -24,31 +36,15 @@ function HereticItem:EntryTest()
 end
 
 --[[
-local HereticItemList = {
-	instanceID = 0,
-	master = "",
-	entries = {},
-	size = 0
-}
-]]
---[[
 
 function HereticItem:Get(objID)
   if not objID then return nil end
   return self.itemLink, self.donator, self.winner
 end
 
-function HereticItemList:GetItemLink(index)
+function HereticItem:GetItemLink(index)
   if (index > self.size) then return nil end
   return self.items[index]
-end
-
-function HereticItem:Add(itemLink, donator, winner, rollActionID)
-	self.itemLink = itemLink
-	self.donators = donator
-	self.winner = winner
-	self.rollActionID = rollActionID
-	self.size = self.size + 1
 end
 
 function HereticItemList:Delete(index)
@@ -77,7 +73,7 @@ function HereticItemList:DeleteAllItems()
   self.size = 0
 end
 
-function HereticItemList:Validate()
+function HereticItem:Validate()
   for i=self.size,1,-1 do
     if (self.items[i] == nil or
         self.donators[i] == nil or
