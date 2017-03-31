@@ -8,6 +8,7 @@
 HereticUtils.lua
 HereticRoll.lua
 HereticRollCollector.xml
+HereticItemList.lua
 HereticLootButton.xml
 KetzerischerLootverteiler.xml
 
