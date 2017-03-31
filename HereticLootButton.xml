@@ -64,17 +64,17 @@
       </Button>
       <Button name="$parentFromButton" inherits="HereticSlotButtonTemplate" hidden="false">
         <Anchors>
-          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="1"/>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
         </Anchors>
       </Button>
       <Button name="$parentSlotButton" inherits="HereticSlotButtonTemplate" hidden="false">
         <Anchors>
-          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-19"/>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-18"/>
         </Anchors>
       </Button>
       <Button name="$parentWinnerFrame" inherits="HereticRollFrameTemplate" hidden="true">
         <Anchors>
-          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-19"/>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-18"/>
         </Anchors>
       </Button>
     </Frames>
