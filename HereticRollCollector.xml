@@ -158,7 +158,7 @@
                  GameTooltip:SetText("Closing this window discards all rolls");
                </OnEnter>
                <OnLeave>
-                   GameTooltip:Hide();
+                 GameTooltip:Hide();
                </OnLeave>
              </Scripts>
          </Button>
