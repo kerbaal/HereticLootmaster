@@ -62,9 +62,9 @@
     </Frame>
 
     <Frame name="KetzerischerLootverteilerFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
-        <Size x="300" y="310"/>
+        <Size x="370" y="310"/>
         <TitleRegion>
-            <Size x="300" y="20"/>
+            <Size x="370" y="20"/>
             <Anchors><Anchor point="TOP"/>
             </Anchors>
         </TitleRegion>
@@ -112,32 +112,32 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="HereticLootButton1" inherits="HereticLootButton" id="1">
+            <Button name="HereticLootFrame1" inherits="HereticLootFrame" id="1">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="20" y="-30"/>
                 </Anchors>
             </Button>
-            <Button name="HereticLootButton2" inherits="HereticLootButton" id="2">
+            <Button name="HereticLootFrame2" inherits="HereticLootFrame" id="2">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="20" y="-70"/>
                 </Anchors>
             </Button>
-            <Button name="HereticLootButton3" inherits="HereticLootButton" id="3">
+            <Button name="HereticLootFrame3" inherits="HereticLootFrame" id="3">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="20" y="-110"/>
                 </Anchors>
             </Button>
-            <Button name="HereticLootButton4" inherits="HereticLootButton" id="4">
+            <Button name="HereticLootFrame4" inherits="HereticLootFrame" id="4">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="20" y="-150"/>
                 </Anchors>
             </Button>
-            <Button name="HereticLootButton5" inherits="HereticLootButton" id="5">
+            <Button name="HereticLootFrame5" inherits="HereticLootFrame" id="5">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="20" y="-190"/>
                 </Anchors>
             </Button>
-            <Button name="HereticLootButton6" inherits="HereticLootButton" id="6">
+            <Button name="HereticLootFrame6" inherits="HereticLootFrame" id="6">
                 <Anchors>
                     <Anchor point="TOPLEFT" x="20" y="-230"/>
                 </Anchors>
