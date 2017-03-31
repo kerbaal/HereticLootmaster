@@ -35,6 +35,16 @@ function HereticItem:EntryTest()
 	print(helpTable[2].itemLink)
 end
 
+function HereticItemList:EntryTest()
+	local helpTable = {}
+	for i = 1, 5 do
+		local newEntry = HereticItem:New("Link"..i, "Donator"..i, {"Name"..i,i,i+i},"RollID"..i)
+		local newObj = HereticItemList:New(10000+i, "Nagisa-DieAldor", newEntry)
+		table.insert(helpTable, newObj)
+		print(newObj.entries.itemLink)
+	end
+end
+
 --[[
 
 function HereticItem:Get(objID)
