@@ -28,6 +28,10 @@ function HereticItem:GetItemLink()
 	return self.itemLink
 end
 
+function HereticItem:Get()
+	return self.itemLink, self.donator, self.winner, self.rollActionID
+end
+
 function HereticItem:EntryTest()
 	local helpTable = {}
 	for i = 1, 5 do
@@ -51,18 +55,10 @@ function HereticItemList:EntryTest()
 		end
 	end
 	print(newEntry:GetItemLink())
+	print(newEntry:Get())
 end
-
-
 
 --[[
-
-function HereticItem:Get(objID)
-  if not objID then return nil end
-  return self.itemLink, self.donator, self.winner
-end
-
-
 
 function HereticItemList:Delete(index)
   if index < 1 or index > self.size then return end
