@@ -24,6 +24,10 @@ function HereticItem:New(itemLink, donator, winner, rollActionID)
 	return obj
 end
 
+function HereticItem:GetItemLink()
+	return self.itemLink
+end
+
 function HereticItem:EntryTest()
 	local helpTable = {}
 	for i = 1, 5 do
@@ -36,7 +40,6 @@ function HereticItem:EntryTest()
 end
 
 function HereticItemList:EntryTest()
-	local helpTable = {}
 	for i = 1, 5 do
 		newObj = HereticItemList:New(10000+i, "Nagisa-DieAldor")
 		for j = 1, 5 do
@@ -47,7 +50,10 @@ function HereticItemList:EntryTest()
 		print(v.itemLink .. " posted by " .. v.donator .. " rolledID: " .. v.rollActionID)
 		end
 	end
+	print(newEntry:GetItemLink())
 end
+
+
 
 --[[
 
@@ -56,10 +62,7 @@ function HereticItem:Get(objID)
   return self.itemLink, self.donator, self.winner
 end
 
-function HereticItem:GetItemLink(index)
-  if (index > self.size) then return nil end
-  return self.items[index]
-end
+
 
 function HereticItemList:Delete(index)
   if index < 1 or index > self.size then return end
