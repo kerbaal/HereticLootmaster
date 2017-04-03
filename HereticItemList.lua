@@ -41,6 +41,8 @@ function HereticItemList:DeleteEntry(obj)
 	end
 end
 
+-- function HereticItemList:DeleteEntryAt(pos)
+
 function HereticItemList:GetEntryObject(itemLink, donator)
 	for i=1, #self.entries do
 		if (self.entries[i].itemLink == itemLink and
@@ -57,13 +59,14 @@ function HereticItemList:DeleteAllEntries()
 	end
 end
 
+-- Split in to functions for each class
 function HereticItemList:Validate()
+	setmetatable(self, HereticItemList)
 	local i = 1
 	while i <= #self.entries do
 		if (self.entries[i].itemLink == "" or 
 			self.entries[i].donator == "") then
 			self:DeleteEntry(self.entries[i])
-			i = 1
 		else
 			i = i + 1
 		end
