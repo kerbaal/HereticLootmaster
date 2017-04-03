@@ -58,10 +58,14 @@ function HereticItemList:DeleteAllEntries()
 end
 
 function HereticItemList:Validate()
-	for i=1, #self.entries do
-		if (self.entries[i].itemLink == "" or self.entries[i].donator == "") then
+	i = 1
+	while i <= #self.entries do
+		if (self.entries[i].itemLink == "" or 
+			self.entries[i].donator == "") then
 			self:DeleteEntry(self.entries[i])
+			i = 1
 		end
+		i = i + 1
 	end
 end
 
