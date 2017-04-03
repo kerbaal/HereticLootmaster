@@ -32,6 +32,31 @@ function HereticItem:Get()
 	return self.itemLink, self.donator, self.winner, self.rollActionID
 end
 
+function HereticItemList:DeleteEntry(obj)
+	for i = 1, #self.entries do
+		if self.entries[i] == obj then
+			table.remove(self.entries, i)
+			break
+		end
+	end
+end
+
+function HereticItemList:DeleteEntryTest()
+	testList = HereticItemList:New(8888889, "Nagisa-DieAldor")
+	for i = 1, 5 do
+		newEntry = HereticItem:New("Link"..i*i, "Donator"..i, {"Name"..i,i,i+i},"RollID"..i)
+		table.insert(testList.entries, newEntry)
+	end
+	for k,v in ipairs(testList.entries) do
+		print(v.itemLink .. " posted by " .. v.donator .. " rolledID: " .. v.rollActionID)
+	end
+	testList:DeleteEntry(newEntry)
+	print("--------")
+	for k,v in ipairs(testList.entries) do
+		print(v.itemLink .. " posted by " .. v.donator .. " rolledID: " .. v.rollActionID)
+	end
+end
+
 function HereticItem:EntryTest()
 	local helpTable = {}
 	for i = 1, 5 do
@@ -57,42 +82,3 @@ function HereticItemList:EntryTest()
 	print(newEntry:GetItemLink())
 	print(newEntry:Get())
 end
-
---[[
-
-function HereticItemList:Delete(index)
-  if index < 1 or index > self.size then return end
-  table.remove(self.items, index)
-  table.remove(self.donators, index)
-  table.remove(self.senders, index)
-  self.size = self.size-1
-end
-
-function HereticItemList:ItemById(item, donator, sender)
-  for i=1,self.size do
-    if (self.items[i] == item and
-        self.donators[i] == donator and
-        self.senders[i] == sender) then
-      return i
-    end
-  end
-  return nil
-end
-
-function HereticItemList:DeleteAllItems()
-  wipe(self.items)
-  wipe(self.donators)
-  wipe(self.senders)
-  self.size = 0
-end
-
-function HereticItem:Validate()
-  for i=self.size,1,-1 do
-    if (self.items[i] == nil or
-        self.donators[i] == nil or
-        self.senders[i] == nil) then
-      self:Delete(i)
-    end
-  end
-end
-]]
