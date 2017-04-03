@@ -15,10 +15,10 @@ end
 HereticItem.__index = HereticItem
 function HereticItem:New(itemLink, donator, winner, rollActionID)
 	local obj = {
-	itemLink = itemLink,
-	donator = donator,
-	winner = winner,
-	rollActionID = rollActionID,
+	itemLink = itemLink or "",
+	donator = donator or "",
+	winner = winner or {},
+	rollActionID = rollActionID or 0,
 	}
 	setmetatable(obj, self)
 	return obj
@@ -51,20 +51,66 @@ function HereticItemList:GetEntryObject(itemLink, donator)
 	return nil
 end
 
+function HereticItemList:DeleteAllEntries()
+	for i=0, #self.entries do 
+		self.entries[i]=nil
+	end
+end
+
+function HereticItemList:Validate()
+	for i=1, #self.entries do
+		if (self.entries[i].itemLink == "" or self.entries[i].donator == "") then
+			self:DeleteEntry(self.entries[i])
+		end
+	end
+end
+
+-- Just for testing not used in the addon
+function BuildString(itemLink, donator, rollActionID)
+	result = ""
+	if itemLink ~= "" then result = result .. itemLink end
+	if donator ~= "" then result = result .. " posted by " .. donator end 
+	if rollActionID ~= 0 then result = result .. " rolledID: " .. rollActionID end
+	if result ~= "" then return result end
+end
+
+function PrintTable(t)
+	for k,v in ipairs(t) do
+		print(BuildString(v.itemLink, v.donator, v.rollActionID))
+	end
+end
+
+function HereticItemList:ValidateTest()
+	testList = HereticItemList:New(8888889, "Nagisa-DieAldor")
+	for i = 1, 5 do
+		newEntry = HereticItem:New("Link"..i*i, "Donator"..i, {"Name"..i,i,i+i},"RollID"..i)
+		table.insert(testList.entries, newEntry)
+	end
+	PrintTable(testList.entries)
+	for j = 1, 5 do
+		newEntry = HereticItem:New("Link"..j+j)
+		table.insert(testList.entries, j+j, newEntry)
+	end
+	print("-- Before validation --")
+	PrintTable(testList.entries)
+	testList:Validate()
+	print("-- After validation --")
+	PrintTable(testList.entries)
+end
+
 function HereticItemList:DeleteEntryTest()
 	testList = HereticItemList:New(8888889, "Nagisa-DieAldor")
 	for i = 1, 5 do
 		newEntry = HereticItem:New("Link"..i*i, "Donator"..i, {"Name"..i,i,i+i},"RollID"..i)
 		table.insert(testList.entries, newEntry)
 	end
-	for k,v in ipairs(testList.entries) do
-		print(v.itemLink .. " posted by " .. v.donator .. " rolledID: " .. v.rollActionID)
-	end
+	PrintTable(testList.entries)
 	testList:DeleteEntry(testList:GetEntryObject("Link16", "Donator4"))
 	print("--- Entry4: Link16 posted by Donator4 rolledID: RollID4 should be removed ---")
-	for k,v in ipairs(testList.entries) do
-		print(v.itemLink .. " posted by " .. v.donator .. " rolledID: " .. v.rollActionID)
-	end
+	PrintTable(testList.entries)
+	testList:DeleteAllEntries()
+	print("--- Table removed ---")
+	PrintTable(testList.entries)
 end
 
 function HereticItem:EntryTest()
@@ -92,21 +138,3 @@ function HereticItemList:EntryTest()
 	print(newEntry:GetItemLink())
 	print(newEntry:Get())
 end
-
---[[
-function HereticItemList:DeleteAllItems()
-  wipe(self.items)
-  wipe(self.donators)
-  wipe(self.senders)
-  self.size = 0
-end
-function HereticItem:Validate()
-  for i=self.size,1,-1 do
-    if (self.items[i] == nil or
-        self.donators[i] == nil or
-        self.senders[i] == nil) then
-      self:Delete(i)
-    end
-  end
-end
-]]
