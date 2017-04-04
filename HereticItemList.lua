@@ -35,13 +35,15 @@ end
 function HereticItemList:DeleteEntry(obj)
 	for i = 1, #self.entries do
 		if self.entries[i] == obj then
-			table.remove(self.entries, i)
+			self:DeleteEntryAt(i)
 			break
 		end
 	end
 end
 
--- function HereticItemList:DeleteEntryAt(pos)
+function HereticItemList:DeleteEntryAt(pos)
+	table.remove(self.entries, pos)
+end
 
 function HereticItemList:GetEntryObject(itemLink, donator)
 	for i=1, #self.entries do
@@ -59,17 +61,27 @@ function HereticItemList:DeleteAllEntries()
 	end
 end
 
--- Split in to functions for each class
 function HereticItemList:Validate()
 	setmetatable(self, HereticItemList)
-	local i = 1
-	while i <= #self.entries do
-		if (self.entries[i].itemLink == "" or 
-			self.entries[i].donator == "") then
-			self:DeleteEntry(self.entries[i])
-		else
-			i = i + 1
-		end
+	if (self.instanceID == 0 or 
+		self.master == "") then
+		return false
+	elseif not self.entries then
+		self.entries = {}
+	else 
+		return true
+	end
+end
+
+function HereticItem:Validate()
+	setmetatable(self, HereticItem)
+	if (self.itemLink == "" or 
+		self.donator == "") then
+	return false
+	elseif not self.winner then
+		self.winner = {}
+	else
+		return true
 	end
 end
 
@@ -88,22 +100,19 @@ function PrintTable(t)
 	end
 end
 
-function HereticItemList:ValidateTest()
-	testList = HereticItemList:New(8888889, "Nagisa-DieAldor")
-	for i = 1, 5 do
-		newEntry = HereticItem:New("Link"..i*i, "Donator"..i, {"Name"..i,i,i+i},"RollID"..i)
-		table.insert(testList.entries, newEntry)
+function ValidateTest()
+	testList = HereticItemList:New(8888889, "")
+	testList.winner = HereticItem:New("", "Unknown", "Different", 123)
+	print("In table " .. tostring(testList) .. " Instance: " .. testList.instanceID .. " has Master: " .. testList.master )
+	print("Winner contains:" .. testList.winner.itemLink .. " from " .. testList.winner.donator)
+	if not testList.winner:Validate() then
+		testList.winner = nil
 	end
-	PrintTable(testList.entries)
-	for j = 1, 5 do
-		newEntry = HereticItem:New("Link"..j+j)
-		table.insert(testList.entries, j+j, newEntry)
+	print("Validated Item " .. tostring(testList.winner))
+	if not testList:Validate() then
+		testList = nil
 	end
-	print("-- Before validation --")
-	PrintTable(testList.entries)
-	testList:Validate()
-	print("-- After validation --")
-	PrintTable(testList.entries)
+	print("In table " .. tostring(testList))
 end
 
 function HereticItemList:DeleteEntryTest()
@@ -140,7 +149,7 @@ function HereticItemList:EntryTest()
 			table.insert(newObj.entries, newEntry)
 		end
 		for k,v in ipairs(newObj.entries) do
-		print(v.itemLink .. " posted by " .. v.donator .. " rolledID: " .. v.rollActionID)
+			print(v.itemLink .. " posted by " .. v.donator .. " rolledID: " .. v.rollActionID)
 		end
 	end
 	print(newEntry:GetItemLink())
