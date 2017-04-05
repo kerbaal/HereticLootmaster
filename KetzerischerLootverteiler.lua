@@ -6,9 +6,6 @@ KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
 
-
-
-
 local function updatePageNavigation()
   Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
   local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
@@ -184,10 +181,11 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  Addon.itemList = ItemList:New()
+  Addon.lootSequences = {}
   Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
-  Addon.rolls = {};
+  Addon.instanceID = 999888777666;
+  --Addon.rolls = {};
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
 end
 
@@ -211,8 +209,11 @@ function Addon:AddItem(itemString, from, sender)
       return
     end
   end
-
-  Addon.itemList:Add(itemString, from, sender)
+  
+  interimItemList = HereticItemList:New(Addon.instanceID, Addon.master)
+  table.insert(Addon.lootSequences, interimItemList)
+  local latestItem = HereticItem:New(itemString, from, {}, 0)
+  table.insert(Addon.lootSequences.entries, latestItem)
 
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
@@ -225,14 +226,14 @@ function Addon:AddItem(itemString, from, sender)
 end
 
 function Addon:DeleteItem(index)
-  item, donator, _ = Addon.itemList:Get(index)
+  item, donator, _ = Addon.interimItemList:GetEntry(index)
   if Addon:IsMaster() then
     local msg = Addon.MSG_DELETE_LOOT .. " " .. donator .. " " .. item
     Util.dbgprint("Announcing loot deletion")
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
-  Addon.itemList:Delete(index)
+  Addon.interimItemList:DeleteEntryAt(index)
   update("DeleteItem")
 end
 
@@ -340,7 +341,7 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
 end
 
 local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.itemList2 = Addon.itemList
+  KetzerischerLootverteilerData.itemList2 = Addon.lootSequences
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
   KetzerischerLootverteilerData.minRarity = Addon.minRarity
@@ -351,10 +352,18 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     RaidInfo:Update()
     if KetzerischerLootverteilerData.itemList2 then
       for i,v in pairs(KetzerischerLootverteilerData.itemList2) do
-        Addon.itemList[i] = v
+        Addon.lootSequences[1].enries[i] = v
       end
-      Addon.itemList:Validate()
+      if not Addon.lootSequences[1]:Validate() then 
+		Addon.lootSequences[1] = nil
+	  else--if not Addon.lootSequences[1].entries:Validate() then
+		for i = 1, #Addon.lootSequences[1].entries do
+		  if not Addon.lootSequences[1].entries[i]:Validate() then
+		    Addon.lootSequences[1].entries[i] = nil
+		end
+	  end
     end
+	------------------------ HERE YOU ARE --------------------------
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
       UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, Addon.minRarity[2])
