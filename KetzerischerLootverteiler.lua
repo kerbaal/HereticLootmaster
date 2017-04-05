@@ -7,7 +7,7 @@ local RaidInfo = {}
 
 
 local function updatePageNavigation()
-  Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
+  Addon.itemListView:SetNumberOfItems(#Addon.interimItemList.entries)
   local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
   KetzerischerLootverteilerPrevPageButton:SetEnabled(prev);
   KetzerischerLootverteilerNextPageButton:SetEnabled(next);
@@ -20,7 +20,7 @@ local function update(reason)
 
   for i=1,Addon.ITEMS_PER_PAGE do
     local itemIndex = Addon.itemListView:IdToIndex(i);
-    HereticLootFrame_SetLoot(i, itemIndex, Addon.itemList:Get(itemIndex))
+    HereticLootFrame_SetLoot(i, itemIndex, Addon.interimItemList:GetEntry(itemIndex))
     HereticLootFrame_Update(i)
   end
 end
@@ -356,7 +356,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
       end
       if not Addon.lootSequences[1]:Validate() then 
 		Addon.lootSequences[1] = nil
-	  else--if not Addon.lootSequences[1].entries:Validate() then
+	  else
 		for i = 1, #Addon.lootSequences[1].entries do
 		  if not Addon.lootSequences[1].entries[i]:Validate() then
 		    Addon.lootSequences[1].entries[i] = nil
@@ -400,7 +400,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     local donator, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
     Util.dbgprint ("Deletion: " .. donator .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
-      local index = Addon.itemList:ItemById(itemString, donator, sender)
+      local index = Addon.interimItemList:GetEntryId(itemString, donator)
       if (index) then Addon:DeleteItem(index) end
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
@@ -477,7 +477,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
       Addon:RenounceMaster();
     end
   elseif (msg:match("^%s*clear%s*$")) then
-    Addon.itemList:DeleteAllItems()
+    Addon.interimItemList:DeleteAllItems()
     update("DeleteAllItems")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
