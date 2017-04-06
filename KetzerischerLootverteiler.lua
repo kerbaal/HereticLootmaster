@@ -81,6 +81,7 @@ end
 
 function RaidInfo:recordByUnitId(unitId)
   local fullName = Util.GetFullUnitName(unitId)
+  if (not fullName) then return end
   local first, _ = Util.DecomposeName(fullName)
   if (first == UNKNOWNOBJECT) then
      RaidInfo:RequestReindexing()
