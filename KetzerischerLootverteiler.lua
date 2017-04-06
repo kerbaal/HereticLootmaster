@@ -355,6 +355,11 @@ function Addon:ClaimMaster()
   end
 end
 
+function Addon:GetItemLinkFromId(id)
+  local itemIndex = Addon.itemListView:IdToIndex(id);
+  return Addon.itemList:GetItemLink(itemIndex)
+end
+
 function Addon:ProcessClaimMaster(name)
   if (name == nil) then return end
   if (Addon.master == name) then return end
