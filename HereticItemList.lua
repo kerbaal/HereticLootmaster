@@ -1,4 +1,4 @@
-local ItemList = {};
+ItemList = {};
 ItemList.__index = ItemList;
 function ItemList:New()
    local self = {};
