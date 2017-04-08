@@ -6,8 +6,11 @@ KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
 
+
+
+
 local function updatePageNavigation()
-  Addon.itemListView:SetNumberOfItems(#Addon.interimItemList.entries)
+  Addon.itemListView:SetNumberOfItems(#Addon.itemList.entries)
   local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
   KetzerischerLootverteilerPrevPageButton:SetEnabled(prev);
   KetzerischerLootverteilerNextPageButton:SetEnabled(next);
@@ -20,7 +23,7 @@ local function update(reason)
 
   for i=1,Addon.ITEMS_PER_PAGE do
     local itemIndex = Addon.itemListView:IdToIndex(i);
-    HereticLootFrame_SetLoot(i, itemIndex, Addon.interimItemList:GetEntry(itemIndex))
+    HereticLootFrame_SetLoot(i, itemIndex, Addon.itemList:GetEntry(itemIndex))
     HereticLootFrame_Update(i)
   end
 end
@@ -181,11 +184,10 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  Addon.lootSequences = {}
+  Addon.itemList = HereticItemList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
-  Addon.instanceID = 999888777666;
-  --Addon.rolls = {};
+  Addon.rolls = {};
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
 end
 
@@ -209,11 +211,9 @@ function Addon:AddItem(itemString, from, sender)
       return
     end
   end
-  
-  interimItemList = HereticItemList:New(Addon.instanceID, Addon.master)
-  table.insert(Addon.lootSequences, interimItemList)
-  local latestItem = HereticItem:New(itemString, from, {}, 0)
-  table.insert(Addon.lootSequences.entries, latestItem)
+	x = 
+	table.insert(Addon.itemList.entries, HereticItem:New(itemString, from))
+  --Addon.itemList:Add(itemString, from, sender)
 
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
@@ -226,14 +226,14 @@ function Addon:AddItem(itemString, from, sender)
 end
 
 function Addon:DeleteItem(index)
-  item, donator, _ = Addon.interimItemList:GetEntry(index)
+  item, donator, _ = Addon.itemList:GetEntry(index)
   if Addon:IsMaster() then
     local msg = Addon.MSG_DELETE_LOOT .. " " .. donator .. " " .. item
     Util.dbgprint("Announcing loot deletion")
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
-  Addon.interimItemList:DeleteEntryAt(index)
+  Addon.itemList:DeleteEntryAt(index)
   update("DeleteItem")
 end
 
@@ -341,7 +341,7 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
 end
 
 local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.itemList2 = Addon.lootSequences
+  KetzerischerLootverteilerData.itemList2 = Addon.itemList
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
   KetzerischerLootverteilerData.minRarity = Addon.minRarity
@@ -352,18 +352,10 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     RaidInfo:Update()
     if KetzerischerLootverteilerData.itemList2 then
       for i,v in pairs(KetzerischerLootverteilerData.itemList2) do
-        Addon.lootSequences[1].enries[i] = v
+        Addon.itemList[i] = v
       end
-      if not Addon.lootSequences[1]:Validate() then 
-		Addon.lootSequences[1] = nil
-	  else
-		for i = 1, #Addon.lootSequences[1].entries do
-		  if not Addon.lootSequences[1].entries[i]:Validate() then
-		    Addon.lootSequences[1].entries[i] = nil
-		end
-	  end
+      Addon.itemList:Validate()
     end
-	------------------------ HERE YOU ARE --------------------------
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
       UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, Addon.minRarity[2])
@@ -400,7 +392,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     local donator, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
     Util.dbgprint ("Deletion: " .. donator .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
-      local index = Addon.interimItemList:GetEntryId(itemString, donator)
+      local index = Addon.itemList:ItemById(itemString, donator, sender)
       if (index) then Addon:DeleteItem(index) end
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
@@ -477,7 +469,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
       Addon:RenounceMaster();
     end
   elseif (msg:match("^%s*clear%s*$")) then
-    Addon.interimItemList:DeleteAllItems()
+    Addon.itemList:DeleteAllItems()
     update("DeleteAllItems")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
@@ -582,7 +574,7 @@ function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
     UIDropDownMenu_AddButton(info, level)
   end
   local info = UIDropDownMenu_CreateInfo()
-  info.text = "|cFFFF0000" .. DISABLE .. "|r"
+  info.text = "|cFFFF0000" .. "Disable" .. "|r"
   info.value = 1000
   info.func = KetzerischerlootverteilerRarityDropDown_OnClick
   UIDropDownMenu_AddButton(info, level)
