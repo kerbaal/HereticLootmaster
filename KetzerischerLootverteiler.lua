@@ -5,12 +5,8 @@ local Util = Addon.Util
 KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
-
-
-
-
 local function updatePageNavigation()
-  Addon.itemListView:SetNumberOfItems(#Addon.itemList.entries)
+  Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
   local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
   KetzerischerLootverteilerPrevPageButton:SetEnabled(prev);
   KetzerischerLootverteilerNextPageButton:SetEnabled(next);
