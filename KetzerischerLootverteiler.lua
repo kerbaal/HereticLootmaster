@@ -299,6 +299,8 @@ function Addon:AddItem(itemString, from, sender)
   end
 
   Addon.itemList:Add(itemString, from, sender)
+  --PlaySound("igBackPackCoinSelect")
+  PlaySound("igMainMenuOptionCheckBoxOn")
 
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
@@ -319,6 +321,7 @@ function Addon:DeleteItem(index)
   end
 
   Addon.itemList:Delete(index)
+  PlaySound("igMainMenuOptionCheckBoxOff");
   update("DeleteItem")
 end
 
