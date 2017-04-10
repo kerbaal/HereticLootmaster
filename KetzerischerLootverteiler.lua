@@ -465,7 +465,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
       Addon:RenounceMaster();
     end
   elseif (msg:match("^%s*clear%s*$")) then
-    Addon.itemList:DeleteAllItems()
+    Addon.itemList:DeleteAllEntries()
     update("DeleteAllItems")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
