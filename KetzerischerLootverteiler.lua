@@ -81,6 +81,7 @@ end
 
 function RaidInfo:recordByUnitId(unitId)
   local fullName = Util.GetFullUnitName(unitId)
+  if (not fullName) then return end
   local first, _ = Util.DecomposeName(fullName)
   if (first == UNKNOWNOBJECT) then
      RaidInfo:RequestReindexing()
@@ -277,6 +278,11 @@ function Addon:ClaimMaster()
   else
     print ("Only leader or assistant may become Ketzerischer Lootverteiler.")
   end
+end
+
+function Addon:GetItemLinkFromId(id)
+  local itemIndex = Addon.itemListView:IdToIndex(id);
+  return Addon.itemList:GetItemLink(itemIndex)
 end
 
 function Addon:ProcessClaimMaster(name)

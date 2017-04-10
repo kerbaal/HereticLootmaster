@@ -40,6 +40,7 @@ end
 
 function Util.GetFullUnitName(unitId)
   local name, realm = UnitName(unitId)
+  if (not name) then return nil end
   return Util.MergeFullName(name, realm)
 end
 
