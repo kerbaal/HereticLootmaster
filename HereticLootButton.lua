@@ -124,6 +124,11 @@ function HereticLootFrame_SetLoot(id, index, entry)
 end
 
 function HereticLootFrame_SetWinner(frame, roll)
+  if roll then
+    PlaySound("igCharacterInfoTab");
+  else
+    PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
+  end
   frame.entry.winner = roll
   HereticLootFrame_UpdateFrame(frame)
 end
@@ -138,13 +143,11 @@ function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame)
   local frame = self:GetParent()
   if not frame:IsMouseOver() and
      not KetzerischerLootverteilerFrame:IsMouseOver() then
-    frame.entry.winner = nil
-    HereticLootFrame_UpdateFrame(frame)
+    HereticLootFrame_SetWinner(frame, nil)
   else
     local lootFrame = KetzerischerLootverteilerFrame_GetItemAtCursor()
     if lootFrame then
-      frame.entry.winner = lootFrame.entry.winner
-      HereticLootFrame_UpdateFrame(frame)
+      HereticLootFrame_SetWinner(frame, lootFrame.entry.winner)
     end
   end
 end
