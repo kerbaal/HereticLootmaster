@@ -149,17 +149,12 @@ function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame)
 end
 
 function HereticLootFrame_OnLoad(frame)
-  local slotText = _G[frame:GetName() .. "SlotButtonText"];
+  local slotText = _G[frame:GetName() .. "WinnerFrameSlotText"];
   slotText:SetText("|cFF333311Drag Roll Here|r");
-  slotText:SetJustifyH("CENTER")
+
   local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
   winnerFrame.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
   winnerFrame.HereticOnDragStop = HereticLootFrameWinnerFrame_HereticOnDragStop
-  local from = _G[frame:GetName() .. "FromButton"];
-  from:SetBackdropColor(0,0,0,0)
-  from:SetBackdropBorderColor(0,0,0,0)
-  local slot = _G[frame:GetName() .. "SlotButton"];
-  slot:SetBackdropColor(0,0,0,0)
 end
 
 function HereticLootFrame_UpdateFrame(frame)
@@ -172,15 +167,8 @@ function HereticLootFrame_UpdateFrame(frame)
   local from = _G[frame:GetName() .. "FromButtonText"];
   from:SetText(name);
   frame:Show();
-  local slot = _G[frame:GetName() .. "SlotButton"];
   local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
-  if (frame.entry.winner == nil) then
-    winnerFrame:Hide()
-    slot:Show()
-  else
-    slot:Hide()
-    HereticRollFrame_SetRoll(winnerFrame, frame.entry.winner)
-  end
+  HereticRollFrame_SetRoll(winnerFrame, frame.entry.winner, true)
 end
 
 function HereticLootFrame_Update(id)
