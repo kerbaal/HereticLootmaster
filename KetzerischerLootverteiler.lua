@@ -388,7 +388,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     local donator, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
     Util.dbgprint ("Deletion: " .. donator .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
-      local index = Addon.itemList:ItemById(itemString, donator, sender)
+      local index = Addon.itemList:GetEntryId(itemString, donator)
       if (index) then Addon:DeleteItem(index) end
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
