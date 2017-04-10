@@ -5,10 +5,6 @@ local Util = Addon.Util
 KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
-
-
-
-
 local function updatePageNavigation()
   Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
   local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
@@ -23,7 +19,7 @@ local function update(reason)
 
   for i=1,Addon.ITEMS_PER_PAGE do
     local itemIndex = Addon.itemListView:IdToIndex(i);
-    HereticLootFrame_SetLoot(i, itemIndex, Addon.itemList:Get(itemIndex))
+    HereticLootFrame_SetLoot(i, itemIndex, Addon.itemList:GetEntry(itemIndex))
     HereticLootFrame_Update(i)
   end
 end
@@ -142,80 +138,6 @@ function RaidInfo:DebugPrint()
 end
 
 
-
-local ItemList = {};
-ItemList.__index = ItemList;
-function ItemList:New()
-   local self = {};
-   setmetatable(self, ItemList);
-
-   self.items = {}
-   self.donators = {}
-   self.senders = {}
-   self.size = 0
-   return self;
-end
-
-function ItemList:Size()
-  return self.size
-end
-
-function ItemList:Get(index)
-  if (index < 1 or index > self.size) then return nil end
-  return self.items[index], self.donators[index], self.senders[index]
-end
-
-function ItemList:GetItemLink(index)
-  if (index > self.size) then return nil end
-  return self.items[index]
-end
-
-function ItemList:Add(item, donator, sender)
-  local n = self.size+1
-  self.items[n] = item
-  self.donators[n] = donator
-  self.senders[n] = sender
-  self.size = n
-end
-
-function ItemList:Delete(index)
-  if index < 1 or index > self.size then return end
-  table.remove(self.items, index)
-  table.remove(self.donators, index)
-  table.remove(self.senders, index)
-  self.size = self.size-1
-end
-
-function ItemList:ItemById(item, donator, sender)
-  for i=1,self.size do
-    if (self.items[i] == item and
-        self.donators[i] == donator and
-        self.senders[i] == sender) then
-      return i
-    end
-  end
-  return nil
-end
-
-function ItemList:DeleteAllItems()
-  wipe(self.items)
-  wipe(self.donators)
-  wipe(self.senders)
-  self.size = 0
-end
-
-function ItemList:Validate()
-  for i=self.size,1,-1 do
-    if (self.items[i] == nil or
-        self.donators[i] == nil or
-        self.senders[i] == nil) then
-      self:Delete(i)
-    end
-  end
-end
-
-
-
 local PagedView = {};
 PagedView.__index = PagedView;
 function PagedView:New(itemsPerPage)
@@ -248,8 +170,6 @@ function PagedView:GetNavigationStatus()
   return (self.currentPage ~= 1), (self.currentPage ~= self.maxPages), self.currentPage, self.maxPages
 end
 
-
-
 function Addon:Initialize()
   Addon.ITEMS_PER_PAGE = 6
   Addon.MSG_PREFIX = "KTZR_LT_VERT"
@@ -261,7 +181,7 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  Addon.itemList = ItemList:New()
+  Addon.itemList = HereticItemList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
   Addon.rolls = {};
@@ -288,8 +208,9 @@ function Addon:AddItem(itemString, from, sender)
       return
     end
   end
-
-  Addon.itemList:Add(itemString, from, sender)
+	x = 
+	table.insert(Addon.itemList.entries, HereticItem:New(itemString, from))
+  --Addon.itemList:Add(itemString, from, sender)
 
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
@@ -302,14 +223,14 @@ function Addon:AddItem(itemString, from, sender)
 end
 
 function Addon:DeleteItem(index)
-  item, donator, _ = Addon.itemList:Get(index)
+  item, donator, _ = Addon.itemList:GetEntry(index)
   if Addon:IsMaster() then
     local msg = Addon.MSG_DELETE_LOOT .. " " .. donator .. " " .. item
     Util.dbgprint("Announcing loot deletion")
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
-  Addon.itemList:Delete(index)
+  Addon.itemList:DeleteEntryAt(index)
   update("DeleteItem")
 end
 
@@ -473,7 +394,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     local donator, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
     Util.dbgprint ("Deletion: " .. donator .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
-      local index = Addon.itemList:ItemById(itemString, donator, sender)
+      local index = Addon.itemList:GetEntryId(itemString, donator)
       if (index) then Addon:DeleteItem(index) end
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
@@ -550,7 +471,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
       Addon:RenounceMaster();
     end
   elseif (msg:match("^%s*clear%s*$")) then
-    Addon.itemList:DeleteAllItems()
+    Addon.itemList:DeleteAllEntries()
     update("DeleteAllItems")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
