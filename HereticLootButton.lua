@@ -9,8 +9,8 @@ function HereticLootButton_OnClick(self, button, down)
   end
 
   if (button == "LeftButton") then
-    local name, _ = Util.DecomposeName(parent.donator)
-    local itemLink = select(2,GetItemInfo(parent.itemLink))
+    local name, _ = Util.DecomposeName(parent.entry.donator)
+    local itemLink = select(2,GetItemInfo(parent.entry.itemLink))
     if ( IsModifiedClick() ) then
       HandleModifiedItemClick(itemLink);
     else
@@ -18,7 +18,7 @@ function HereticLootButton_OnClick(self, button, down)
       if ( not ItemRefTooltip:IsShown() ) then
         ItemRefTooltip:SetOwner(UIParent, "ANCHOR_PRESERVE");
       end
-      ItemRefTooltip:SetHyperlink(parent.itemLink);
+      ItemRefTooltip:SetHyperlink(parent.entry.itemLink);
       ItemRefTooltipTextRight1:SetText(name .. " ")
       ItemRefTooltipTextRight1:SetTextColor(FRIENDS_BNET_NAME_COLOR.r, FRIENDS_BNET_NAME_COLOR.g, FRIENDS_BNET_NAME_COLOR.b);
       ItemRefTooltipTextRight1:Show()
@@ -26,13 +26,14 @@ function HereticLootButton_OnClick(self, button, down)
     end
   elseif (button == "RightButton") then
     if ( not IsModifiedClick() ) then
-      ChatFrame_OpenChat("/w " .. parent.donator .. " ")
+      ChatFrame_OpenChat("/w " .. parent.entry.donator .. " ")
     end
   end
 end
 
 function HereticLootButton_OnEnter(self, motion)
-  local itemLink = Addon:GetItemLinkFromId(self:GetParent():GetID())
+  local parent = self:GetParent()
+  local itemLink = parent.entry.itemLink
   if itemLink then
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
     GameTooltip:SetHyperlink(itemLink);
