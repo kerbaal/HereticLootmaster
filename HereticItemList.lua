@@ -1,5 +1,5 @@
-local HereticItem = {}
-local HereticItemList = {}
+HereticItem = {}
+HereticItemList = {}
 
 HereticItemList.__index = HereticItemList
 function HereticItemList:New(instanceID, master, entries)
