@@ -55,6 +55,9 @@ function HereticItemList:GetItemLinkByID(pos)
 	return self.entries[pos].itemLink
 end
 
+function HereticItemList:Size()
+	return #self.entries
+end
 --[[local ADDON, Addon = ...
 
 local Util = Addon.Util
