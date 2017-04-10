@@ -425,7 +425,8 @@ function Addon:AddAllItems(itemStrings, from, sender)
 end
 
 local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID, raidSize, endStatus)
-  if (endStatus == 1 and 14 <= difficultyID and difficultyID <= 16) then
+  if (endStatus == 1 and 14 <= difficultyID and difficultyID <= 16 and
+      (not Addon.minRarity or Addon.minRarity[1] < 1000)) then
     KetzerischerLootverteilerShow()
   end
   if (Addon:IsMaster() and Addon:IsAuthorizedToClaimMaster("player") ) then
