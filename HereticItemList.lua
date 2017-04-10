@@ -58,6 +58,16 @@ end
 function HereticItemList:Size()
 	return #self.entries
 end
+
+function HereticItemList:GetEntryId(item, donator)
+  for i=1, #self.entries do
+    if (self.entries[i].itemLink == item and
+        self.entries[i].donator == donator) then
+      return i
+    end
+  end
+  return nil
+end
 --[[local ADDON, Addon = ...
 
 local Util = Addon.Util
