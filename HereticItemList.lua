@@ -40,16 +40,30 @@ function HereticItemList:DeleteAllEntries()
   end
 end
 
-function HereticItemList:Validate()
-  setmetatable(self, HereticItemList)
-  if (self.instanceID == 0 or
-    self.master == "") then
+function HereticItem:Validate()
+  if (not self.itemLink or not self.donator) then
     return false
-  elseif not self.entries then
-    self.entries = {}
-  else
-    return true
   end
+  if (self.winner and not HereticRoll.Validate(self.winner)) then
+    return false
+  end
+  setmetatable(self, HereticItem)
+  return true
+end
+
+function HereticItemList:Validate()
+  if (not self.instanceID or self.instanceID == 0 or
+      not self.master or self.master == "" or
+      not self.entries) then
+    return false
+  end
+  setmetatable(self, HereticItemList)
+  for i=#self.entries,1,-1 do
+    if not HereticItem.Validate(self.entries[i]) then
+      self:DeleteEntryAt(i)
+    end
+  end
+  return true
 end
 
 function HereticItemList:GetItemLinkByID(pos)

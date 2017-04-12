@@ -356,6 +356,10 @@ end
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
     RaidInfo:Update()
+    if KetzerischerLootverteilerData.itemList2
+      and HereticItemList.Validate(KetzerischerLootverteilerData.itemList2) then
+      Addon.itemList = KetzerischerLootverteilerData.itemList2
+    end
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
       UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, Addon.minRarity[2])
