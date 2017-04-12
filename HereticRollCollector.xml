@@ -38,6 +38,12 @@
                         <Anchor point="LEFT" relativeTo="$parentRoll" relativePoint="RIGHT" x="2" y="0"/>
                     </Anchors>
                 </FontString>
+                <FontString name="$parentSlotText" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Size x="154" y="8"/>
+                    <Anchors>
+                        <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="10" y="0"/>
+                    </Anchors>
+                </FontString>
             </Layer>
         </Layers>
         <Scripts>
@@ -45,10 +51,10 @@
                 self:RegisterForDrag("LeftButton");
             </OnLoad>
             <OnEnter>
-                self:SetBackdropBorderColor(1.0, 1.0, 0.0)
+              self:SetBackdropBorderColor(1.0, 1.0, 0.0)
             </OnEnter>
             <OnLeave>
-                self:SetBackdropBorderColor(0.2, 0.2, 0.2)
+              self:SetBackdropBorderColor(0.2, 0.2, 0.2)
             </OnLeave>
             <OnDragStart function="HereticRollFrame_OnDragStart"/>
             <OnDragStop function="HereticRollFrame_OnDragStop"/>

@@ -47,3 +47,11 @@ end
 function HereticRoll.__tostring(self)
   return "" .. self.name .. " rolled " .. self.roll .. " / " .. self.max;
 end
+
+function HereticRoll:Validate()
+  if not self.name or not self.roll or not self.min or not self.max then
+    return false
+  end
+  setmetatable(self, HereticRoll)
+  return true
+end
