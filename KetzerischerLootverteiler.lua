@@ -212,7 +212,8 @@ function Addon:AddItem(itemString, from, sender)
 
   Addon.itemList:AddEntry(HereticItem:New(itemString, from, sender))
   --PlaySound("igBackPackCoinSelect")
-  PlaySound("igMainMenuOptionCheckBoxOn")
+  PlaySound("TellMessage");
+  --PlaySound("igMainMenuOptionCheckBoxOn")
 
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
