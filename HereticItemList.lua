@@ -68,6 +68,12 @@ function HereticItemList:GetEntryId(item, donator)
   end
   return nil
 end
+
+function HereticItemList:AddEntry(itemLink, donator)
+	local newEntry = HereticItem:New(itemLink, donator)
+	table.insert(self.entries, newEntry)
+	return true
+end
 --[[local ADDON, Addon = ...
 
 local Util = Addon.Util
