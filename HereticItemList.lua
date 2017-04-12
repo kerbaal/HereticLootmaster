@@ -26,7 +26,7 @@ end
 
 function HereticItemList:GetEntry(pos)
 	if (pos < 1 or pos > #self.entries) then return nil end
-	return self.entries[pos].itemLink--, self.entries[pos].donator, self.entries[pos].winner, self.entries[pos].rollActionID
+	return self.entries[pos].itemLink, self.entries[pos].donator, self.entries[pos].winner, self.entries[pos].rollActionID
 end
 
 function HereticItemList:DeleteEntryAt(pos)
