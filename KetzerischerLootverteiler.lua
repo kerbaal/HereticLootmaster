@@ -208,9 +208,8 @@ function Addon:AddItem(itemString, from, sender)
       return
     end
   end
-	x = 
-	table.insert(Addon.itemList.entries, HereticItem:New(itemString, from))
-  --Addon.itemList:Add(itemString, from, sender)
+	
+  Addon.itemList:AddEntry(itemString, from, sender)
 
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
