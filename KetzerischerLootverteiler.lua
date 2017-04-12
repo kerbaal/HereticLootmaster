@@ -584,6 +584,8 @@ function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
   UIDropDownMenu_AddButton(info, level)
   UIDropDownMenu_JustifyText(KetzerischerlootverteilerRarityDropDown, "LEFT")
   UIDropDownMenu_SetWidth(KetzerischerlootverteilerRarityDropDown, 100);
+  UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, 1)
+  Addon.minRarity = { 0, 1 }
 end
 
 
