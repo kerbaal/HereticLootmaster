@@ -21,6 +21,8 @@ local function eventHandlerSystem(self, event, msg)
   if name and roll and minRoll and maxRoll then
     Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
     table.insert(self.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, minRoll, maxRoll))
+    PlaySoundKitID(31579);  --UI_BonusLootRoll_Start
+    PlaySoundKitID(31581);  --UI_BonusLootRoll_End
     HereticRollCollectorFrame_Update(self)
   end
 end
@@ -31,18 +33,28 @@ local function eventHandler(self, event, ...)
   end
 end
 
-function HereticRollFrame_SetRoll(rollFrame, roll)
+function HereticRollFrame_SetRoll(rollFrame, roll, showDropTarget)
   if not rollFrame then return end
-  if not roll then
+  if not roll and not showDropTarget == true then
     rollFrame:Hide()
     return
   end
   rollFrame.roll = roll
   local nameText = _G[rollFrame:GetName() .. "Name"]
-  nameText:SetText(Util.ShortenFullName(roll.name))
   local rollText = _G[rollFrame:GetName() .. "Roll"]
-  rollText:SetText(""..roll.roll)
-  rollText:SetTextColor(roll:GetColor())
+  local slotText = _G[rollFrame:GetName() .. "SlotText"]
+  if roll then
+    nameText:SetText(Util.ShortenFullName(roll.name))
+    nameText:Show()
+    rollText:SetText(""..roll.roll)
+    rollText:SetTextColor(roll:GetColor())
+    rollText:Show()
+    slotText:Hide()
+  else
+    rollText:Hide()
+    nameText:Hide()
+    slotText:Show()
+  end
   rollFrame:Show()
 end
 
@@ -93,6 +105,7 @@ function HereticRollCollectorFrame_OnDragStop()
 end
 
 function HereticRollFrame_OnDragStart(button)
+  if (not button.roll) then return end
   local cursorX, cursorY = GetCursorPosition();
   local uiScale = UIParent:GetScale();
   button:SetAlpha(.5);
@@ -108,6 +121,7 @@ end
 
 function HereticRollFrame_OnDragStop(button)
   local roll = button.roll
+  if not roll then return end
   if button.HereticOnDragStop then button:HereticOnDragStop(HereticRollDragFrame) end
   KetzerischerLootverteilerFrame:OnDropRoll(roll)
   button:SetAlpha(1.0);

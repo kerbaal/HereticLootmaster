@@ -23,7 +23,7 @@ local function update(reason)
 
   for i=1,Addon.ITEMS_PER_PAGE do
     local itemIndex = Addon.itemListView:IdToIndex(i);
-    HereticLootFrame_SetLoot(i, itemIndex, Addon.itemList:Get(itemIndex))
+    HereticLootFrame_SetLoot(i, itemIndex, Addon.itemList:GetEntry(itemIndex))
     HereticLootFrame_Update(i)
   end
 end
@@ -214,6 +214,8 @@ function Addon:AddItem(itemString, from, sender)
   end
 
   Addon.itemList:Add(itemString, from, sender)
+  --PlaySound("igBackPackCoinSelect")
+  PlaySound("igMainMenuOptionCheckBoxOn")
 
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
@@ -226,14 +228,15 @@ function Addon:AddItem(itemString, from, sender)
 end
 
 function Addon:DeleteItem(index)
-  item, donator, _ = Addon.itemList:Get(index)
+  local entry = Addon.itemList:GetEntry(index)
   if Addon:IsMaster() then
-    local msg = Addon.MSG_DELETE_LOOT .. " " .. donator .. " " .. item
+    local msg = Addon.MSG_DELETE_LOOT .. " " .. entry.donator .. " " .. entry.itemLink
     Util.dbgprint("Announcing loot deletion")
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
   Addon.itemList:Delete(index)
+  PlaySound("igMainMenuOptionCheckBoxOff");
   update("DeleteItem")
 end
 
@@ -337,7 +340,8 @@ function Addon:AddAllItems(itemStrings, from, sender)
 end
 
 local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID, raidSize, endStatus)
-  if (endStatus == 1 and 14 <= difficultyID and difficultyID <= 16) then
+  if (endStatus == 1 and 14 <= difficultyID and difficultyID <= 16 and
+      (not Addon.minRarity or Addon.minRarity[1] < 1000)) then
     KetzerischerLootverteilerShow()
   end
   if (Addon:IsMaster() and Addon:IsAuthorizedToClaimMaster("player") ) then
