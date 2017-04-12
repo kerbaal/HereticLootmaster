@@ -348,7 +348,7 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
 end
 
 local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.itemList2 = Addon.itemList
+  KetzerischerLootverteilerData.itemList3 = Addon.itemList
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
   KetzerischerLootverteilerData.minRarity = Addon.minRarity
@@ -357,9 +357,9 @@ end
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
     RaidInfo:Update()
-    if KetzerischerLootverteilerData.itemList2
-      and HereticItemList.Validate(KetzerischerLootverteilerData.itemList2) then
-      Addon.itemList = KetzerischerLootverteilerData.itemList2
+    if KetzerischerLootverteilerData.itemList3
+      and HereticItemList.Validate(KetzerischerLootverteilerData.itemList3) then
+      Addon.itemList = KetzerischerLootverteilerData.itemList3
     end
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
