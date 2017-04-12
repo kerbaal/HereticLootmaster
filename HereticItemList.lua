@@ -41,7 +41,7 @@ function HereticItemList:DeleteAllEntries()
 end
 
 function HereticItem:Validate()
-  if (not self.itemLink or not self.donator) then
+  if (not self.itemLink or not self.donator or not self.sender) then
     return false
   end
   if (self.winner and not HereticRoll.Validate(self.winner)) then
@@ -79,10 +79,11 @@ function HereticItemList:AddEntry(entry)
 end
 
 
-function HereticItemList:GetEntryId(item, donator)
+function HereticItemList:GetEntryId(item, donator, sender)
   for i=1, #self.entries do
     if (self.entries[i].itemLink == item and
-        self.entries[i].donator == donator) then
+        self.entries[i].donator == donator and
+        self.entries[i].sender == sender) then
       return i
     end
   end
