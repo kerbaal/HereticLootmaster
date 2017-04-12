@@ -6,7 +6,7 @@ KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
 local function updatePageNavigation()
-  Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
+  Addon.itemListView:SetNumberOfItems(Addon.itemList:GetSize())
   local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
   KetzerischerLootverteilerPrevPageButton:SetEnabled(prev);
   KetzerischerLootverteilerNextPageButton:SetEnabled(next);
@@ -181,7 +181,7 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  Addon.itemList = HereticItemList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
+  Addon.itemList = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
   Addon.rolls = {};
@@ -278,7 +278,7 @@ end
 
 function Addon:GetItemLinkFromId(id)
   local itemIndex = Addon.itemListView:IdToIndex(id);
-  return Addon.itemList:GetItemLink(itemIndex)
+  return Addon.itemList:GetItemLinkByID(itemIndex)
 end
 
 function Addon:ProcessClaimMaster(name)
