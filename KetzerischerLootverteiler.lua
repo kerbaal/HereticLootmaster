@@ -180,7 +180,7 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  Addon.itemList = HereticItemList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
+  Addon.itemList = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
   Addon.rolls = {};
@@ -356,7 +356,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
     RaidInfo:Update()
     if KetzerischerLootverteilerData.itemList3
-      and HereticItemList.Validate(KetzerischerLootverteilerData.itemList3) then
+      and HereticList.Validate(KetzerischerLootverteilerData.itemList3) then
       Addon.itemList = KetzerischerLootverteilerData.itemList3
     end
     if KetzerischerLootverteilerData.minRarity then
