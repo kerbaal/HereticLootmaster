@@ -5,12 +5,8 @@ local Util = Addon.Util
 KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
-
-
-
-
 local function updatePageNavigation()
-  Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
+  Addon.itemListView:SetNumberOfItems(Addon.itemList:GetSize())
   local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
   KetzerischerLootverteilerPrevPageButton:SetEnabled(prev);
   KetzerischerLootverteilerNextPageButton:SetEnabled(next);
@@ -141,7 +137,6 @@ function RaidInfo:DebugPrint()
   for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
 end
 
-
 local PagedView = {};
 PagedView.__index = PagedView;
 function PagedView:New(itemsPerPage)
@@ -185,7 +180,7 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  Addon.itemList = ItemList:New()
+  Addon.itemList = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
   Addon.rolls = {};
@@ -213,7 +208,7 @@ function Addon:AddItem(itemString, from, sender)
     end
   end
 
-  Addon.itemList:Add(itemString, from, sender)
+  Addon.itemList:AddEntry(itemString, from, sender)
   --PlaySound("igBackPackCoinSelect")
   PlaySound("igMainMenuOptionCheckBoxOn")
 
@@ -235,7 +230,7 @@ function Addon:DeleteItem(index)
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
-  Addon.itemList:Delete(index)
+  Addon.itemList:DeleteEntryAt(index)
   PlaySound("igMainMenuOptionCheckBoxOff");
   update("DeleteItem")
 end
@@ -285,7 +280,7 @@ end
 
 function Addon:GetItemLinkFromId(id)
   local itemIndex = Addon.itemListView:IdToIndex(id);
-  return Addon.itemList:GetItemLink(itemIndex)
+  return Addon.itemList:GetItemLinkByID(itemIndex)
 end
 
 function Addon:ProcessClaimMaster(name)
@@ -401,7 +396,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     local donator, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
     Util.dbgprint ("Deletion: " .. donator .. " " .. itemString)
     if (sender == Addon.master and not Addon:IsMaster()) then
-      local index = Addon.itemList:ItemById(itemString, donator, sender)
+      local index = Addon.itemList:GetEntryId(itemString, donator)
       if (index) then Addon:DeleteItem(index) end
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
@@ -478,7 +473,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
       Addon:RenounceMaster();
     end
   elseif (msg:match("^%s*clear%s*$")) then
-    Addon.itemList:DeleteAllItems()
+    Addon.itemList:DeleteAllEntries()
     update("DeleteAllItems")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
