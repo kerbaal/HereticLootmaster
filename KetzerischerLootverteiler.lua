@@ -137,8 +137,6 @@ function RaidInfo:DebugPrint()
   for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
 end
 
-
-
 local PagedView = {};
 PagedView.__index = PagedView;
 function PagedView:New(itemsPerPage)
