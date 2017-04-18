@@ -5,23 +5,9 @@ local Util = Addon.Util
 KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
-local function updatePageNavigation()
-  Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
-  local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
-  KetzerischerLootverteilerPrevPageButton:SetEnabled(prev);
-  KetzerischerLootverteilerNextPageButton:SetEnabled(next);
-  KetzerischerLootverteilerPageText:SetFormattedText("%d / %d", currentPage, maxPages);
-end
-
 local function update(reason)
-  Util.dbgprint("Updating UI... (" .. (reason or "") .. ")")
-  updatePageNavigation()
-
-  for i=1,Addon.ITEMS_PER_PAGE do
-    local itemIndex = Addon.itemListView:IdToIndex(i);
-    HereticLootFrame_SetLoot(i, itemIndex, Addon.itemList:GetEntry(itemIndex))
-    HereticLootFrame_Update(i)
-  end
+  Util.dbgprint("Updating UI (" .. reason ..")..")
+  HereticListView_Update(KetzerischerLootverteilerFrame.itemViewMaster)
 end
 
 function KetzerischerLootverteilerShow()
@@ -137,40 +123,8 @@ function RaidInfo:DebugPrint()
   for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
 end
 
-local PagedView = {};
-PagedView.__index = PagedView;
-function PagedView:New(itemsPerPage)
-   local self = {};
-   setmetatable(self, PagedView);
-
-   self.itemsPerPage = itemsPerPage
-   self.currentPage = 1
-   self.maxPages = 1
-   return self;
-end
-
-function PagedView:Next()
-  self.currentPage = max(1, self.currentPage - 1)
-end
-
-function PagedView:Prev()
-  self.currentPage = min(self.maxPages, self.currentPage + 1)
-end
-
-function PagedView:IdToIndex(id)
-  return (self.currentPage - 1) * self.itemsPerPage + id
-end
-
-function PagedView:SetNumberOfItems(count)
-  self.maxPages = max(ceil(count / self.itemsPerPage), 1);
-end
-
-function PagedView:GetNavigationStatus()
-  return (self.currentPage ~= 1), (self.currentPage ~= self.maxPages), self.currentPage, self.maxPages
-end
 
 function Addon:Initialize()
-  Addon.ITEMS_PER_PAGE = 6
   Addon.MSG_PREFIX = "KTZR_LT_VERT"
   Addon.MSG_CLAIM_MASTER = "ClaimMaster"
   Addon.MSG_CHECK_MASTER = "CheckMaster"
@@ -181,7 +135,6 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
   Addon.itemList = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
-  Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
   Addon.master = nil;
   Addon.rolls = {};
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
@@ -530,13 +483,7 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
   KetzerischerLootverteilerFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
 
-  for id=1,Addon.ITEMS_PER_PAGE do
-    local frame = HereticLootFrame_FromId(id)
-    frame.HereticOnClick = LootItem_OnClick
-  end
-
   self:RegisterForDrag("LeftButton");
-  update("Load")
 
   KetzerischerLootverteilerFrame.OnDropRoll = KetzerischerLootverteilerFrame_OnDropRoll
   PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, 2);
@@ -549,19 +496,6 @@ end
 
 function KetzerischerLootverteilerFrame_OnDragStop()
   KetzerischerLootverteilerFrame:StopMovingOrSizing();
-end
-
-function KetzerischerLootverteilerPrevPageButton_OnClick()
-  Addon.itemListView:Next()
-  update("PrevPage")
-end
-
-function KetzerischerLootverteilerNextPageButton_OnClick()
-  Addon.itemListView:Prev()
-  update("NextPage")
-end
-
-function KetzerischerLootverteilerNavigationFrame_OnLoad()
 end
 
 local function KetzerischerlootverteilerRarityDropDown_OnClick(self)

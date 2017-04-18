@@ -113,14 +113,13 @@ function HereticLootButton_Update(parent, entry)
   button:Show();
 end
 
-function HereticLootFrame_FromId(id)
-  return _G["HereticLootFrame"..id];
+function HereticLootFrame_FromId(self, id)
+  return _G[self:GetName().."HereticLootFrame"..id];
 end
 
-function HereticLootFrame_SetLoot(id, index, entry)
-  local frame = HereticLootFrame_FromId(id);
-  frame.index = index
-  frame.entry = entry
+function HereticLootFrame_SetLoot(self, index, entry)
+  self.index = index
+  self.entry = entry
 end
 
 function HereticLootFrame_SetWinner(frame, roll)
@@ -130,7 +129,7 @@ function HereticLootFrame_SetWinner(frame, roll)
     PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
   end
   frame.entry.winner = roll
-  HereticLootFrame_UpdateFrame(frame)
+  HereticLootFrame_Update(frame)
 end
 
 function HereticLootFrameWinnerFrame_HereticOnDragStart(self,dragFrame)
@@ -161,7 +160,7 @@ function HereticLootFrame_OnLoad(frame)
   winnerFrame.HereticOnDragStop = HereticLootFrameWinnerFrame_HereticOnDragStop
 end
 
-function HereticLootFrame_UpdateFrame(frame)
+function HereticLootFrame_Update(frame)
   if frame.entry == nil then
     frame:Hide()
     return
@@ -173,11 +172,4 @@ function HereticLootFrame_UpdateFrame(frame)
   frame:Show();
   local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
   HereticRollFrame_SetRoll(winnerFrame, frame.entry.winner, true)
-end
-
-function HereticLootFrame_Update(id)
-  local frame = HereticLootFrame_FromId(id);
-  if frame == nil then return end
-
-  HereticLootFrame_UpdateFrame(frame)
 end
