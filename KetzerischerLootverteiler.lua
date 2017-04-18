@@ -448,9 +448,25 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   end
 end
 
+StaticPopupDialogs["HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY"] = {
+  text = "Are you sure you want to delete this item permanently from history?",
+  button1 = "Yes",
+  button2 = "No",
+  OnAccept = function(self)
+    Addon.itemListHistory:DeleteEntryAt(self.data.index)
+    update("delete from history")
+  end,
+  OnCancel = function()
+    -- Do nothing and keep item.
+  end,
+  sound = "levelup2",
+  timeout = 10,
+  whileDead = true,
+  hideOnEscape = true,
+  hasItemFrame = 1,
+}
 
-
-function LootItem_OnClick(self, button, down)
+function MasterLootItem_OnClick(self, button, down)
   if (button == "RightButton" and IsModifiedClick()) then
     if self.index then Addon:DeleteItem(self.index) end
     return true
@@ -459,6 +475,17 @@ function LootItem_OnClick(self, button, down)
     HereticRollCollectorFrame:Toggle()
     return true
   end
+  return false
+end
+
+function HistoryLootItem_OnClick(self, button, down)
+  if (button == "RightButton" and IsModifiedClick()) then
+    StaticPopup_Show("HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY", "", "",
+      {useLinkForItemInfo = true, link = self.entry.itemLink, index = self.index})
+    return true
+  end
+  -- Disable whispering for history items.
+  if (button == "RightButton") then return true end
   return false
 end
 
@@ -497,7 +524,9 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   self:RegisterForDrag("LeftButton");
 
   HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[1], Addon.itemList)
+  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.itemView[1], MasterLootItem_OnClick)
   HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[2], Addon.itemListHistory)
+  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.itemView[2], HistoryLootItem_OnClick)
 
   KetzerischerLootverteilerFrame.OnDropRoll = KetzerischerLootverteilerFrame_OnDropRoll
   PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, 2);

@@ -75,7 +75,10 @@ end
 
 function HereticListView_OnLoad(self)
   self.pagination = PagedView:New(#self.lootFrames)
+end
+
+function HereticListView_SetOnClickHandler(self, handler)
   for i,frame in pairs(self.lootFrames) do
-    frame.HereticOnClick = LootItem_OnClick
+    frame.HereticOnClick = handler
   end
 end
