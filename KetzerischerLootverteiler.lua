@@ -539,6 +539,8 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   update("Load")
 
   KetzerischerLootverteilerFrame.OnDropRoll = KetzerischerLootverteilerFrame_OnDropRoll
+  PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, 2);
+  PanelTemplates_SetTab(KetzerischerLootverteilerFrame, 1);
 end
 
 function KetzerischerLootverteilerFrame_OnDragStart()

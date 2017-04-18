@@ -61,6 +61,60 @@
         </Frames>
     </Frame>
 
+    <Frame name="HereticListViewTemplate" virtual="true">
+      <Size x="370" y="280"/>
+      <Frames>
+        <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
+            <Size x="24" y="24"/>
+            <Anchors>
+                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="KetzerischerLootverteilerFrame">
+                    <Offset x="0" y="0"/>
+                </Anchor>
+            </Anchors>
+        </Button>
+        <Button name="HereticLootFrame1" inherits="HereticLootFrame" id="1">
+            <Anchors>
+                <Anchor point="TOPLEFT" x="20" y="0"/>
+            </Anchors>
+        </Button>
+        <Button name="HereticLootFrame2" inherits="HereticLootFrame" id="2">
+            <Anchors>
+                <Anchor point="TOPLEFT" x="20" y="-40"/>
+            </Anchors>
+        </Button>
+        <Button name="HereticLootFrame3" inherits="HereticLootFrame" id="3">
+            <Anchors>
+                <Anchor point="TOPLEFT" x="20" y="-80"/>
+            </Anchors>
+        </Button>
+        <Button name="HereticLootFrame4" inherits="HereticLootFrame" id="4">
+            <Anchors>
+                <Anchor point="TOPLEFT" x="20" y="-120"/>
+            </Anchors>
+        </Button>
+        <Button name="HereticLootFrame5" inherits="HereticLootFrame" id="5">
+            <Anchors>
+                <Anchor point="TOPLEFT" x="20" y="-160"/>
+            </Anchors>
+        </Button>
+        <Button name="HereticLootFrame6" inherits="HereticLootFrame" id="6">
+            <Anchors>
+                <Anchor point="TOPLEFT" x="20" y="-200"/>
+            </Anchors>
+        </Button>
+        <Frame name="KetzerischerLootverteilerNavigationFrame" inherits="KetzerischerLootverteilerNavigationFrameTemplate" visible="true">
+            <Anchors>
+                <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="KetzerischerLootverteilerFrame">
+                    <Offset x="0" y="0"/>
+                </Anchor>
+            </Anchors>
+            <Scripts>
+                <OnLoad>KetzerischerLootverteilerNavigationFrame_OnLoad(self);</OnLoad>
+            </Scripts>
+        </Frame>
+      </Frames>
+    </Frame>
+
     <Frame name="KetzerischerLootverteilerFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
         <Size x="370" y="310"/>
         <TitleRegion>
@@ -102,52 +156,19 @@
                 </FontString>
             </Layer>
         </Layers>
-
-        <Frames>
-            <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
-                <Size x="24" y="24"/>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="KetzerischerLootverteilerFrame">
-                        <Offset x="0" y="0"/>
-                    </Anchor>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame1" inherits="HereticLootFrame" id="1">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-30"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame2" inherits="HereticLootFrame" id="2">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-70"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame3" inherits="HereticLootFrame" id="3">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-110"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame4" inherits="HereticLootFrame" id="4">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-150"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame5" inherits="HereticLootFrame" id="5">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-190"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame6" inherits="HereticLootFrame" id="6">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-230"/>
-                </Anchors>
-            </Button>
+          <Frames>
+            <Frame name="parent$ItemView" inherits="HereticListViewTemplate">
+              <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                      <Offset x="0" y="-30"/>
+                  </Anchor>
+              </Anchors>
+            </Frame>
             <Button name="KetzerischerlootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate">
                 <Scripts>
                     <OnLoad>
                         UIDropDownMenu_Initialize(self, KetzerischerlootverteilerRarityDropDown_Initialize);
                     </OnLoad>
-                    function=""/>
                 </Scripts>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
@@ -155,16 +176,34 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Frame name="KetzerischerLootverteilerNavigationFrame" inherits="KetzerischerLootverteilerNavigationFrameTemplate" visible="true">
+            <Button name="$parentTab1" inherits="CharacterFrameTabButtonTemplate" id="1" text="Master">
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="KetzerischerLootverteilerFrame">
-                        <Offset x="0" y="0"/>
+                    <Anchor point="CENTER" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="60" y="-12"/>
+                        </Offset>
                     </Anchor>
                 </Anchors>
                 <Scripts>
-                    <OnLoad>KetzerischerLootverteilerNavigationFrame_OnLoad(self);</OnLoad>
+                    <OnClick>
+                        PanelTemplates_SetTab(KetzerischerLootverteilerFrame, 1);
+                    </OnClick>
                 </Scripts>
-            </Frame>
+            </Button>
+            <Button name="$parentTab2" inherits="CharacterFrameTabButtonTemplate" id="2" text="History">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT">
+                        <Offset>
+                            <AbsDimension x="-16" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                    <OnClick>
+                        PanelTemplates_SetTab(KetzerischerLootverteilerFrame, 2);
+                    </OnClick>
+                </Scripts>
+            </Button>
         </Frames>
         <Scripts>
             <OnLoad>KetzerischerLootverteilerFrame_OnLoad(self);</OnLoad>
