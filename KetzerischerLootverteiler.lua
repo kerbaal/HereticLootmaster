@@ -307,6 +307,7 @@ local function eventHandlerLogout(self, event)
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
   KetzerischerLootverteilerData.minRarity = Addon.minRarity
+  KetzerischerLootverteilerData.activeTab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
 end
 
 local function eventHandlerAddonLoaded(self, event, addonName)
@@ -328,6 +329,9 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     if (KetzerischerLootverteilerData.master and IsPlayerInPartyOrRaid()) then
       SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CHECK_MASTER, "WHISPER",
         KetzerischerLootverteilerData.master)
+    end
+    if KetzerischerLootverteilerData.activeTab then
+      HereticTab_SetActiveTab(Util.toRange(KetzerischerLootverteilerFrame.itemView, KetzerischerLootverteilerData.activeTab))
     end
   end
 end
@@ -444,6 +448,8 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   end
 end
 
+
+
 function LootItem_OnClick(self, button, down)
   if (button == "RightButton" and IsModifiedClick()) then
     if self.index then Addon:DeleteItem(self.index) end
@@ -495,7 +501,7 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
 
   KetzerischerLootverteilerFrame.OnDropRoll = KetzerischerLootverteilerFrame_OnDropRoll
   PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, 2);
-  PanelTemplates_SetTab(KetzerischerLootverteilerFrame, 1);
+  HereticTab_SetActiveTab(1)
 end
 
 function KetzerischerLootverteilerFrame_OnDragStart()
@@ -533,16 +539,20 @@ function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
   end
 end
 
-function HereticTab_OnClick(self)
-  PanelTemplates_SetTab(KetzerischerLootverteilerFrame, self:GetID());
+function HereticTab_SetActiveTab(id)
+  PanelTemplates_SetTab(KetzerischerLootverteilerFrame, id);
   for i,tab in pairs(KetzerischerLootverteilerFrame.itemView) do
-    if i == self:GetID() then
+    if i == id then
       tab:Show();
     else
       tab:Hide();
     end
   end
-  update("tab")
+  update("set active tab")
+end
+
+function HereticTab_OnClick(self)
+  HereticTab_SetActiveTab(self:GetID())
 end
 
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
