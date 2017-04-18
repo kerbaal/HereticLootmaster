@@ -40,11 +40,15 @@ function HereticNavigationFrame_OnLoad()
 end
 
 local function HereticNavigationFrame_Update(self)
-  self.pagination:SetNumberOfItems(Addon.itemList:Size())
+  self.pagination:SetNumberOfItems(self.itemList:Size())
   local prev, next, currentPage, maxPages = self.pagination:GetNavigationStatus()
   self.navigation.prevButton:SetEnabled(prev);
   self.navigation.nextButton:SetEnabled(next);
   self.navigation.pageText:SetFormattedText("%d / %d", currentPage, maxPages);
+end
+
+function HereticListView_SetItemList(self, itemList)
+  self.itemList = itemList
 end
 
 function HereticListView_Update(self)
@@ -52,7 +56,7 @@ function HereticListView_Update(self)
 
   for i,frame in pairs(self.lootFrames) do
     local itemIndex = self.pagination:IdToIndex(i);
-    HereticLootFrame_SetLoot(frame, itemIndex, Addon.itemList:GetEntry(itemIndex))
+    HereticLootFrame_SetLoot(frame, itemIndex, self.itemList:GetEntry(itemIndex))
     HereticLootFrame_Update(frame)
   end
 end

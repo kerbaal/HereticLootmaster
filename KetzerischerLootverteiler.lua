@@ -7,7 +7,8 @@ local RaidInfo = {}
 
 local function update(reason)
   Util.dbgprint("Updating UI (" .. reason ..")..")
-  HereticListView_Update(KetzerischerLootverteilerFrame.itemViewMaster)
+  local tab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
+  HereticListView_Update(KetzerischerLootverteilerFrame.itemView[tab])
 end
 
 function KetzerischerLootverteilerShow()
@@ -135,6 +136,7 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
   Addon.itemList = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
+  Addon.itemListHistory = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.master = nil;
   Addon.rolls = {};
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
@@ -161,7 +163,9 @@ function Addon:AddItem(itemString, from, sender)
     end
   end
 
-  Addon.itemList:AddEntry(HereticItem:New(itemString, from, sender))
+  local item = HereticItem:New(itemString, from, sender)
+  Addon.itemList:AddEntry(item)
+  Addon.itemListHistory:AddEntry(item)
   --PlaySound("igBackPackCoinSelect")
   PlaySound("TellMessage");
   --PlaySound("igMainMenuOptionCheckBoxOn")
@@ -311,6 +315,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     if KetzerischerLootverteilerData.itemList3
       and HereticList.Validate(KetzerischerLootverteilerData.itemList3) then
       Addon.itemList = KetzerischerLootverteilerData.itemList3
+      HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[1], Addon.itemList)
     end
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
@@ -485,6 +490,9 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
 
   self:RegisterForDrag("LeftButton");
 
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[1], Addon.itemList)
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[2], Addon.itemListHistory)
+
   KetzerischerLootverteilerFrame.OnDropRoll = KetzerischerLootverteilerFrame_OnDropRoll
   PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, 2);
   PanelTemplates_SetTab(KetzerischerLootverteilerFrame, 1);
@@ -525,6 +533,17 @@ function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
   end
 end
 
+function HereticTab_OnClick(self)
+  PanelTemplates_SetTab(KetzerischerLootverteilerFrame, self:GetID());
+  for i,tab in pairs(KetzerischerLootverteilerFrame.itemView) do
+    if i == self:GetID() then
+      tab:Show();
+    else
+      tab:Hide();
+    end
+  end
+  update("tab")
+end
 
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
 --  Suffix, Unique, LinkLvl, reforging, Name = string.find(arg, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")

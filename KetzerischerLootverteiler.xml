@@ -52,7 +52,14 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Frame name="$parentItemView" inherits="HereticListViewTemplate" parentKey="itemViewMaster">
+            <Frame name="$parentItemViewMaster" inherits="HereticListViewTemplate" parentArray="itemView">
+              <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                      <Offset x="0" y="-30"/>
+                  </Anchor>
+              </Anchors>
+            </Frame>
+            <Frame name="$parentItemViewHistory" inherits="HereticListViewTemplate" parentArray="itemView">
               <Anchors>
                   <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
                       <Offset x="0" y="-30"/>
@@ -80,8 +87,7 @@
                     </Anchor>
                 </Anchors>
                 <Scripts>
-                    <OnClick>
-                        PanelTemplates_SetTab(KetzerischerLootverteilerFrame, 1);
+                    <OnClick function="HereticTab_OnClick">
                     </OnClick>
                 </Scripts>
             </Button>
@@ -94,9 +100,7 @@
                     </Anchor>
                 </Anchors>
                 <Scripts>
-                    <OnClick>
-                        PanelTemplates_SetTab(KetzerischerLootverteilerFrame, 2);
-                    </OnClick>
+                  <OnClick function="HereticTab_OnClick"></OnClick>
                 </Scripts>
             </Button>
         </Frames>
