@@ -149,7 +149,6 @@ end
 function Addon:CountLootFor(name)
   local count = {}
   for i,entry in pairs(Addon.itemListHistory.entries) do
-    print(name)
     if (entry.winner and entry.winner.name == name) then
       local cat = entry.winner:GetCategory()
       count[cat] = (count[cat] or 0) + 1
@@ -272,7 +271,7 @@ function Addon:ProcessClaimMaster(name)
   local unitId = RaidInfo:GetUnitId(name)
   if (Addon:IsAuthorizedToClaimMaster(unitId)) then
     Addon:SetMaster(name)
-    print("You accepted " .. name .. " as your Ketzerischer Lootverteiler.")
+    print ("You accepted " .. name .. " as your Ketzerischer Lootverteiler.")
   end
 end
 
@@ -467,9 +466,9 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
     if KetzerischerLootverteilerData.debug then
-      print("Debug is now on.")
+      print ("Debug is now on.")
     else
-      print("Debug is now off.")
+      print ("Debug is now off.")
     end
   elseif (msg:match("^%s*raid%s*$")) then
     RaidInfo:DebugPrint()
@@ -509,9 +508,9 @@ end
 function HistoryLootItem_OnClick(self, button, down)
   if (button == "RightButton" and IsModifiedClick()) then
     if self.entry.isCurrent then
-      print("Refusing to delete item from history that is still on Master page.")
+      print ("Refusing to delete item from history that is still on Master page.")
     elseif self.entry.winner then
-      print("Refusing to delete item from history that has a winner assigned.")
+      print ("Refusing to delete item from history that has a winner assigned.")
     else
       StaticPopup_Show("HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY", "", "",
         {useLinkForItemInfo = true, link = self.entry.itemLink, index = self.index})
