@@ -146,6 +146,18 @@ function Addon:Initialize()
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
 end
 
+function Addon:CountLootFor(name)
+  local count = {}
+  for i,entry in pairs(Addon.itemListHistory.entries) do
+    print(name)
+    if (entry.winner and entry.winner.name == name) then
+      local cat = entry.winner:GetCategory()
+      count[cat] = (count[cat] or 0) + 1
+    end
+  end
+  return count
+end
+
 local function showIfNotCombat()
   if not UnitAffectingCombat("player") then
     KetzerischerLootverteilerShow()
@@ -587,6 +599,7 @@ end
 function HereticTab_OnClick(self)
   HereticTab_SetActiveTab(self:GetID())
 end
+
 
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
 --  Suffix, Unique, LinkLvl, reforging, Name = string.find(arg, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
