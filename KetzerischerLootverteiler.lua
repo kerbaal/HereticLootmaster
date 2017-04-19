@@ -396,7 +396,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
   print("foo")
   local type, msg = message:match("^%s*([^ ]+)(.*)$")
   if (type == nil) then return end
-  Util.dbgprint ("Addon message: " .. type)
+  Util.dbgprint ("Received: " .. type)
   if (type == Addon.MSG_CLAIM_MASTER) then
     Addon:ProcessClaimMaster(sender)
   elseif (type == Addon.MSG_RENOUNCE_MASTER) then
