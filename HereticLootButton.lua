@@ -166,6 +166,8 @@ function HereticLootFrame_Update(frame)
   local name, realm = Util.DecomposeName(frame.entry.donator)
   local from = _G[frame:GetName() .. "FromButtonText"];
   from:SetText(name);
+  local dateText = _G[frame:GetName() .. "FromButtonDate"];
+  dateText:SetText(date("%H:%M %d.%m.", frame.entry.time));
   frame:Show();
   local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
   HereticRollFrame_SetRoll(winnerFrame, frame.entry.winner, true)
