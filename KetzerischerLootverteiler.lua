@@ -304,6 +304,7 @@ end
 
 local function eventHandlerLogout(self, event)
   KetzerischerLootverteilerData.itemList3 = Addon.itemList
+  KetzerischerLootverteilerData.itemListHistory = Addon.itemListHistory
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
   KetzerischerLootverteilerData.minRarity = Addon.minRarity
@@ -317,6 +318,11 @@ local function eventHandlerAddonLoaded(self, event, addonName)
       and HereticList.Validate(KetzerischerLootverteilerData.itemList3) then
       Addon.itemList = KetzerischerLootverteilerData.itemList3
       HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[1], Addon.itemList)
+    end
+    if KetzerischerLootverteilerData.itemListHistory
+      and HereticItemList.Validate(KetzerischerLootverteilerData.itemListHistory) then
+      Addon.itemListHistory = KetzerischerLootverteilerData.itemListHistory
+      HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[2], Addon.itemListHistory)
     end
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
