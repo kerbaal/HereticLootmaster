@@ -133,22 +133,18 @@ function HereticLootFrame_SetWinner(frame, roll)
 end
 
 function HereticLootFrameWinnerFrame_HereticOnDragStart(self,dragFrame)
-  local from = _G[self:GetParent():GetName() .. "SlotButton"];
-  --self:Hide()
-  --from:Show()
 end
 
-function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame)
+function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame,winner)
   local frame = self:GetParent()
-  if not frame:IsMouseOver() and
-     not KetzerischerLootverteilerFrame:IsMouseOver() then
-    HereticLootFrame_SetWinner(frame, nil)
-  else
-    local lootFrame = KetzerischerLootverteilerFrame_GetItemAtCursor()
-    if lootFrame then
-      HereticLootFrame_SetWinner(frame, lootFrame.entry.winner)
-    end
-  end
+  HereticLootFrame_SetWinner(frame, winner)
+end
+
+function HereticLootFrameWinnerFrame_HereticOnDrop(frame, button)
+  print("on drop")
+  local oldWinner = frame.entry.winner
+  HereticLootFrame_SetWinner(frame, button.roll)
+  return oldWinner
 end
 
 function HereticLootFrame_OnLoad(frame)
@@ -158,6 +154,7 @@ function HereticLootFrame_OnLoad(frame)
   local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
   winnerFrame.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
   winnerFrame.HereticOnDragStop = HereticLootFrameWinnerFrame_HereticOnDragStop
+  frame.HereticOnDrop = HereticLootFrameWinnerFrame_HereticOnDrop
 end
 
 function HereticLootFrame_Update(frame)

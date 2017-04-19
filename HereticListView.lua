@@ -82,3 +82,12 @@ function HereticListView_SetOnClickHandler(self, handler)
     frame.HereticOnClick = handler
   end
 end
+
+function HereticListView_GetItemAtCursor(self)
+  for i,frame in pairs(self.lootFrames) do
+    if (frame and frame:IsMouseOver() and frame:IsVisible()) then
+      return frame
+    end
+  end
+  return nil
+end
