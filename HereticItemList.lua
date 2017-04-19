@@ -20,6 +20,7 @@ function HereticItem:New(itemLink, donator, sender, winner, rollActionID)
     sender = sender,
     winner = winner,
     rollActionID = rollActionID,
+    isCurrent = true
   }
   setmetatable(obj, self)
   return obj

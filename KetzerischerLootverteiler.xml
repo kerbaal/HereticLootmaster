@@ -1,65 +1,6 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
   ..\FrameXML\UI.xsd">
     <Script file="KetzerischerLootverteiler.lua"/>
-    <Frame name="KetzerischerLootverteilerNavigationFrameTemplate" setAllPoints="true" virtual="true">
-        <Layers>
-            <Layer level="OVERLAY">
-                <FontString name="KetzerischerLootverteilerPageText" inherits="GameFontNormal" justifyH="RIGHT">
-                    <Size>
-                      <AbsDimension x="100" y="0"/>
-                    </Size>
-                    <Anchors>
-                        <Anchor point="BOTTOMRIGHT">
-                            <Offset>
-                                <AbsDimension x="-80" y="10"/>
-                            </Offset>
-                        </Anchor>
-                    </Anchors>
-                </FontString>
-
-            </Layer>
-        </Layers>
-        <Frames>
-            <Button name="KetzerischerLootverteilerPrevPageButton">
-                <Size>
-                    <AbsDimension x="32" y="32"/>
-                </Size>
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativeTo="$parent">
-                        <Offset>
-                            <AbsDimension x="-36" y="1"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick function="KetzerischerLootverteilerPrevPageButton_OnClick"/>
-                </Scripts>
-                <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
-                <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
-                <DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
-                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
-            </Button>
-            <Button name="KetzerischerLootverteilerNextPageButton">
-                <Size>
-                    <AbsDimension x="32" y="32"/>
-                </Size>
-                <Anchors>
-                    <Anchor point="BOTTOMRIGHT">
-                        <Offset>
-                            <AbsDimension x="-1" y="1"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick function="KetzerischerLootverteilerNextPageButton_OnClick"/>
-                </Scripts>
-                <NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
-                <PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
-                <DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
-                <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
-            </Button>
-        </Frames>
-    </Frame>
 
     <Frame name="KetzerischerLootverteilerFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
         <Size x="370" y="310"/>
@@ -102,52 +43,34 @@
                 </FontString>
             </Layer>
         </Layers>
-
-        <Frames>
+          <Frames>
             <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
                 <Size x="24" y="24"/>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="KetzerischerLootverteilerFrame">
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
                         <Offset x="0" y="0"/>
                     </Anchor>
                 </Anchors>
             </Button>
-            <Button name="HereticLootFrame1" inherits="HereticLootFrame" id="1">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-30"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame2" inherits="HereticLootFrame" id="2">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-70"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame3" inherits="HereticLootFrame" id="3">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-110"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame4" inherits="HereticLootFrame" id="4">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-150"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame5" inherits="HereticLootFrame" id="5">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-190"/>
-                </Anchors>
-            </Button>
-            <Button name="HereticLootFrame6" inherits="HereticLootFrame" id="6">
-                <Anchors>
-                    <Anchor point="TOPLEFT" x="20" y="-230"/>
-                </Anchors>
-            </Button>
+            <Frame name="$parentItemViewMaster" inherits="HereticListViewTemplate" parentArray="itemView">
+              <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                      <Offset x="0" y="-30"/>
+                  </Anchor>
+              </Anchors>
+            </Frame>
+            <Frame name="$parentItemViewHistory" inherits="HereticListViewTemplate" parentArray="itemView">
+              <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                      <Offset x="0" y="-30"/>
+                  </Anchor>
+              </Anchors>
+            </Frame>
             <Button name="KetzerischerlootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate">
                 <Scripts>
                     <OnLoad>
                         UIDropDownMenu_Initialize(self, KetzerischerlootverteilerRarityDropDown_Initialize);
                     </OnLoad>
-                    function=""/>
                 </Scripts>
                 <Anchors>
                     <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
@@ -155,16 +78,31 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Frame name="KetzerischerLootverteilerNavigationFrame" inherits="KetzerischerLootverteilerNavigationFrameTemplate" visible="true">
+            <Button name="$parentTab1" inherits="CharacterFrameTabButtonTemplate" id="1" text="Master">
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="KetzerischerLootverteilerFrame">
-                        <Offset x="0" y="0"/>
+                    <Anchor point="CENTER" relativePoint="BOTTOMLEFT">
+                        <Offset>
+                            <AbsDimension x="60" y="-12"/>
+                        </Offset>
                     </Anchor>
                 </Anchors>
                 <Scripts>
-                    <OnLoad>KetzerischerLootverteilerNavigationFrame_OnLoad(self);</OnLoad>
+                    <OnClick function="HereticTab_OnClick">
+                    </OnClick>
                 </Scripts>
-            </Frame>
+            </Button>
+            <Button name="$parentTab2" inherits="CharacterFrameTabButtonTemplate" id="2" text="History">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT">
+                        <Offset>
+                            <AbsDimension x="-16" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnClick function="HereticTab_OnClick"></OnClick>
+                </Scripts>
+            </Button>
         </Frames>
         <Scripts>
             <OnLoad>KetzerischerLootverteilerFrame_OnLoad(self);</OnLoad>

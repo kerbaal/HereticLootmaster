@@ -32,8 +32,8 @@
                         <Anchor point="LEFT" relativeTo="$parentName" relativePoint="RIGHT" x="2" y="0"/>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentItemCount" inherits="GameFontNormalSmall" justifyH="CENTER">
-                    <Size x="30" y="8"/>
+                <FontString name="$parentItemCount" inherits="GameFontNormalSmall" justifyH="CENTER" text="1">
+                    <Size x="60" y="8"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeTo="$parentRoll" relativePoint="RIGHT" x="2" y="0"/>
                     </Anchors>

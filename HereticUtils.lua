@@ -62,8 +62,18 @@ end
 function Util.pack(...)
   return {n = select("#", ...), ...}
 end
+
 function Util.unpack(t)
   return unpack(t, 1, t.n)
+end
+
+function Util.toRange(self, n)
+  if n < 1 then
+    return 1
+  elseif n > #self then
+    return #self
+  end
+  return n
 end
 
 Addon.Util = Util

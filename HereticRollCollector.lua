@@ -20,7 +20,7 @@ local function eventHandlerSystem(self, event, msg)
 
   if name and roll and minRoll and maxRoll then
     Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
-    table.insert(self.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, minRoll, maxRoll))
+    table.insert(self.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, maxRoll))
     PlaySoundKitID(31579);  --UI_BonusLootRoll_Start
     PlaySoundKitID(31581);  --UI_BonusLootRoll_End
     HereticRollCollectorFrame_Update(self)
@@ -33,6 +33,22 @@ local function eventHandler(self, event, ...)
   end
 end
 
+local function formatLootCount(count)
+  local str = ""
+  local sep = ""
+  for i,v in pairs(count) do
+    local r, g, b, hex = GetItemQualityColor(i)
+    if (i == 0) then hex = "FFFF0000" end
+    if (i == 0) then
+      str = str .. sep .. "|c" .. hex .. v .. "|r"
+    else
+      str = "|c" .. hex .. v .. "|r" .. sep .. str
+    end
+    sep = " "
+  end
+  return str
+end
+
 function HereticRollFrame_SetRoll(rollFrame, roll, showDropTarget)
   if not rollFrame then return end
   if not roll and not showDropTarget == true then
@@ -42,6 +58,7 @@ function HereticRollFrame_SetRoll(rollFrame, roll, showDropTarget)
   rollFrame.roll = roll
   local nameText = _G[rollFrame:GetName() .. "Name"]
   local rollText = _G[rollFrame:GetName() .. "Roll"]
+  local itemCountText = _G[rollFrame:GetName() .. "ItemCount"]
   local slotText = _G[rollFrame:GetName() .. "SlotText"]
   if roll then
     nameText:SetText(Util.ShortenFullName(roll.name))
@@ -49,10 +66,14 @@ function HereticRollFrame_SetRoll(rollFrame, roll, showDropTarget)
     rollText:SetText(""..roll.roll)
     rollText:SetTextColor(roll:GetColor())
     rollText:Show()
+    local count = Addon:CountLootFor(roll.name)
+    itemCountText:SetText(formatLootCount(count))
+    itemCountText:Show()
     slotText:Hide()
   else
     rollText:Hide()
     nameText:Hide()
+    itemCountText:Hide()
     slotText:Show()
   end
   rollFrame:Show()
@@ -120,10 +141,16 @@ function HereticRollFrame_OnDragStart(button)
 end
 
 function HereticRollFrame_OnDragStop(button)
-  local roll = button.roll
-  if not roll then return end
-  if button.HereticOnDragStop then button:HereticOnDragStop(HereticRollDragFrame) end
-  KetzerischerLootverteilerFrame:OnDropRoll(roll)
+  if not button.roll then return end
+  local dropButton = KetzerischerLootverteilerFrame:GetItemAtCursor()
+  local data = nil
+  if dropButton and dropButton.HereticOnDrop then
+    data = dropButton:HereticOnDrop(button)
+  end
+  if button.HereticOnDragStop then
+    button:HereticOnDragStop(HereticRollDragFrame, data)
+  end
+
   button:SetAlpha(1.0);
   HereticRollDragFrame:StopMovingOrSizing();
   HereticRollDragFrame:ClearAllPoints();
