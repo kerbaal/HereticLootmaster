@@ -141,7 +141,6 @@ function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame,winner)
 end
 
 function HereticLootFrameWinnerFrame_HereticOnDrop(frame, button)
-  print("on drop")
   local oldWinner = frame.entry.winner
   HereticLootFrame_SetWinner(frame, button.roll)
   return oldWinner

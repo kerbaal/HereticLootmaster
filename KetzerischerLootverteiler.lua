@@ -491,8 +491,14 @@ end
 
 function HistoryLootItem_OnClick(self, button, down)
   if (button == "RightButton" and IsModifiedClick()) then
-    StaticPopup_Show("HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY", "", "",
-      {useLinkForItemInfo = true, link = self.entry.itemLink, index = self.index})
+    if self.entry.isCurrent then
+      print("Refusing to delete item from history that is still on Master page.")
+    elseif self.entry.winner then
+      print("Refusing to delete item from history that has a winner assigned.")
+    else
+      StaticPopup_Show("HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY", "", "",
+        {useLinkForItemInfo = true, link = self.entry.itemLink, index = self.index})
+    end
     return true
   end
   -- Disable whispering for history items.

@@ -123,7 +123,6 @@ function HereticRollFrame_OnDragStop(button)
   if not button.roll then return end
   local dropButton = KetzerischerLootverteilerFrame:GetItemAtCursor()
   local data = nil
-  print(dropButton:GetName())
   if dropButton and dropButton.HereticOnDrop then
     data = dropButton:HereticOnDrop(button)
   end
