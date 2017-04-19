@@ -186,6 +186,8 @@ end
 
 function Addon:DeleteItem(index)
   local entry = Addon.itemList:GetEntry(index)
+  entry.isCurrent = false
+
   if Addon:IsMaster() then
     local msg = Addon.MSG_DELETE_LOOT .. " " .. entry.donator .. " " .. entry.itemLink
     Util.dbgprint("Announcing loot deletion")
@@ -307,7 +309,6 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
 end
 
 local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.itemList3 = Addon.itemList
   KetzerischerLootverteilerData.itemListHistory = Addon.itemListHistory
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
@@ -318,15 +319,15 @@ end
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
     RaidInfo:Update()
-    if KetzerischerLootverteilerData.itemList3
-      and HereticList.Validate(KetzerischerLootverteilerData.itemList3) then
-      Addon.itemList = KetzerischerLootverteilerData.itemList3
-      HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[1], Addon.itemList)
-    end
     if KetzerischerLootverteilerData.itemListHistory
-      and HereticItemList.Validate(KetzerischerLootverteilerData.itemListHistory) then
+      and HereticList.Validate(KetzerischerLootverteilerData.itemListHistory) then
       Addon.itemListHistory = KetzerischerLootverteilerData.itemListHistory
       HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[2], Addon.itemListHistory)
+    end
+    for i,entry in pairs(Addon.itemListHistory.entries) do
+      if entry.isCurrent then
+        Addon.itemList:AddEntry(entry)
+      end
     end
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
