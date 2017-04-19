@@ -138,6 +138,8 @@ function Addon:Initialize()
   Addon.MSG_RENOUNCE_MASTER = "RenounceMaster"
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
+  Addon.MSG_ANNOUNCE_WINNER = "Winner"
+  Addon.MSG_ANNOUNCE_WINNER_PATTERN = "^%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
   Addon.itemList = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.itemListHistory = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
@@ -157,9 +159,35 @@ function Addon:CountLootFor(name)
   return count
 end
 
-function Addon:OnWinnerUpdate()
+function Addon:OnWinnerUpdate(entry)
   update("on winner update")
+  if (Addon:IsMaster()) then
+    local msg = Addon.MSG_ANNOUNCE_WINNER .. " " .. entry.donator .. " " ..
+      entry.itemLink .. " "
+
+    if entry.winner then
+      msg = msg .. entry.winner.name .. " " .. entry.winner.roll ..
+        " " .. entry.winner.max
+    else
+      msg = msg .. "- - -"
+    end
+
+    Util.dbgprint("Announcing winner: " .. msg)
+    SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
+  end
   HereticRollCollectorFrame_Update(HereticRollCollectorFrame)
+end
+
+function Addon:SetWinner(itemString, from, sender, winnerName, rollValue, rollMax)
+  local index = Addon.itemListHistory:GetEntryId(itemString, donator, sender)
+  if not index then return end
+  local entry = Addon.itemListHistory:GetEntry(index)
+  if (winnerName == "/") then
+    entry.winner = nil
+  else
+    entry.winner = HereticRoll:New(winnerName, rollValue, rollMax)
+  end
+  OnWinnerUpdate(entry)
 end
 
 local function showIfNotCombat()
@@ -365,6 +393,7 @@ end
 
 local function eventHandlerAddonMessage(self, event, prefix, message, channel, sender)
   if (prefix ~= Addon.MSG_PREFIX) then return end
+  print("foo")
   local type, msg = message:match("^%s*([^ ]+)(.*)$")
   if (type == nil) then return end
   Util.dbgprint ("Addon message: " .. type)
@@ -386,6 +415,14 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     if (sender == Addon.master and not Addon:IsMaster()) then
       local index = Addon.itemList:GetEntryId(itemString, donator, sender)
       if (index) then Addon:DeleteItem(index) end
+    end
+  elseif (type == Addon.MSG_ANNOUNCE_WINNER) then
+    if not msg then return end
+    local from, itemString, winnerName, roll, rollMax = msg:match(Addon.MSG_ANNOUNCE_WINNER_PATTERN)
+    Util.dbgprint ("Winner: " .. from .. " " .. itemString .. " "
+      .. winnerName .. " " .. roll .. " " .. rollMax)
+    if (sender == Addon.master and not Addon:IsMaster()) then
+      Addon:SetWinner(itemString, from, sender, winnerName, roll, rollMax)
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
     SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", sender)

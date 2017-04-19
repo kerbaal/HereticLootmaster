@@ -20,7 +20,7 @@ local function eventHandlerSystem(self, event, msg)
 
   if name and roll and minRoll and maxRoll then
     Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
-    table.insert(self.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, minRoll, maxRoll))
+    table.insert(self.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, maxRoll))
     PlaySoundKitID(31579);  --UI_BonusLootRoll_Start
     PlaySoundKitID(31581);  --UI_BonusLootRoll_End
     HereticRollCollectorFrame_Update(self)
