@@ -130,6 +130,7 @@ function HereticLootFrame_SetWinner(frame, roll)
   end
   frame.entry.winner = roll
   HereticLootFrame_Update(frame)
+  Addon:OnWinnerUpdate()
 end
 
 function HereticLootFrameWinnerFrame_HereticOnDragStart(self,dragFrame)

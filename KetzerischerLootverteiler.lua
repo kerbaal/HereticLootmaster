@@ -158,6 +158,11 @@ function Addon:CountLootFor(name)
   return count
 end
 
+function Addon:OnWinnerUpdate()
+  update("on winner update")
+  HereticRollCollectorFrame_Update(HereticRollCollectorFrame)
+end
+
 local function showIfNotCombat()
   if not UnitAffectingCombat("player") then
     KetzerischerLootverteilerShow()
