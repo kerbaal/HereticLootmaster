@@ -393,7 +393,6 @@ end
 
 local function eventHandlerAddonMessage(self, event, prefix, message, channel, sender)
   if (prefix ~= Addon.MSG_PREFIX) then return end
-  print("foo")
   local type, msg = message:match("^%s*([^ ]+)(.*)$")
   if (type == nil) then return end
   Util.dbgprint ("Received: " .. type)
