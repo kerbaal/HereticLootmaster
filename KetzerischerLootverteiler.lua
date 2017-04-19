@@ -505,8 +505,11 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     end
   elseif (msg:match("^%s*clear%s*$")) then
     Addon.itemList:DeleteAllEntries()
+    update("clear")
+  elseif (msg:match("^%s*clearall%s*$")) then
+    Addon.itemList:DeleteAllEntries()
     Addon.itemListHistory:DeleteAllEntries()
-    update("DeleteAllItems")
+    update("clearall")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
     if KetzerischerLootverteilerData.debug then
