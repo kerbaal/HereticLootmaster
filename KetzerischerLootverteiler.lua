@@ -172,22 +172,25 @@ function Addon:OnWinnerUpdate(entry)
       msg = msg .. "- - -"
     end
 
-    Util.dbgprint("Announcing winner: " .. msg)
+    Util.dbgprint ("Announcing winner: " .. msg)
     SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
   HereticRollCollectorFrame_Update(HereticRollCollectorFrame)
 end
 
-function Addon:SetWinner(itemString, from, sender, winnerName, rollValue, rollMax)
+function Addon:SetWinner(itemString, donator, sender, winnerName, rollValue, rollMax)
   local index = Addon.itemListHistory:GetEntryId(itemString, donator, sender)
-  if not index then return end
+  if not index then
+    return
+  end
   local entry = Addon.itemListHistory:GetEntry(index)
-  if (winnerName == "/") then
+  rollValue, rollMax = tonumber(rollValue), tonumber(rollMax)
+  if (winnerName == "/" or not rollValue or not rollMax) then
     entry.winner = nil
   else
     entry.winner = HereticRoll:New(winnerName, rollValue, rollMax)
   end
-  OnWinnerUpdate(entry)
+  Addon:OnWinnerUpdate(entry)
 end
 
 local function showIfNotCombat()
@@ -393,7 +396,6 @@ end
 
 local function eventHandlerAddonMessage(self, event, prefix, message, channel, sender)
   if (prefix ~= Addon.MSG_PREFIX) then return end
-  print("foo")
   local type, msg = message:match("^%s*([^ ]+)(.*)$")
   if (type == nil) then return end
   Util.dbgprint ("Received: " .. type)

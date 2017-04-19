@@ -17,7 +17,6 @@ local function eventHandlerSystem(self, event, msg)
 
   local name, roll, minRoll, maxRoll = msg:match(ROLL_REGEX)
   roll, minRoll, maxRoll = tonumber(roll), tonumber(minRoll), tonumber(maxRoll)
-
   if name and roll and minRoll and maxRoll then
     Util.dbgprint (name .. " " .. roll .. " range: " .. minRoll .. " - " .. maxRoll);
     table.insert(self.rolls, HereticRoll:New(Util.CompleteUnitName(name), roll, maxRoll))
