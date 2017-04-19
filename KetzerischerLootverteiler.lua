@@ -193,6 +193,10 @@ function Addon:SetWinner(itemString, donator, sender, winnerName, rollValue, rol
   Addon:OnWinnerUpdate(entry)
 end
 
+function Addon:CanModify()
+  return Addon:IsMaster() or Addon.master == nil
+end
+
 local function showIfNotCombat()
   if not UnitAffectingCombat("player") then
     KetzerischerLootverteilerShow()
@@ -535,6 +539,7 @@ StaticPopupDialogs["HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY"] = {
 
 function MasterLootItem_OnClick(self, button, down)
   if (button == "RightButton" and IsModifiedClick()) then
+    if not Addon:CanModify() then return end
     if self.index then Addon:DeleteItem(self.index) end
     return true
   end
@@ -547,6 +552,7 @@ end
 
 function HistoryLootItem_OnClick(self, button, down)
   if (button == "RightButton" and IsModifiedClick()) then
+    if not Addon:CanModify() then return end
     if self.entry.isCurrent then
       print ("Refusing to delete item from history that is still on Master page.")
     elseif self.entry.winner then

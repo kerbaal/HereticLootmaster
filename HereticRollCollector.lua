@@ -125,7 +125,7 @@ function HereticRollCollectorFrame_OnDragStop()
 end
 
 function HereticRollFrame_OnDragStart(button)
-  if (not button.roll) then return end
+  if (not button.roll or not Addon:CanModify()) then return end
   local cursorX, cursorY = GetCursorPosition();
   local uiScale = UIParent:GetScale();
   button:SetAlpha(.5);
@@ -140,7 +140,7 @@ function HereticRollFrame_OnDragStart(button)
 end
 
 function HereticRollFrame_OnDragStop(button)
-  if not button.roll then return end
+  if not button.roll or not Addon:CanModify() then return end
   local dropButton = KetzerischerLootverteilerFrame:GetItemAtCursor()
   local data = nil
   if dropButton and dropButton.HereticOnDrop then
