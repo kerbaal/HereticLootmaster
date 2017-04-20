@@ -41,9 +41,17 @@
       <Layers>
           <Layer level="ARTWORK">
               <FontString name="$parentText" inherits="GameFontNormalSmall" justifyH="LEFT">
-                  <Size x="154" y="8"/>
+                  <Size x="95" y="8"/>
                   <Anchors>
-                      <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="10" y="0"/>
+                      <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="0" y="0"/>
+                  </Anchors>
+              </FontString>
+          </Layer>
+          <Layer level="ARTWORK">
+              <FontString name="$parentDate" inherits="GameFontNormalSmall" justifyH="RIGHT" parentKey="dateText">
+                  <Size x="70" y="8"/>
+                  <Anchors>
+                      <Anchor point="LEFT" relativeTo="$parentText" relativePoint="RIGHT" x="5" y="0"/>
                   </Anchors>
               </FontString>
           </Layer>

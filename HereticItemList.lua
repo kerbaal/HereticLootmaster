@@ -1,8 +1,8 @@
 HereticItem = {}
-HereticItemList = {}
+HereticList = {}
 
-HereticItemList.__index = HereticItemList
-function HereticItemList:New(instanceID, master, entries)
+HereticList.__index = HereticList
+function HereticList:New(instanceID, master, entries)
   local obj = {
     instanceID = instanceID,
     master = master,
@@ -20,21 +20,23 @@ function HereticItem:New(itemLink, donator, sender, winner, rollActionID)
     sender = sender,
     winner = winner,
     rollActionID = rollActionID,
+    time = time(),
+    isCurrent = true
   }
   setmetatable(obj, self)
   return obj
 end
 
-function HereticItemList:GetEntry(pos)
+function HereticList:GetEntry(pos)
   if (pos < 1 or pos > #self.entries) then return nil end
   return self.entries[pos]
 end
 
-function HereticItemList:DeleteEntryAt(pos)
+function HereticList:DeleteEntryAt(pos)
   table.remove(self.entries, pos)
 end
 
-function HereticItemList:DeleteAllEntries()
+function HereticList:DeleteAllEntries()
   for i=0, #self.entries do
     self.entries[i]=nil
   end
@@ -51,13 +53,13 @@ function HereticItem:Validate()
   return true
 end
 
-function HereticItemList:Validate()
+function HereticList:Validate()
   if (not self.instanceID or self.instanceID == 0 or
       not self.master or self.master == "" or
       not self.entries) then
     return false
   end
-  setmetatable(self, HereticItemList)
+  setmetatable(self, HereticList)
   for i=#self.entries,1,-1 do
     if not HereticItem.Validate(self.entries[i]) then
       self:DeleteEntryAt(i)
@@ -66,20 +68,20 @@ function HereticItemList:Validate()
   return true
 end
 
-function HereticItemList:GetItemLinkByID(pos)
+function HereticList:GetItemLinkByID(pos)
   return self.entries[pos].itemLink
 end
 
-function HereticItemList:Size()
+function HereticList:Size()
   return #self.entries
 end
 
-function HereticItemList:AddEntry(entry)
+function HereticList:AddEntry(entry)
   table.insert(self.entries, entry)
 end
 
 
-function HereticItemList:GetEntryId(item, donator, sender)
+function HereticList:GetEntryId(item, donator, sender)
   for i=1, #self.entries do
     if (self.entries[i].itemLink == item and
         self.entries[i].donator == donator and

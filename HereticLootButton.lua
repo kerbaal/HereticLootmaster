@@ -113,14 +113,13 @@ function HereticLootButton_Update(parent, entry)
   button:Show();
 end
 
-function HereticLootFrame_FromId(id)
-  return _G["HereticLootFrame"..id];
+function HereticLootFrame_FromId(self, id)
+  return _G[self:GetName().."HereticLootFrame"..id];
 end
 
-function HereticLootFrame_SetLoot(id, index, entry)
-  local frame = HereticLootFrame_FromId(id);
-  frame.index = index
-  frame.entry = entry
+function HereticLootFrame_SetLoot(self, index, entry)
+  self.index = index
+  self.entry = entry
 end
 
 function HereticLootFrame_SetWinner(frame, roll)
@@ -130,26 +129,22 @@ function HereticLootFrame_SetWinner(frame, roll)
     PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
   end
   frame.entry.winner = roll
-  HereticLootFrame_UpdateFrame(frame)
+  HereticLootFrame_Update(frame)
+  Addon:OnWinnerUpdate(frame.entry)
 end
 
 function HereticLootFrameWinnerFrame_HereticOnDragStart(self,dragFrame)
-  local from = _G[self:GetParent():GetName() .. "SlotButton"];
-  --self:Hide()
-  --from:Show()
 end
 
-function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame)
+function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame,winner)
   local frame = self:GetParent()
-  if not frame:IsMouseOver() and
-     not KetzerischerLootverteilerFrame:IsMouseOver() then
-    HereticLootFrame_SetWinner(frame, nil)
-  else
-    local lootFrame = KetzerischerLootverteilerFrame_GetItemAtCursor()
-    if lootFrame then
-      HereticLootFrame_SetWinner(frame, lootFrame.entry.winner)
-    end
-  end
+  HereticLootFrame_SetWinner(frame, winner)
+end
+
+function HereticLootFrameWinnerFrame_HereticOnDrop(frame, button)
+  local oldWinner = frame.entry.winner
+  HereticLootFrame_SetWinner(frame, button.roll)
+  return oldWinner
 end
 
 function HereticLootFrame_OnLoad(frame)
@@ -159,9 +154,10 @@ function HereticLootFrame_OnLoad(frame)
   local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
   winnerFrame.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
   winnerFrame.HereticOnDragStop = HereticLootFrameWinnerFrame_HereticOnDragStop
+  frame.HereticOnDrop = HereticLootFrameWinnerFrame_HereticOnDrop
 end
 
-function HereticLootFrame_UpdateFrame(frame)
+function HereticLootFrame_Update(frame)
   if frame.entry == nil then
     frame:Hide()
     return
@@ -170,14 +166,9 @@ function HereticLootFrame_UpdateFrame(frame)
   local name, realm = Util.DecomposeName(frame.entry.donator)
   local from = _G[frame:GetName() .. "FromButtonText"];
   from:SetText(name);
+  local dateText = _G[frame:GetName() .. "FromButtonDate"];
+  dateText:SetText(date("%H:%M %d.%m.", frame.entry.time));
   frame:Show();
   local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
   HereticRollFrame_SetRoll(winnerFrame, frame.entry.winner, true)
-end
-
-function HereticLootFrame_Update(id)
-  local frame = HereticLootFrame_FromId(id);
-  if frame == nil then return end
-
-  HereticLootFrame_UpdateFrame(frame)
 end

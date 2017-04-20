@@ -5,23 +5,14 @@ local Util = Addon.Util
 KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
-local function updatePageNavigation()
-  Addon.itemListView:SetNumberOfItems(Addon.itemList:Size())
-  local prev, next, currentPage, maxPages = Addon.itemListView:GetNavigationStatus()
-  KetzerischerLootverteilerPrevPageButton:SetEnabled(prev);
-  KetzerischerLootverteilerNextPageButton:SetEnabled(next);
-  KetzerischerLootverteilerPageText:SetFormattedText("%d / %d", currentPage, maxPages);
+local function getActiveTabItemList()
+  local tab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
+  return KetzerischerLootverteilerFrame.itemView[tab]
 end
 
 local function update(reason)
-  Util.dbgprint("Updating UI... (" .. (reason or "") .. ")")
-  updatePageNavigation()
-
-  for i=1,Addon.ITEMS_PER_PAGE do
-    local itemIndex = Addon.itemListView:IdToIndex(i);
-    HereticLootFrame_SetLoot(i, itemIndex, Addon.itemList:GetEntry(itemIndex))
-    HereticLootFrame_Update(i)
-  end
+  Util.dbgprint("Updating UI (" .. reason ..")..")
+  HereticListView_Update(getActiveTabItemList())
 end
 
 function KetzerischerLootverteilerShow()
@@ -137,40 +128,8 @@ function RaidInfo:DebugPrint()
   for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
 end
 
-local PagedView = {};
-PagedView.__index = PagedView;
-function PagedView:New(itemsPerPage)
-   local self = {};
-   setmetatable(self, PagedView);
-
-   self.itemsPerPage = itemsPerPage
-   self.currentPage = 1
-   self.maxPages = 1
-   return self;
-end
-
-function PagedView:Next()
-  self.currentPage = max(1, self.currentPage - 1)
-end
-
-function PagedView:Prev()
-  self.currentPage = min(self.maxPages, self.currentPage + 1)
-end
-
-function PagedView:IdToIndex(id)
-  return (self.currentPage - 1) * self.itemsPerPage + id
-end
-
-function PagedView:SetNumberOfItems(count)
-  self.maxPages = max(ceil(count / self.itemsPerPage), 1);
-end
-
-function PagedView:GetNavigationStatus()
-  return (self.currentPage ~= 1), (self.currentPage ~= self.maxPages), self.currentPage, self.maxPages
-end
 
 function Addon:Initialize()
-  Addon.ITEMS_PER_PAGE = 6
   Addon.MSG_PREFIX = "KTZR_LT_VERT"
   Addon.MSG_CLAIM_MASTER = "ClaimMaster"
   Addon.MSG_CHECK_MASTER = "CheckMaster"
@@ -179,12 +138,63 @@ function Addon:Initialize()
   Addon.MSG_RENOUNCE_MASTER = "RenounceMaster"
   Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
+  Addon.MSG_ANNOUNCE_WINNER = "Winner"
+  Addon.MSG_ANNOUNCE_WINNER_PATTERN = "^%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  Addon.itemList = HereticItemList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
-  Addon.itemListView = PagedView:New(Addon.ITEMS_PER_PAGE)
+  Addon.itemList = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
+  Addon.itemListHistory = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.master = nil;
   Addon.rolls = {};
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
+end
+
+function Addon:CountLootFor(name)
+  local count = {}
+  for i,entry in pairs(Addon.itemListHistory.entries) do
+    if (entry.winner and entry.winner.name == name) then
+      local cat = entry.winner:GetCategory()
+      count[cat] = (count[cat] or 0) + 1
+    end
+  end
+  return count
+end
+
+function Addon:OnWinnerUpdate(entry)
+  update("on winner update")
+  if (Addon:IsMaster()) then
+    local msg = Addon.MSG_ANNOUNCE_WINNER .. " " .. entry.donator .. " " ..
+      entry.itemLink .. " "
+
+    if entry.winner then
+      msg = msg .. entry.winner.name .. " " .. entry.winner.roll ..
+        " " .. entry.winner.max
+    else
+      msg = msg .. "- - -"
+    end
+
+    Util.dbgprint ("Announcing winner: " .. msg)
+    SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
+  end
+  HereticRollCollectorFrame_Update(HereticRollCollectorFrame)
+end
+
+function Addon:SetWinner(itemString, donator, sender, winnerName, rollValue, rollMax)
+  local index = Addon.itemListHistory:GetEntryId(itemString, donator, sender)
+  if not index then
+    return
+  end
+  local entry = Addon.itemListHistory:GetEntry(index)
+  rollValue, rollMax = tonumber(rollValue), tonumber(rollMax)
+  if (winnerName == "/" or not rollValue or not rollMax) then
+    entry.winner = nil
+  else
+    entry.winner = HereticRoll:New(winnerName, rollValue, rollMax)
+  end
+  Addon:OnWinnerUpdate(entry)
+end
+
+function Addon:CanModify()
+  return Addon:IsMaster() or Addon.master == nil
 end
 
 local function showIfNotCombat()
@@ -208,7 +218,9 @@ function Addon:AddItem(itemString, from, sender)
     end
   end
 
-  Addon.itemList:AddEntry(HereticItem:New(itemString, from, sender))
+  local item = HereticItem:New(itemString, from, sender)
+  Addon.itemList:AddEntry(item)
+  Addon.itemListHistory:AddEntry(item)
   --PlaySound("igBackPackCoinSelect")
   PlaySound("TellMessage");
   --PlaySound("igMainMenuOptionCheckBoxOn")
@@ -225,6 +237,8 @@ end
 
 function Addon:DeleteItem(index)
   local entry = Addon.itemList:GetEntry(index)
+  entry.isCurrent = false
+
   if Addon:IsMaster() then
     local msg = Addon.MSG_DELETE_LOOT .. " " .. entry.donator .. " " .. entry.itemLink
     Util.dbgprint("Announcing loot deletion")
@@ -292,7 +306,7 @@ function Addon:ProcessClaimMaster(name)
   local unitId = RaidInfo:GetUnitId(name)
   if (Addon:IsAuthorizedToClaimMaster(unitId)) then
     Addon:SetMaster(name)
-    print("You accepted " .. name .. " as your Ketzerischer Lootverteiler.")
+    print ("You accepted " .. name .. " as your Ketzerischer Lootverteiler.")
   end
 end
 
@@ -346,18 +360,25 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
 end
 
 local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.itemList3 = Addon.itemList
+  KetzerischerLootverteilerData.itemListHistory = Addon.itemListHistory
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
   KetzerischerLootverteilerData.minRarity = Addon.minRarity
+  KetzerischerLootverteilerData.activeTab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
 end
 
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
     RaidInfo:Update()
-    if KetzerischerLootverteilerData.itemList3
-      and HereticItemList.Validate(KetzerischerLootverteilerData.itemList3) then
-      Addon.itemList = KetzerischerLootverteilerData.itemList3
+    if KetzerischerLootverteilerData.itemListHistory
+      and HereticList.Validate(KetzerischerLootverteilerData.itemListHistory) then
+      Addon.itemListHistory = KetzerischerLootverteilerData.itemListHistory
+      HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[2], Addon.itemListHistory)
+    end
+    for i,entry in pairs(Addon.itemListHistory.entries) do
+      if entry.isCurrent then
+        Addon.itemList:AddEntry(entry)
+      end
     end
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
@@ -371,6 +392,9 @@ local function eventHandlerAddonLoaded(self, event, addonName)
       SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CHECK_MASTER, "WHISPER",
         KetzerischerLootverteilerData.master)
     end
+    if KetzerischerLootverteilerData.activeTab then
+      HereticTab_SetActiveTab(Util.toRange(KetzerischerLootverteilerFrame.itemView, KetzerischerLootverteilerData.activeTab))
+    end
   end
 end
 
@@ -378,7 +402,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
   if (prefix ~= Addon.MSG_PREFIX) then return end
   local type, msg = message:match("^%s*([^ ]+)(.*)$")
   if (type == nil) then return end
-  Util.dbgprint ("Addon message: " .. type)
+  Util.dbgprint ("Received: " .. type)
   if (type == Addon.MSG_CLAIM_MASTER) then
     Addon:ProcessClaimMaster(sender)
   elseif (type == Addon.MSG_RENOUNCE_MASTER) then
@@ -397,6 +421,14 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
     if (sender == Addon.master and not Addon:IsMaster()) then
       local index = Addon.itemList:GetEntryId(itemString, donator, sender)
       if (index) then Addon:DeleteItem(index) end
+    end
+  elseif (type == Addon.MSG_ANNOUNCE_WINNER) then
+    if not msg then return end
+    local from, itemString, winnerName, roll, rollMax = msg:match(Addon.MSG_ANNOUNCE_WINNER_PATTERN)
+    Util.dbgprint ("Winner: " .. from .. " " .. itemString .. " "
+      .. winnerName .. " " .. roll .. " " .. rollMax)
+    if (sender == Addon.master and not Addon:IsMaster()) then
+      Addon:SetWinner(itemString, from, sender, winnerName, roll, rollMax)
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
     SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", sender)
@@ -473,21 +505,44 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     end
   elseif (msg:match("^%s*clear%s*$")) then
     Addon.itemList:DeleteAllEntries()
-    update("DeleteAllItems")
+    update("clear")
+  elseif (msg:match("^%s*clearall%s*$")) then
+    Addon.itemList:DeleteAllEntries()
+    Addon.itemListHistory:DeleteAllEntries()
+    update("clearall")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
     if KetzerischerLootverteilerData.debug then
-      print("Debug is now on.")
+      print ("Debug is now on.")
     else
-      print("Debug is now off.")
+      print ("Debug is now off.")
     end
   elseif (msg:match("^%s*raid%s*$")) then
     RaidInfo:DebugPrint()
   end
 end
 
-function LootItem_OnClick(self, button, down)
+StaticPopupDialogs["HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY"] = {
+  text = "Are you sure you want to delete this item permanently from history?",
+  button1 = "Yes",
+  button2 = "No",
+  OnAccept = function(self)
+    Addon.itemListHistory:DeleteEntryAt(self.data.index)
+    update("delete from history")
+  end,
+  OnCancel = function()
+    -- Do nothing and keep item.
+  end,
+  sound = "levelup2",
+  timeout = 10,
+  whileDead = true,
+  hideOnEscape = true,
+  hasItemFrame = 1,
+}
+
+function MasterLootItem_OnClick(self, button, down)
   if (button == "RightButton" and IsModifiedClick()) then
+    if not Addon:CanModify() then return end
     if self.index then Addon:DeleteItem(self.index) end
     return true
   end
@@ -498,21 +553,26 @@ function LootItem_OnClick(self, button, down)
   return false
 end
 
-function KetzerischerLootverteilerFrame_GetItemAtCursor()
-  for id=1,Addon.ITEMS_PER_PAGE do
-    local frame = HereticLootFrame_FromId(id)
-    if (frame and frame:IsMouseOver() and frame:IsVisible()) then
-      return frame
+function HistoryLootItem_OnClick(self, button, down)
+  if (button == "RightButton" and IsModifiedClick()) then
+    if not Addon:CanModify() then return end
+    if self.entry.isCurrent then
+      print ("Refusing to delete item from history that is still on Master page.")
+    elseif self.entry.winner then
+      print ("Refusing to delete item from history that has a winner assigned.")
+    else
+      StaticPopup_Show("HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY", "", "",
+        {useLinkForItemInfo = true, link = self.entry.itemLink, index = self.index})
     end
+    return true
   end
-  return nil
+  -- Disable whispering for history items.
+  if (button == "RightButton") then return true end
+  return false
 end
 
-function KetzerischerLootverteilerFrame_OnDropRoll(self, roll)
-  local frame = KetzerischerLootverteilerFrame_GetItemAtCursor()
-  if frame then
-    HereticLootFrame_SetWinner(frame, roll)
-  end
+function KetzerischerLootverteilerFrame_GetItemAtCursor(self)
+  return HereticListView_GetItemAtCursor(getActiveTabItemList())
 end
 
 function KetzerischerLootverteilerFrame_OnLoad(self)
@@ -530,15 +590,16 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
   KetzerischerLootverteilerFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
 
-  for id=1,Addon.ITEMS_PER_PAGE do
-    local frame = HereticLootFrame_FromId(id)
-    frame.HereticOnClick = LootItem_OnClick
-  end
-
   self:RegisterForDrag("LeftButton");
-  update("Load")
 
-  KetzerischerLootverteilerFrame.OnDropRoll = KetzerischerLootverteilerFrame_OnDropRoll
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[1], Addon.itemList)
+  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.itemView[1], MasterLootItem_OnClick)
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[2], Addon.itemListHistory)
+  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.itemView[2], HistoryLootItem_OnClick)
+
+  KetzerischerLootverteilerFrame.GetItemAtCursor = KetzerischerLootverteilerFrame_GetItemAtCursor
+  PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, 2);
+  HereticTab_SetActiveTab(1)
 end
 
 function KetzerischerLootverteilerFrame_OnDragStart()
@@ -547,19 +608,6 @@ end
 
 function KetzerischerLootverteilerFrame_OnDragStop()
   KetzerischerLootverteilerFrame:StopMovingOrSizing();
-end
-
-function KetzerischerLootverteilerPrevPageButton_OnClick()
-  Addon.itemListView:Next()
-  update("PrevPage")
-end
-
-function KetzerischerLootverteilerNextPageButton_OnClick()
-  Addon.itemListView:Prev()
-  update("NextPage")
-end
-
-function KetzerischerLootverteilerNavigationFrame_OnLoad()
 end
 
 local function KetzerischerlootverteilerRarityDropDown_OnClick(self)
@@ -583,8 +631,26 @@ function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
   UIDropDownMenu_AddButton(info, level)
   UIDropDownMenu_JustifyText(KetzerischerlootverteilerRarityDropDown, "LEFT")
   UIDropDownMenu_SetWidth(KetzerischerlootverteilerRarityDropDown, 100);
-  UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, 1)
-  Addon.minRarity = { 0, 1 }
+  if not Addon.minRarity then
+    UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, 1)
+    Addon.minRarity = { 0, 1 }
+  end
+end
+
+function HereticTab_SetActiveTab(id)
+  PanelTemplates_SetTab(KetzerischerLootverteilerFrame, id);
+  for i,tab in pairs(KetzerischerLootverteilerFrame.itemView) do
+    if i == id then
+      tab:Show();
+    else
+      tab:Hide();
+    end
+  end
+  update("set active tab")
+end
+
+function HereticTab_OnClick(self)
+  HereticTab_SetActiveTab(self:GetID())
 end
 
 
