@@ -204,6 +204,7 @@ local function showIfNotCombat()
 end
 
 function Addon:AddItem(itemString, from, sender)
+  if (Addon:HasMaster() and sender ~= Addon.master) then return end
   itemString = itemString:match("item[%-?%d:]+")
   if (itemString == nil) then return end
   if (from == nil or from:gsub("%s+", "") == "") then return end
@@ -262,6 +263,10 @@ end
 
 function Addon:IsMaster()
   return Util.GetFullUnitName("player") == Addon.master
+end
+
+function Addon:HasMaster()
+  return Addon.master ~= nil and not Addon:IsMaster()
 end
 
 function Addon:SetMaster(name)
