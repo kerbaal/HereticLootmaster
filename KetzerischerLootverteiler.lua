@@ -144,22 +144,44 @@ function Addon:Initialize()
   Addon.itemList = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.itemListHistory = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
   Addon.master = nil;
+  Addon.lootCount = {};
   Addon.rolls = {};
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
 end
 
-function Addon:CountLootFor(name)
-  local count = {}
+function Addon:RecomputeLootCount()
+  wipe(Addon.lootCount)
   for i,entry in pairs(Addon.itemListHistory.entries) do
-    if (entry.winner and entry.winner.name == name) then
+    if (entry.winner) then
       local cat = entry.winner:GetCategory()
+      local count = Addon.lootCount[entry.winner.name] or {}
       count[cat] = (count[cat] or 0) + 1
+      Addon.lootCount[entry.winner.name] = count
     end
   end
-  return count
 end
 
-function Addon:OnWinnerUpdate(entry)
+function Addon:UpdateLootCount(fromWinner, toWinner)
+  if fromWinner then
+    local cat = fromWinner:GetCategory()
+    local count = Addon.lootCount[fromWinner.name] or {}
+    count[cat] = (count[cat] or 0) - 1
+    Addon.lootCount[fromWinner.name] = count
+  end
+  if toWinner then
+    local cat = toWinner:GetCategory()
+    local count = Addon.lootCount[toWinner.name] or {}
+    count[cat] = (count[cat] or 0) + 1
+    Addon.lootCount[toWinner.name] = count
+  end
+end
+
+function Addon:CountLootFor(name)
+  return Addon.lootCount[name] or {}
+end
+
+function Addon:OnWinnerUpdate(entry, prevWinner)
+  Addon:UpdateLootCount(prevWinner, entry.winner)
   update("on winner update")
   if (Addon:IsMaster()) then
     local msg = Addon.MSG_ANNOUNCE_WINNER .. " " .. entry.donator .. " " ..
@@ -184,13 +206,14 @@ function Addon:SetWinner(itemString, donator, sender, winnerName, rollValue, rol
     return
   end
   local entry = Addon.itemListHistory:GetEntry(index)
+  local prevWinner = entry.winner
   rollValue, rollMax = tonumber(rollValue), tonumber(rollMax)
   if (winnerName == "/" or not rollValue or not rollMax) then
     entry.winner = nil
   else
     entry.winner = HereticRoll:New(winnerName, rollValue, rollMax)
   end
-  Addon:OnWinnerUpdate(entry)
+  Addon:OnWinnerUpdate(entry, prevWinner)
 end
 
 function Addon:CanModify(owner)
@@ -387,6 +410,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
         Addon.itemList:AddEntry(entry)
       end
     end
+    Addon:RecomputeLootCount()
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
       UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, Addon.minRarity[2])
