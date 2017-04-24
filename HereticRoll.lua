@@ -59,6 +59,21 @@ function HereticRoll.Compare(rollA, rollB)
   return catA > catB
 end
 
+-- Returns true if rollA should be before rollB, considering Addon.lootCount.
+function HereticRoll.CompareWithLootCount(rollA, rollB)
+  local catA = rollA:GetCategory()
+  local catB = rollB:GetCategory()
+  if catA == catB then
+    if Addon:CountLootFor(rollA.name, catA) ==
+       Addon:CountLootFor(rollB.name, catB) then
+      return rollA.roll > rollB.roll
+    end
+    return Addon:CountLootFor(rollA.name, catA) <
+           Addon:CountLootFor(rollB.name, catB)
+  end
+  return catA > catB
+end
+
 function HereticRoll.__tostring(self)
   return "" .. self.name .. " rolled " .. self.roll .. " / " .. self.max;
 end

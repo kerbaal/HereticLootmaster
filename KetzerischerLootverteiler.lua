@@ -176,8 +176,10 @@ function Addon:UpdateLootCount(fromWinner, toWinner)
   end
 end
 
-function Addon:CountLootFor(name)
-  return Addon.lootCount[name] or {}
+function Addon:CountLootFor(name, cat)
+  local count = Addon.lootCount[name] or {}
+  if cat == nil then return count end
+  return count[cat] or 0
 end
 
 function Addon:OnWinnerUpdate(entry, prevWinner)

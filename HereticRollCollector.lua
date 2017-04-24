@@ -88,7 +88,7 @@ function HereticRollCollectorFrame_Update(self, ...)
   FauxScrollFrame_Update(scrollBar, numRolls, 8, 20,
     self:GetName() .. "RollFrame", 170, 190);
   local offset = FauxScrollFrame_GetOffset(scrollBar)
-  table.sort(self.rolls, HereticRoll.Compare)
+  table.sort(self.rolls, HereticRoll.CompareWithLootCount)
   for id=1,8 do
     local rollFrameName = self:GetName() .. "RollFrame" .. id
     local rollFrame = _G[rollFrameName]
