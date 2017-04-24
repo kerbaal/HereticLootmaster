@@ -76,4 +76,13 @@ function Util.toRange(self, n)
   return n
 end
 
+function Util.table_contains(t, x)
+  for i,v in pairs(t) do
+    if (x == v) then
+      return true
+    end
+  end
+  return false
+end
+
 Addon.Util = Util
