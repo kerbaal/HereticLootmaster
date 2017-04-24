@@ -32,19 +32,22 @@ local function eventHandler(self, event, ...)
   end
 end
 
+local function colorCount(hex, count)
+  local v = count or 0
+  if v == 0 then hex = "00000000" end
+  return "|c" .. hex .. v .. "|r"
+end
+
 local function formatLootCount(count)
   local str = ""
   local sep = ""
-  for i,v in pairs(count) do
-    local r, g, b, hex = GetItemQualityColor(i)
-    if (i == 0) then hex = "FFFF0000" end
-    if (i == 0) then
-      str = str .. sep .. "|c" .. hex .. v .. "|r"
-    else
-      str = "|c" .. hex .. v .. "|r" .. sep .. str
-    end
+  for i,cat in pairs(HereticRoll.GetCategories()) do
+    local _, _, _, hex = HereticRoll.ColorForMax(cat)
+    str = colorCount(hex, count[i]) .. sep .. str
     sep = " "
   end
+  local _, _, _, hex = HereticRoll.ColorForCategory(0)
+  str = str .. sep .. colorCount(hex, count[0])
   return str
 end
 

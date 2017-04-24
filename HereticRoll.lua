@@ -13,24 +13,40 @@ function HereticRoll:New(name, roll, max)
    return self;
 end
 
-function HereticRoll:GetCategory()
-  local categories = {25, 50, 100}
+function HereticRoll.GetCategories()
+  return {25, 50, 100}
+end
+
+function HereticRoll.CategoryForMax(max)
+  local categories = HereticRoll.GetCategories()
   local n = #categories
   for i=1,#categories do
-    if self.max == categories[i] then
+    if max == categories[i] then
       return i
     end
   end
   return 0
 end
 
+function HereticRoll:GetCategory()
+  return HereticRoll.CategoryForMax(self.max)
+end
+
+function HereticRoll.ColorForCategory(category)
+  if (category == 0) then
+    return 1.0, 0, 0, "FFFF0000"
+  end
+  return GetItemQualityColor(category)
+end
+
+function HereticRoll.ColorForMax(max)
+  local category = HereticRoll.CategoryForMax(max)
+  return GetItemQualityColor(category)
+end
+
 function HereticRoll:GetColor()
   local category = self:GetCategory()
-  if (category == 0) then
-    return 1.0, 0, 0
-  end
-  local r, g, b, _ = GetItemQualityColor(category)
-  return r, g, b
+  return HereticRoll.ColorForCategory(category)
 end
 
 -- Returns true if rollA should be before rollB.
