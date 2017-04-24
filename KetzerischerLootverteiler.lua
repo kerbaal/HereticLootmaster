@@ -603,7 +603,13 @@ function HistoryLootItem_OnClick(self, button, down)
 end
 
 function KetzerischerLootverteilerFrame_GetItemAtCursor(self)
-  return HereticListView_GetItemAtCursor(getActiveTabItemList())
+  local frame = HereticListView_GetItemAtCursor(getActiveTabItemList())
+  if frame then return frame end
+  frame = HereticRollCollectorFrame
+  if (frame and frame:IsMouseOver() and frame:IsVisible()) then
+    return frame
+  end
+  return nil
 end
 
 function KetzerischerLootverteilerFrame_OnLoad(self)

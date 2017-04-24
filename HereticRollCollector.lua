@@ -100,6 +100,14 @@ function HereticRollCollectorFrame_Toggle(self)
   self:Show()
 end
 
+function HereticRollCollectorFrame_HereticOnDrop(self, button)
+  if Util.table_contains(self.rolls, button.roll) then
+    return
+  end
+  table.insert(self.rolls, button.roll)
+  HereticRollCollectorFrame_Update(self)
+end
+
 function HereticRollCollectorFrame_OnLoad(self)
   self.rolls = {}
   self:RegisterForDrag("LeftButton");
@@ -107,6 +115,7 @@ function HereticRollCollectorFrame_OnLoad(self)
   self:RegisterEvent("CHAT_MSG_SYSTEM");
   HereticRollCollectorFrame_Update(self)
   self.Toggle = HereticRollCollectorFrame_Toggle
+  HereticRollCollectorFrame.HereticOnDrop = HereticRollCollectorFrame_HereticOnDrop
 end
 
 function RollsScrollBar_Update(self)
@@ -141,10 +150,10 @@ end
 
 function HereticRollFrame_OnDragStop(button)
   if not button.roll or not Addon:CanModify() then return end
-  local dropButton = KetzerischerLootverteilerFrame:GetItemAtCursor()
+  local dropFrame = KetzerischerLootverteilerFrame:GetItemAtCursor()
   local data = nil
-  if dropButton and dropButton.HereticOnDrop then
-    data = dropButton:HereticOnDrop(button)
+  if dropFrame and dropFrame.HereticOnDrop then
+    data = dropFrame:HereticOnDrop(button)
   end
   if button.HereticOnDragStop then
     button:HereticOnDragStop(HereticRollDragFrame, data)
