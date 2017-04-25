@@ -1,60 +1,64 @@
-- checkbox to disable loot collection from chat
+- Interface:
+
+GetCurrentInstance() - returns instanceID, mapID, difficultyID
+DifficultyIDToString(difficultyID) - returns name of for difficulty id
+MapIDToString(difficultyID) - returns name of for mapID
 
 --[[
 Struktur:
-	Eine Item Liste wird pro Lootsequenz erstellt
-	Eine Lootsequenz wird pro Bosskill erstellt
-	Ein Eintrag wird pro Item erstellt
-	
-	Eine Roll Liste wird pro Item & Donator erstellt
-	Ein Eintrag wird pro Würfelaktion erstellt
+  Eine Item Liste wird pro Lootsequenz erstellt
+  Eine Lootsequenz wird pro Bosskill erstellt
+  Ein Eintrag wird pro Item erstellt
+
+  Eine Roll Liste wird pro Item & Donator erstellt
+  Ein Eintrag wird pro Würfelaktion erstellt
 
 Lootsequences = {} -- beinaltet alle Meta-Objekte der Item Liste
 RollActions = {} -- beinaltet alle Meta-Objekte der Roll Liste
-	
+
 Variablen der Liste:
-	instanceID = 0
-	instanceMapID = 0
-	instanceDifficulty = ""
-	encounterID = 0
-	master = ""
-	entries = {}
-	
+  instanceID = 0
+  instanceMapID = 0
+  instanceDifficultyID = ""
+  encounterID = 0
+  master = ""
+  entries = {}
+
 Erweiterung für  Roll Liste:
-	itemLink = ""
-	donator = ""
+  itemLink = ""
+  donator = ""
 
 Eigenschaften des Item Eintrags:
-	itemLink = ""
-	donator = ""
-	winner = {
-		name = ""
-		roll = 0
-		maxRoll = 0
-		wonItems = 0
-	}
-	rollActionID = 0
-	
+  itemLink = ""
+  donator = ""
+  winner = {
+    name = ""
+    roll = 0
+    maxRoll = 0
+    wonItems = 0
+  }
+  rollActionID = 0
+
 Eigenschaften des Rolls Eintrages = {
-	name = ""
-	roll = 0
-	maxRoll = 0
-	wonItems = 0
+  name = ""
+  roll = 0
+  maxRoll = 0
+  wonItems = 0
 }
-	
+
 Funktionen der Liste:
-	new() -- neue Liste erstellen
-	delete(pos) -- Eintag an (pos) aus der Liste entfernen
-	deleteAll() -- Alle Eintäge aus der Liste entfernen
-	getEntry(pos) -- einen kompletten Eintrag aus der Liste erhalten
-	validate() -- Überprüft ob die "Pflichtfelder" gefüllt sind
-	getSize() -- liefert die Anzahl aller Einträge dieser Liste
-	
+  new() -- neue Liste erstellen
+  delete(pos) -- Eintag an (pos) aus der Liste entfernen
+  deleteAll() -- Alle Eintäge aus der Liste entfernen
+  getEntry(pos) -- einen kompletten Eintrag aus der Liste erhalten
+  validate() -- Überprüft ob die "Pflichtfelder" gefüllt sind
+  getSize() -- liefert die Anzahl aller Einträge dieser Liste
+
 Funktionen eines Eintrags:
-	new() -- neuen Eintrag erstellen
-	validate() -- Überprüft ob die "Pflichtfelder" gefüllt sind
+  new() -- neuen Eintrag erstellen
+  validate() -- Überprüft ob die "Pflichtfelder" gefüllt sind
 --[[ Noch nicht implementiert --
-	setWinner(Name, roll, maxRoll, wonItems) -- Gesamten Gewinner hinzufügen
-	setRollActionID(ID) -- Referenziert zu der Tabelle mit den Würfen zu dem Item
+  setWinner(Name, roll, maxRoll, wonItems) -- Gesamten Gewinner hinzufügen
+  setRollActionID(ID) -- Referenziert zu der Tabelle mit den Würfen zu dem Item
 ]]
 ]]
