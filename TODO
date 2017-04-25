@@ -1,8 +1,9 @@
 - Interface:
 
 GetCurrentInstance() - returns instanceID, mapID, difficultyID
+  instanceID may be nil if no instance id has been assigned yet
 DifficultyIDToString(difficultyID) - returns name of for difficulty id
-MapIDToString(difficultyID) - returns name of for mapID
+MapIDToString(mapID) - returns name of for mapID
 
 --[[
 Struktur:
