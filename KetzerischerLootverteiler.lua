@@ -128,6 +128,28 @@ function RaidInfo:DebugPrint()
   for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
 end
 
+function GetCurrentInstance()
+  local instanceName, type, instanceDifficultyIndex = GetInstanceInfo()
+  local mapID = GetCurrentMapAreaID()
+  local instanceID = nil
+  local numInstances = GetNumSavedInstances()
+  for i = 1, numInstances do
+    local savedInstanceName, id, reset, savedInstanceDifficulty = GetSavedInstanceInfo(i)
+    if savedInstanceName == instanceName and savedInstanceDifficulty == instanceDifficultyIndex then  
+      instanceID = id
+	end
+  end
+  return instanceID, mapID, difficultyIndex
+end
+
+function MapIDToString(mapID)
+  return GetMapNameByID(mapID)
+end
+
+function DifficultyIDToString(difficultyID)
+  difficultyName = GetDifficultyInfo(difficultyID)
+  return difficultyName
+end
 
 function Addon:Initialize()
   Addon.MSG_PREFIX = "KTZR_LT_VERT"
