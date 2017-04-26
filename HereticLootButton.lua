@@ -128,9 +128,10 @@ function HereticLootFrame_SetWinner(frame, roll)
   else
     PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
   end
+  local prevWinner = frame.entry.winner
   frame.entry.winner = roll
   HereticLootFrame_Update(frame)
-  Addon:OnWinnerUpdate(frame.entry)
+  Addon:OnWinnerUpdate(frame.entry, prevWinner)
 end
 
 function HereticLootFrameWinnerFrame_HereticOnDragStart(self,dragFrame)

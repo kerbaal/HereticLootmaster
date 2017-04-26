@@ -32,19 +32,22 @@ local function eventHandler(self, event, ...)
   end
 end
 
+local function colorCount(hex, count)
+  local v = count or 0
+  if v == 0 then hex = "00000000" end
+  return "|c" .. hex .. v .. "|r"
+end
+
 local function formatLootCount(count)
   local str = ""
   local sep = ""
-  for i,v in pairs(count) do
-    local r, g, b, hex = GetItemQualityColor(i)
-    if (i == 0) then hex = "FFFF0000" end
-    if (i == 0) then
-      str = str .. sep .. "|c" .. hex .. v .. "|r"
-    else
-      str = "|c" .. hex .. v .. "|r" .. sep .. str
-    end
+  for i,cat in pairs(HereticRoll.GetCategories()) do
+    local _, _, _, hex = HereticRoll.ColorForMax(cat)
+    str = colorCount(hex, count[i]) .. sep .. str
     sep = " "
   end
+  local _, _, _, hex = HereticRoll.ColorForCategory(0)
+  str = str .. sep .. colorCount(hex, count[0])
   return str
 end
 
@@ -85,7 +88,7 @@ function HereticRollCollectorFrame_Update(self, ...)
   FauxScrollFrame_Update(scrollBar, numRolls, 8, 20,
     self:GetName() .. "RollFrame", 170, 190);
   local offset = FauxScrollFrame_GetOffset(scrollBar)
-  table.sort(self.rolls, HereticRoll.Compare)
+  table.sort(self.rolls, HereticRoll.CompareWithLootCount)
   for id=1,8 do
     local rollFrameName = self:GetName() .. "RollFrame" .. id
     local rollFrame = _G[rollFrameName]
@@ -100,6 +103,14 @@ function HereticRollCollectorFrame_Toggle(self)
   self:Show()
 end
 
+function HereticRollCollectorFrame_HereticOnDrop(self, button)
+  if Util.table_contains(self.rolls, button.roll) then
+    return
+  end
+  table.insert(self.rolls, button.roll)
+  HereticRollCollectorFrame_Update(self)
+end
+
 function HereticRollCollectorFrame_OnLoad(self)
   self.rolls = {}
   self:RegisterForDrag("LeftButton");
@@ -107,6 +118,7 @@ function HereticRollCollectorFrame_OnLoad(self)
   self:RegisterEvent("CHAT_MSG_SYSTEM");
   HereticRollCollectorFrame_Update(self)
   self.Toggle = HereticRollCollectorFrame_Toggle
+  HereticRollCollectorFrame.HereticOnDrop = HereticRollCollectorFrame_HereticOnDrop
 end
 
 function RollsScrollBar_Update(self)
@@ -141,10 +153,10 @@ end
 
 function HereticRollFrame_OnDragStop(button)
   if not button.roll or not Addon:CanModify() then return end
-  local dropButton = KetzerischerLootverteilerFrame:GetItemAtCursor()
+  local dropFrame = KetzerischerLootverteilerFrame:GetItemAtCursor()
   local data = nil
-  if dropButton and dropButton.HereticOnDrop then
-    data = dropButton:HereticOnDrop(button)
+  if dropFrame and dropFrame.HereticOnDrop then
+    data = dropFrame:HereticOnDrop(button)
   end
   if button.HereticOnDragStop then
     button:HereticOnDragStop(HereticRollDragFrame, data)
