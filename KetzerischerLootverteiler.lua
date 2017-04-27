@@ -128,27 +128,66 @@ function RaidInfo:DebugPrint()
   for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
 end
 
-function GetCurrentInstance()
-  local instanceName, type, instanceDifficultyIndex = GetInstanceInfo()
-  local mapID = GetCurrentMapAreaID()
-  local instanceID = nil
+-- This function assumes that there is at most one saved ID for each
+-- instance name and difficulty.
+function FindSavedInstanceID(instanceName, instanceDifficultyID)
   local numInstances = GetNumSavedInstances()
   for i = 1, numInstances do
-    local savedInstanceName, id, reset, savedInstanceDifficulty = GetSavedInstanceInfo(i)
-    if savedInstanceName == instanceName and savedInstanceDifficulty == instanceDifficultyIndex then  
-      instanceID = id
-	end
+    local savedInstanceName, id, reset, savedInstanceDifficultyID = GetSavedInstanceInfo(i)
+    if savedInstanceName == instanceName and savedInstanceDifficultyID == instanceDifficultyID then
+      return id
+    end
   end
-  return instanceID, mapID, difficultyIndex
+  return nil
 end
 
-function MapIDToString(mapID)
-  return GetMapNameByID(mapID)
+function Addon:GetCurrentInstance()
+  local instanceName, instanceType, instanceDifficultyID, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance, mapID, instanceGroupSize = GetInstanceInfo()
+  if (instanceType == "raid" and Addon:IsTrackedDifficulity(instanceDifficultyID)) then
+    local instanceID = FindSavedInstanceID(mapID, instanceDifficultyID)
+    return instanceName, instanceID, difficultyName, instanceDifficultyID
+  end
+  return nil
 end
 
-function DifficultyIDToString(difficultyID)
-  difficultyName = GetDifficultyInfo(difficultyID)
-  return difficultyName
+function Addon:DifficultyIDToString(difficultyID)
+  return GetDifficultyInfo(difficultyID)
+end
+
+function Addon:GetHistoryForInstanceID(instanceName, instanceDifficultyID, instanceID)
+  local match_i, match_history, noid_i, noid_history
+  for i,history in ipairs(Addon.histories) do
+    if instanceID and history.intanceID == instanceID and
+       history.difficultyID == instanceDifficultyID and
+       history.instanceName == instanceName then
+      match_i, match_history = i, history
+    end
+    if history.instanceID == nil and
+       history.difficultyID == instanceDifficultyID and
+       history.instanceName == instanceName then
+      noid_i, noid_history = i, history
+    end
+  end
+  if match_i and match_history then
+    return match_i, match_history
+  end
+  if noid_i and noid_history then
+    noid_history.instanceID = instanceID
+    return noid_i, noid_history
+  end
+  return nil
+end
+
+function Addon:GetCurrentHistory()
+  local instanceName, instanceID, difficultyName, instanceDifficultyID = Addon:GetCurrentInstance()
+  if instanceName then
+    local i, history = Addon:GetHistoryForInstanceID(instanceName, instanceDifficultyID, instanceID)
+    if history then return i, history end
+    local newHistory = HereticList:New(instanceName, difficultyID, instanceID)
+    table.insert(Addon.histories, 2, newHistory)
+    return 2, newHistory
+  end
+  return 1, Addon.histories[1]
 end
 
 function Addon:Initialize()
@@ -163,8 +202,9 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_WINNER = "Winner"
   Addon.MSG_ANNOUNCE_WINNER_PATTERN = "^%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  Addon.itemList = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
-  Addon.itemListHistory = HereticList:New(999888777, "Nagisa-DieAldor") -- FixME hardcoded data
+  Addon.itemList = HereticList:New("master")
+  Addon.itemListHistory = HereticList:New("default")
+  Addon.histories = {};
   Addon.master = nil;
   Addon.lootCount = {};
   Addon.rolls = {};
@@ -403,8 +443,12 @@ function Addon:AddAllItems(itemStrings, from, sender)
   end
 end
 
+function Addon:IsTrackedDifficulity(difficultyID)
+  return 14 <= difficultyID and difficultyID <= 16
+end
+
 local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID, raidSize, endStatus)
-  if (endStatus == 1 and 14 <= difficultyID and difficultyID <= 16 and
+  if (endStatus == 1 and Addon:IsTrackedDifficulity(difficultyID) and
       (not Addon.minRarity or Addon.minRarity[1] < 1000)) then
     KetzerischerLootverteilerShow()
   end
@@ -534,6 +578,10 @@ local function eventHandler(self, event, ...)
     eventHandlerRaidRosterUpdate(self, event, ...)
   elseif (event == "GET_ITEM_INFO_RECEIVED") then
     update("ItemInfoReceived")
+  elseif (event == "RAID_INSTANCE_WELCOME") then
+    Util.dbgprint("RaidInstanceWelcome: " .. (select(1, ...) .. " " .. select(2, ...)))
+  elseif (event == "UPDATE_INSTANCE_INFO") then
+    Util.dbgprint("UpdateInstanceInfo")
   end
 end
 

@@ -2,10 +2,11 @@ HereticItem = {}
 HereticList = {}
 
 HereticList.__index = HereticList
-function HereticList:New(instanceID, master, entries)
+function HereticList:New(instanceName, difficultyID, instanceID)
   local obj = {
+    instanceName = instanceName,
+    difficultyID = difficultyID,
     instanceID = instanceID,
-    master = master,
     entries = {},
   }
   setmetatable(obj, self)
