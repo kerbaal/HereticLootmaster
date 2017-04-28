@@ -7,7 +7,7 @@ local RaidInfo = {}
 
 local function getActiveTabItemList()
   local tab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
-  return KetzerischerLootverteilerFrame.itemView[tab]
+  return KetzerischerLootverteilerFrame.tabView[tab].itemView
 end
 
 local function update(reason)
@@ -471,7 +471,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     if KetzerischerLootverteilerData.itemListHistory
       and HereticList.Validate(KetzerischerLootverteilerData.itemListHistory) then
       Addon.itemListHistory = KetzerischerLootverteilerData.itemListHistory
-      HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[2], Addon.itemListHistory)
+      HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon.itemListHistory)
     end
     for i,entry in pairs(Addon.itemListHistory.entries) do
       if entry.isCurrent then
@@ -492,7 +492,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
         KetzerischerLootverteilerData.master)
     end
     if KetzerischerLootverteilerData.activeTab then
-      HereticTab_SetActiveTab(Util.toRange(KetzerischerLootverteilerFrame.itemView, KetzerischerLootverteilerData.activeTab))
+      HereticTab_SetActiveTab(Util.toRange(KetzerischerLootverteilerFrame.tabView, KetzerischerLootverteilerData.activeTab))
     end
   end
 end
@@ -700,11 +700,11 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
 
   self:RegisterForDrag("LeftButton");
-
-  HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[1], Addon.itemList)
-  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.itemView[1], MasterLootItem_OnClick)
-  HereticListView_SetItemList(KetzerischerLootverteilerFrame.itemView[2], Addon.itemListHistory)
-  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.itemView[2], HistoryLootItem_OnClick)
+  print(#KetzerischerLootverteilerFrame.tabView[1])
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[1].itemView, Addon.itemList)
+  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[1].itemView, MasterLootItem_OnClick)
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon.itemListHistory)
+  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[2].itemView, HistoryLootItem_OnClick)
 
   KetzerischerLootverteilerFrame.GetItemAtCursor = KetzerischerLootverteilerFrame_GetItemAtCursor
   PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, 2);
@@ -748,7 +748,7 @@ end
 
 function HereticTab_SetActiveTab(id)
   PanelTemplates_SetTab(KetzerischerLootverteilerFrame, id);
-  for i,tab in pairs(KetzerischerLootverteilerFrame.itemView) do
+  for i,tab in pairs(KetzerischerLootverteilerFrame.tabView) do
     if i == id then
       tab:Show();
     else

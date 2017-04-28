@@ -52,32 +52,52 @@
                     </Anchor>
                 </Anchors>
             </Button>
-            <Frame name="$parentItemViewMaster" inherits="HereticListViewTemplate" parentArray="itemView">
+            <Frame name="$parentTabView1" parentArray="tabView">
+              <Size x="370" y="280"/>
               <Anchors>
                   <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
                       <Offset x="0" y="-30"/>
                   </Anchor>
               </Anchors>
+              <Frames>
+                <Frame name="$parentItemViewMaster" inherits="HereticListViewTemplate" parentKey="itemView">
+                  <Anchors>
+                      <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                          <Offset x="0" y="0"/>
+                      </Anchor>
+                  </Anchors>
+                </Frame>
+                <Button name="KetzerischerlootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate">
+                    <Scripts>
+                        <OnLoad>
+                            UIDropDownMenu_Initialize(self, KetzerischerlootverteilerRarityDropDown_Initialize);
+                        </OnLoad>
+                    </Scripts>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
+                            <Offset x="-10" y="-2"/>
+                        </Anchor>
+                    </Anchors>
+                </Button>
+              </Frames>
             </Frame>
-            <Frame name="$parentItemViewHistory" inherits="HereticListViewTemplate" parentArray="itemView">
+            <Frame name="$parentTabView2" parentArray="tabView">
+              <Size x="370" y="280"/>
               <Anchors>
                   <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
                       <Offset x="0" y="-30"/>
                   </Anchor>
               </Anchors>
+              <Frames>
+                <Frame name="$parentItemViewHistory" inherits="HereticListViewTemplate" parentKey="itemView">
+                  <Anchors>
+                      <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                          <Offset x="0" y="0"/>
+                      </Anchor>
+                  </Anchors>
+                </Frame>
+              </Frames>
             </Frame>
-            <Button name="KetzerischerlootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate">
-                <Scripts>
-                    <OnLoad>
-                        UIDropDownMenu_Initialize(self, KetzerischerlootverteilerRarityDropDown_Initialize);
-                    </OnLoad>
-                </Scripts>
-                <Anchors>
-                    <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
-                        <Offset x="-10" y="-2"/>
-                    </Anchor>
-                </Anchors>
-            </Button>
             <Button name="$parentTab1" inherits="CharacterFrameTabButtonTemplate" id="1" text="Master">
                 <Anchors>
                     <Anchor point="CENTER" relativePoint="BOTTOMLEFT">
