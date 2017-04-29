@@ -481,7 +481,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     Addon:RecomputeLootCount()
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
-      UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, Addon.minRarity[2])
+      UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerRarityDropDown, Addon.minRarity[2])
     end
     if (KetzerischerLootverteilerData.isVisible == nil or
         KetzerischerLootverteilerData.isVisible == true) then
@@ -719,29 +719,29 @@ function KetzerischerLootverteilerFrame_OnDragStop()
   KetzerischerLootverteilerFrame:StopMovingOrSizing();
 end
 
-local function KetzerischerlootverteilerRarityDropDown_OnClick(self)
-   UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, self:GetID())
+local function KetzerischerLootverteilerRarityDropDown_OnClick(self)
+   UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerRarityDropDown, self:GetID())
    Addon.minRarity = { self.value, self:GetID() }
 end
 
-function KetzerischerlootverteilerRarityDropDown_Initialize(self, level)
+function KetzerischerLootverteilerRarityDropDown_Initialize(self, level)
   for i = 0, 5 do
     local r, g, b, hex = GetItemQualityColor(i)
     local info = UIDropDownMenu_CreateInfo()
     info.text = "|c" .. hex .. _G["ITEM_QUALITY" .. i .. "_DESC"] .. "|r"
     info.value = i
-    info.func = KetzerischerlootverteilerRarityDropDown_OnClick
+    info.func = KetzerischerLootverteilerRarityDropDown_OnClick
     UIDropDownMenu_AddButton(info, level)
   end
   local info = UIDropDownMenu_CreateInfo()
   info.text = "|cFFFF0000" .. DISABLE .. "|r"
   info.value = 1000
-  info.func = KetzerischerlootverteilerRarityDropDown_OnClick
+  info.func = KetzerischerLootverteilerRarityDropDown_OnClick
   UIDropDownMenu_AddButton(info, level)
-  UIDropDownMenu_JustifyText(KetzerischerlootverteilerRarityDropDown, "LEFT")
-  UIDropDownMenu_SetWidth(KetzerischerlootverteilerRarityDropDown, 100);
+  UIDropDownMenu_JustifyText(KetzerischerLootverteilerRarityDropDown, "LEFT")
+  UIDropDownMenu_SetWidth(KetzerischerLootverteilerRarityDropDown, 100);
   if not Addon.minRarity then
-    UIDropDownMenu_SetSelectedID(KetzerischerlootverteilerRarityDropDown, 1)
+    UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerRarityDropDown, 1)
     Addon.minRarity = { 0, 1 }
   end
 end

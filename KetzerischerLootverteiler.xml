@@ -67,10 +67,10 @@
                       </Anchor>
                   </Anchors>
                 </Frame>
-                <Button name="KetzerischerlootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate">
+                <Button name="KetzerischerLootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate">
                     <Scripts>
                         <OnLoad>
-                            UIDropDownMenu_Initialize(self, KetzerischerlootverteilerRarityDropDown_Initialize);
+                            UIDropDownMenu_Initialize(self, KetzerischerLootverteilerRarityDropDown_Initialize);
                         </OnLoad>
                     </Scripts>
                     <Anchors>
