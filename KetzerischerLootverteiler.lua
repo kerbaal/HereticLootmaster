@@ -272,7 +272,7 @@ function Addon:SetWinner(itemString, donator, sender, winnerName, rollValue, rol
   local entry = Addon.itemListHistory:GetEntry(index)
   local prevWinner = entry.winner
   rollValue, rollMax = tonumber(rollValue), tonumber(rollMax)
-  if (winnerName == "/" or not rollValue or not rollMax) then
+  if (winnerName == "-" or not rollValue or not rollMax) then
     entry.winner = nil
   else
     entry.winner = HereticRoll:New(winnerName, rollValue, rollMax)
