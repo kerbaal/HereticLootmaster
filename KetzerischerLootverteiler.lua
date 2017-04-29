@@ -481,7 +481,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     Addon:RecomputeLootCount()
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
-      UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerRarityDropDown, Addon.minRarity[2])
+      KetzerischerLootverteilerRarityDropDown_Initialize(KetzerischerLootverteilerRarityDropDown)
     end
     if (KetzerischerLootverteilerData.isVisible == nil or
         KetzerischerLootverteilerData.isVisible == true) then
@@ -700,7 +700,7 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
 
   self:RegisterForDrag("LeftButton");
-  print(#KetzerischerLootverteilerFrame.tabView[1])
+
   HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[1].itemView, Addon.itemList)
   HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[1].itemView, MasterLootItem_OnClick)
   HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon.itemListHistory)
@@ -741,9 +741,9 @@ function KetzerischerLootverteilerRarityDropDown_Initialize(self, level)
   UIDropDownMenu_JustifyText(self, "LEFT")
   UIDropDownMenu_SetWidth(self, 100);
   if not Addon.minRarity then
-    UIDropDownMenu_SetSelectedID(self, 1)
     Addon.minRarity = { 0, 1 }
   end
+  UIDropDownMenu_SetSelectedID(self, Addon.minRarity[2])
 end
 
 function HereticTab_SetActiveTab(id)
@@ -762,6 +762,10 @@ function HereticTab_OnClick(self)
   HereticTab_SetActiveTab(self:GetID())
 end
 
+function KetzerischerLootverteilerHistoryDropDown_Initialize(self, level)
+  UIDropDownMenu_SetWidth(self, 200);
+  UIDropDownMenu_JustifyText(self, "LEFT")
+end
 
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
 --  Suffix, Unique, LinkLvl, reforging, Name = string.find(arg, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")

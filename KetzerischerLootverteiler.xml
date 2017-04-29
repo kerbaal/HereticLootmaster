@@ -96,6 +96,18 @@
                       </Anchor>
                   </Anchors>
                 </Frame>
+                <Button name="KetzerischerLootverteilerHistoryDropDown" inherits="UIDropDownMenuTemplate">
+                    <Scripts>
+                        <OnLoad>
+                            UIDropDownMenu_Initialize(self, KetzerischerLootverteilerHistoryDropDown_Initialize);
+                        </OnLoad>
+                    </Scripts>
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
+                            <Offset x="-10" y="-2"/>
+                        </Anchor>
+                    </Anchors>
+                </Button>
               </Frames>
             </Frame>
             <Button name="$parentTab1" inherits="CharacterFrameTabButtonTemplate" id="1" text="Master">
