@@ -762,9 +762,20 @@ function HereticTab_OnClick(self)
   HereticTab_SetActiveTab(self:GetID())
 end
 
+local function KetzerischerLootverteilerHistoryDropDown_OnClick(self)
+   UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerHistoryDropDown, self:GetID())
+end
+
 function KetzerischerLootverteilerHistoryDropDown_Initialize(self, level)
   UIDropDownMenu_SetWidth(self, 200);
   UIDropDownMenu_JustifyText(self, "LEFT")
+  for i, h in ipairs(Addon.histories or {}) do
+    local info = UIDropDownMenu_CreateInfo()
+    info.text = h.instanceName .. " " .. (h.instanceID or "")
+    info.value = i
+    info.func = KetzerischerLootverteilerHistoryDropDown_OnClick
+    UIDropDownMenu_AddButton(info, level)
+  end
 end
 
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
