@@ -12,6 +12,7 @@ end
 
 local function update(reason)
   Util.dbgprint("Updating UI (" .. reason ..")..")
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
   HereticListView_Update(getActiveTabItemList())
 end
 
@@ -178,12 +179,12 @@ function Addon:GetHistoryForInstanceID(instanceName, instanceDifficultyID, insta
   return nil
 end
 
-function Addon:GetCurrentHistory()
+function Addon:GetHistoryForCurrentInstance()
   local instanceName, instanceID, difficultyName, instanceDifficultyID = Addon:GetCurrentInstance()
   if instanceName then
     local i, history = Addon:GetHistoryForInstanceID(instanceName, instanceDifficultyID, instanceID)
     if history then return i, history end
-    local newHistory = HereticList:New(instanceName, difficultyID, instanceID)
+    local newHistory = HereticList:New(instanceName, instanceDifficultyID, instanceID)
     table.insert(Addon.histories, 2, newHistory)
     return 2, newHistory
   end
@@ -314,7 +315,8 @@ function Addon:AddItem(itemString, from, sender)
 
   local item = HereticItem:New(itemString, from, sender)
   Addon.itemList:AddEntry(item)
-  Addon:GetActiveHistory():AddEntry(item)
+  local historyIndex, history = Addon:GetHistoryForCurrentInstance()
+  history:AddEntry(item)
   --PlaySound("igBackPackCoinSelect")
   PlaySound("TellMessage");
   --PlaySound("igMainMenuOptionCheckBoxOn")
@@ -474,6 +476,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
     RaidInfo:Update()
     if KetzerischerLootverteilerData.histories then
+      wipe(Addon.histories)
       for i,history in pairs(KetzerischerLootverteilerData.histories) do
         if HereticList.Validate(history) then
           table.insert(Addon.histories, history)
@@ -776,7 +779,7 @@ end
 
 function Addon:SetHistoryDropDown(id)
   Addon.activeHistoryIndex = id
-  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
+  update("change history")
 end
 
 

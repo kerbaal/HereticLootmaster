@@ -55,8 +55,7 @@ function HereticItem:Validate()
 end
 
 function HereticList:Validate()
-  if (not self.instanceID or self.instanceID == 0 or
-      not self.master or self.master == "" or
+  if (not self.instanceName or
       not self.entries) then
     return false
   end
