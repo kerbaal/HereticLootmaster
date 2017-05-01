@@ -203,17 +203,21 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_WINNER_PATTERN = "^%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)$"
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
   Addon.itemList = HereticList:New("master")
-  Addon.itemListHistory = HereticList:New("default")
-  Addon.histories = {};
+  Addon.histories = { HereticList:New("default") }
+  Addon.activeHistoryIndex = 1
   Addon.master = nil;
   Addon.lootCount = {};
   Addon.rolls = {};
   RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
 end
 
+function Addon:GetActiveHistory()
+  return Addon.histories[Addon.activeHistoryIndex]
+end
+
 function Addon:RecomputeLootCount()
   wipe(Addon.lootCount)
-  for i,entry in pairs(Addon.itemListHistory.entries) do
+  for i,entry in pairs(Addon:GetActiveHistory().entries) do
     if (entry.winner) then
       local cat = entry.winner:GetCategory()
       local count = Addon.lootCount[entry.winner.name] or {}
@@ -265,11 +269,11 @@ function Addon:OnWinnerUpdate(entry, prevWinner)
 end
 
 function Addon:SetWinner(itemString, donator, sender, winnerName, rollValue, rollMax)
-  local index = Addon.itemListHistory:GetEntryId(itemString, donator, sender)
+  local index = Addon:GetActiveHistory():GetEntryId(itemString, donator, sender)
   if not index then
     return
   end
-  local entry = Addon.itemListHistory:GetEntry(index)
+  local entry = Addon:GetActiveHistory():GetEntry(index)
   local prevWinner = entry.winner
   rollValue, rollMax = tonumber(rollValue), tonumber(rollMax)
   if (winnerName == "-" or not rollValue or not rollMax) then
@@ -310,7 +314,7 @@ function Addon:AddItem(itemString, from, sender)
 
   local item = HereticItem:New(itemString, from, sender)
   Addon.itemList:AddEntry(item)
-  Addon.itemListHistory:AddEntry(item)
+  Addon:GetActiveHistory():AddEntry(item)
   --PlaySound("igBackPackCoinSelect")
   PlaySound("TellMessage");
   --PlaySound("igMainMenuOptionCheckBoxOn")
@@ -458,7 +462,8 @@ local function eventHandlerEncounterEnd(self, event, encounterID, encounterName,
 end
 
 local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.itemListHistory = Addon.itemListHistory
+  KetzerischerLootverteilerData.histories = Addon.histories
+  KetzerischerLootverteilerData.activeHistoryIndex = Addon.activeHistoryIndex
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master
   KetzerischerLootverteilerData.minRarity = Addon.minRarity
@@ -468,17 +473,23 @@ end
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
     RaidInfo:Update()
-    if KetzerischerLootverteilerData.itemListHistory
-      and HereticList.Validate(KetzerischerLootverteilerData.itemListHistory) then
-      Addon.itemListHistory = KetzerischerLootverteilerData.itemListHistory
-      HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon.itemListHistory)
-    end
-    for i,entry in pairs(Addon.itemListHistory.entries) do
-      if entry.isCurrent then
-        Addon.itemList:AddEntry(entry)
+    if KetzerischerLootverteilerData.histories then
+      for i,history in pairs(KetzerischerLootverteilerData.histories) do
+        if HereticList.Validate(history) then
+          table.insert(Addon.histories, history)
+          for i,entry in pairs(history.entries) do
+            if entry.isCurrent then
+              Addon.itemList:AddEntry(entry)
+            end
+          end
+        end
       end
     end
+    if KetzerischerLootverteilerData.activeHistoryIndex then
+      Addon.activeHistoryIndex = KetzerischerLootverteilerData.activeHistoryIndex
+    end
     Addon:RecomputeLootCount()
+    KetzerischerLootverteilerHistoryDropDown_Initialize(KetzerischerLootverteilerHistoryDropDown)
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
       KetzerischerLootverteilerRarityDropDown_Initialize(KetzerischerLootverteilerRarityDropDown)
@@ -611,7 +622,6 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     update("clear")
   elseif (msg:match("^%s*clearall%s*$")) then
     Addon.itemList:DeleteAllEntries()
-    Addon.itemListHistory:DeleteAllEntries()
     update("clearall")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
@@ -630,7 +640,7 @@ StaticPopupDialogs["HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY"] = {
   button1 = "Yes",
   button2 = "No",
   OnAccept = function(self)
-    Addon.itemListHistory:DeleteEntryAt(self.data.index)
+    self.data.list:DeleteEntryAt(self.data.index)
     update("delete from history")
   end,
   OnCancel = function()
@@ -665,7 +675,7 @@ function HistoryLootItem_OnClick(self, button, down)
       print ("Refusing to delete item from history that has a winner assigned.")
     else
       StaticPopup_Show("HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY", "", "",
-        {useLinkForItemInfo = true, link = self.entry.itemLink, index = self.index})
+        {useLinkForItemInfo = true, link = self.entry.itemLink, list = Addon:GetActiveHistory(), index = self.index})
     end
     return true
   end
@@ -703,7 +713,7 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
 
   HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[1].itemView, Addon.itemList)
   HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[1].itemView, MasterLootItem_OnClick)
-  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon.itemListHistory)
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
   HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[2].itemView, HistoryLootItem_OnClick)
 
   KetzerischerLootverteilerFrame.GetItemAtCursor = KetzerischerLootverteilerFrame_GetItemAtCursor
@@ -746,6 +756,7 @@ function KetzerischerLootverteilerRarityDropDown_Initialize(self, level)
   UIDropDownMenu_SetSelectedID(self, Addon.minRarity[2])
 end
 
+
 function HereticTab_SetActiveTab(id)
   PanelTemplates_SetTab(KetzerischerLootverteilerFrame, id);
   for i,tab in pairs(KetzerischerLootverteilerFrame.tabView) do
@@ -762,20 +773,32 @@ function HereticTab_OnClick(self)
   HereticTab_SetActiveTab(self:GetID())
 end
 
-local function KetzerischerLootverteilerHistoryDropDown_OnClick(self)
-   UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerHistoryDropDown, self:GetID())
+
+function Addon:SetHistoryDropDown(id)
+  Addon.activeHistoryIndex = id
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
 end
+
+
+local function KetzerischerLootverteilerHistoryDropDown_OnClick(self)
+  UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerHistoryDropDown, self:GetID())
+  Addon:SetHistoryDropDown(self:GetID())
+end
+
 
 function KetzerischerLootverteilerHistoryDropDown_Initialize(self, level)
   UIDropDownMenu_SetWidth(self, 200);
   UIDropDownMenu_JustifyText(self, "LEFT")
+  if not Addon.histories or not Addon.activeHistoryIndex or #Addon.histories < 1 then return end
+
   for i, h in ipairs(Addon.histories or {}) do
     local info = UIDropDownMenu_CreateInfo()
-    info.text = h.instanceName .. " " .. (h.instanceID or "")
+    info.text = h.instanceName .. " " .. ((h.difficultyID and Addon:DifficultyIDToString(h.difficultyID)) or "") .. " " .. (h.instanceID or "")
     info.value = i
     info.func = KetzerischerLootverteilerHistoryDropDown_OnClick
     UIDropDownMenu_AddButton(info, level)
   end
+  UIDropDownMenu_SetSelectedID(self, Addon.activeHistoryIndex)
 end
 
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
