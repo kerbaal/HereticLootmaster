@@ -12,8 +12,7 @@ end
 
 local function update(reason)
   Util.dbgprint("Updating UI (" .. reason ..")..")
-  local tab = getActiveTab()
-  HereticListView_SetItemList(tab.itemView, Addon:GetActiveHistory())
+  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
   HereticListView_Update(getActiveTab().itemView)
 end
 
