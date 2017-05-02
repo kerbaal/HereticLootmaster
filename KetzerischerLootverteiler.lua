@@ -475,6 +475,9 @@ end
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
     RaidInfo:Update()
+    if KetzerischerLootverteilerData.activeHistoryIndex then
+      Addon.activeHistoryIndex = KetzerischerLootverteilerData.activeHistoryIndex
+    end
     if KetzerischerLootverteilerData.histories then
       wipe(Addon.histories)
       for i,history in pairs(KetzerischerLootverteilerData.histories) do
@@ -487,9 +490,10 @@ local function eventHandlerAddonLoaded(self, event, addonName)
           end
         end
       end
-    end
-    if KetzerischerLootverteilerData.activeHistoryIndex then
-      Addon.activeHistoryIndex = KetzerischerLootverteilerData.activeHistoryIndex
+      if #Addon.histories == 0 then
+        Addon.histories = { HereticList:New("default") }
+        Addon.activeHistoryIndex = 1
+      end
     end
     Addon:RecomputeLootCount()
     if KetzerischerLootverteilerData.minRarity then
