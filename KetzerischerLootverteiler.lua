@@ -5,20 +5,21 @@ local Util = Addon.Util
 KetzerischerLootverteilerData = {}
 local RaidInfo = {}
 
-local function getActiveTabItemList()
+local function getActiveTab()
   local tab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
-  return KetzerischerLootverteilerFrame.tabView[tab].itemView
+  return KetzerischerLootverteilerFrame.tabView[tab]
 end
 
 local function update(reason)
   Util.dbgprint("Updating UI (" .. reason ..")..")
-  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
-  HereticListView_Update(getActiveTabItemList())
+  local tab = getActiveTab()
+  HereticListView_SetItemList(tab.itemView, Addon:GetActiveHistory())
+  HereticListView_Update(getActiveTab().itemView)
 end
 
 function KetzerischerLootverteilerShow()
-  update("show")
   KetzerischerLootverteilerFrame:Show()
+  update("show")
 end
 
 function KetzerischerLootverteilerToggle()
@@ -492,10 +493,8 @@ local function eventHandlerAddonLoaded(self, event, addonName)
       Addon.activeHistoryIndex = KetzerischerLootverteilerData.activeHistoryIndex
     end
     Addon:RecomputeLootCount()
-    KetzerischerLootverteilerHistoryDropDown_Initialize(KetzerischerLootverteilerHistoryDropDown)
     if KetzerischerLootverteilerData.minRarity then
       Addon.minRarity = KetzerischerLootverteilerData.minRarity
-      KetzerischerLootverteilerRarityDropDown_Initialize(KetzerischerLootverteilerRarityDropDown)
     end
     if (KetzerischerLootverteilerData.isVisible == nil or
         KetzerischerLootverteilerData.isVisible == true) then
@@ -508,6 +507,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
     if KetzerischerLootverteilerData.activeTab then
       HereticTab_SetActiveTab(Util.toRange(KetzerischerLootverteilerFrame.tabView, KetzerischerLootverteilerData.activeTab))
     end
+    update("addon loaded")
   end
 end
 
@@ -688,7 +688,7 @@ function HistoryLootItem_OnClick(self, button, down)
 end
 
 function KetzerischerLootverteilerFrame_GetItemAtCursor(self)
-  local frame = HereticListView_GetItemAtCursor(getActiveTabItemList())
+  local frame = HereticListView_GetItemAtCursor(getActiveTab().itemView)
   if frame then return frame end
   frame = HereticRollCollectorFrame
   if (frame and frame:IsMouseOver() and frame:IsVisible()) then
@@ -753,10 +753,6 @@ function KetzerischerLootverteilerRarityDropDown_Initialize(self, level)
   UIDropDownMenu_AddButton(info, level)
   UIDropDownMenu_JustifyText(self, "LEFT")
   UIDropDownMenu_SetWidth(self, 100);
-  if not Addon.minRarity then
-    Addon.minRarity = { 0, 1 }
-  end
-  UIDropDownMenu_SetSelectedID(self, Addon.minRarity[2])
 end
 
 
@@ -801,6 +797,16 @@ function KetzerischerLootverteilerHistoryDropDown_Initialize(self, level)
     info.func = KetzerischerLootverteilerHistoryDropDown_OnClick
     UIDropDownMenu_AddButton(info, level)
   end
+end
+
+function KetzerischerLootverteilerRarityDropDown_OnShow(self)
+  UIDropDownMenu_Initialize(self, KetzerischerLootverteilerRarityDropDown_Initialize);
+  if not Addon.minRarity then return end
+  UIDropDownMenu_SetSelectedID(self, Addon.minRarity[2])
+end
+
+function KetzerischerLootverteilerHistoryDropDown_OnShow(self)
+  UIDropDownMenu_Initialize(self, KetzerischerLootverteilerHistoryDropDown_Initialize);
   UIDropDownMenu_SetSelectedID(self, Addon.activeHistoryIndex)
 end
 

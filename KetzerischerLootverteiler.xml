@@ -69,9 +69,7 @@
                 </Frame>
                 <Button name="KetzerischerLootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
                     <Scripts>
-                        <OnLoad>
-                            UIDropDownMenu_Initialize(KetzerischerLootverteilerRarityDropDown, KetzerischerLootverteilerRarityDropDown_Initialize);
-                        </OnLoad>
+                        <OnShow function="KetzerischerLootverteilerRarityDropDown_OnShow"/>
                     </Scripts>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
@@ -98,9 +96,7 @@
                 </Frame>
                 <Button name="KetzerischerLootverteilerHistoryDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
                     <Scripts>
-                      <OnLoad>
-                        UIDropDownMenu_Initialize(KetzerischerLootverteilerHistoryDropDown, KetzerischerLootverteilerHistoryDropDown_Initialize);
-                      </OnLoad>
+                      <OnShow function="KetzerischerLootverteilerHistoryDropDown_OnShow"/>
                     </Scripts>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
