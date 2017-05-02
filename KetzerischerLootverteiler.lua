@@ -250,7 +250,8 @@ function Addon:CountLootFor(name, cat)
 end
 
 function Addon:OnWinnerUpdate(entry, prevWinner)
-  Addon:UpdateLootCount(prevWinner, entry.winner)
+  --Addon:UpdateLootCount(prevWinner, entry.winner)
+  Addon:RecomputeLootCount()
   update("on winner update")
   if (Addon:IsMaster()) then
     local msg = Addon.MSG_ANNOUNCE_WINNER .. " " .. entry.donator .. " " ..
