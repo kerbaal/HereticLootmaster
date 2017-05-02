@@ -795,7 +795,7 @@ function KetzerischerLootverteilerHistoryDropDown_Initialize(self, level)
 
   for i, h in ipairs(Addon.histories or {}) do
     local info = UIDropDownMenu_CreateInfo()
-    info.text = h.instanceName .. " " .. ((h.difficultyID and Addon:DifficultyIDToString(h.difficultyID)) or "") .. " " .. (h.instanceID or "")
+    info.text = h.instanceName .. " " .. ((h.difficultyID and "("..Addon:DifficultyIDToString(h.difficultyID) .. ")") or "") .. " " .. (h.instanceID or "")
     info.value = i
     info.func = KetzerischerLootverteilerHistoryDropDown_OnClick
     UIDropDownMenu_AddButton(info, level)
