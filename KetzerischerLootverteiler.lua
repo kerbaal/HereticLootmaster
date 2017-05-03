@@ -144,7 +144,7 @@ end
 
 function Addon:GetCurrentInstance()
   local instanceName, instanceType, instanceDifficultyID, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance, mapID, instanceGroupSize = GetInstanceInfo()
-  if (instanceType == "raid" and Addon:IsTrackedDifficulity(instanceDifficultyID)) then
+  if (instanceType == "raid" or instanceType == "party") then
     local instanceID = FindSavedInstanceID(mapID, instanceDifficultyID)
     return instanceName, instanceID, difficultyName, instanceDifficultyID
   end
