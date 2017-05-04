@@ -158,7 +158,7 @@ end
 function Addon:GetHistoryForInstanceID(instanceName, instanceDifficultyID, instanceID)
   local match_i, match_history, noid_i, noid_history
   for i,history in ipairs(Addon.histories) do
-    if instanceID and history.intanceID == instanceID and
+    if instanceID and history.instanceID == instanceID and
        history.difficultyID == instanceDifficultyID and
        history.instanceName == instanceName then
       match_i, match_history = i, history
