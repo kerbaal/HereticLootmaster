@@ -629,6 +629,10 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     update("clear")
   elseif (msg:match("^%s*clearall%s*$")) then
     Addon.itemList:DeleteAllEntries()
+    wipe(Addon.histories)
+    Addon.histories[1] = HereticList:New("default")
+    Addon.activeHistoryIndex = 1
+    HereticTab_SetActiveTab(1)
     update("clearall")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
