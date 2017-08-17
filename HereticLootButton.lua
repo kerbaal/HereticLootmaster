@@ -4,7 +4,7 @@ local Util = Addon.Util
 
 function HereticLootButton_OnClick(self, button, down)
   local parent = self:GetParent()
-  if (parent.HereticOnClick and parent:HereticOnClick(button, down)) then
+  if (parent.HereticOnClick and parent:HereticOnClick(button, down, parent.entry)) then
     return
   end
 

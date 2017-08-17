@@ -664,14 +664,21 @@ StaticPopupDialogs["HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY"] = {
   hasItemFrame = 1,
 }
 
-function MasterLootItem_OnClick(self, button, down)
-  if (button == "RightButton" and IsModifiedClick()) then
+function MasterLootItem_OnClick(self, button, down, entry)
+  if (button == "RightButton" and IsModifiedClick("SHIFT")) then
     if not Addon:CanModify(self.entry.sender) then return end
     if self.index then Addon:DeleteItem(self.index) end
     return true
   end
   if (button == "RightButton" and not IsModifiedClick()) then
     HereticRollCollectorFrame:Toggle()
+    return true
+  end
+  if (button == "LeftButton" and IsModifiedClick("ALT")) then
+    local itemLink = select(2,GetItemInfo(entry.itemLink))
+    local text = itemLink .. " (" .. Util.ShortenFullName(entry.donator) .. ")"
+    SendChatMessage(text, "RAID")
+    HereticRollCollectorFrame_BeginRollCollection(HereticRollCollectorFrame, entry)
     return true
   end
   return false

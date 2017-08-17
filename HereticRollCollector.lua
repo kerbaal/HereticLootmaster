@@ -3,8 +3,6 @@ local ADDON, Addon = ...
 local Util = Addon.Util
 
 local function eventHandlerSystem(self, event, msg)
-  -- Don't track rolls if collector frame is invisible.
-  if not self:IsVisible() then return end
   local ROLL_REGEX = RANDOM_ROLL_RESULT
   ROLL_REGEX = gsub(ROLL_REGEX, "%(", "%%(")
   ROLL_REGEX = gsub(ROLL_REGEX, "%-", "%%-")
@@ -98,9 +96,17 @@ end
 
 function HereticRollCollectorFrame_Toggle(self)
   if self:IsVisible() then return end
-  wipe(self.rolls)
   HereticRollCollectorFrame_Update(self)
   self:Show()
+end
+
+function HereticRollCollectorFrame_BeginRollCollection(self, entry)
+  if (self.entry == entry) then
+    return  -- Don't start a new collection with the same item.
+  end
+  wipe(self.rolls)
+  self.entry = entry
+  HereticRollCollectorFrame_Update(self)
 end
 
 function HereticRollCollectorFrame_HereticOnDrop(self, button)
