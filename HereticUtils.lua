@@ -59,6 +59,14 @@ function Util.GetItemIdFromLink(itemLink)
   return itemId
 end
 
+function Util.GetColoredPlayerName(fullPlayerName)
+  local name = Util.ShortenFullName(fullPlayerName)
+  local class, classFileName = UnitClass(name)
+  local color = RAID_CLASS_COLORS[classFileName]
+  if not color then return name end
+  return "|c" .. color.colorStr  .. name .. "|r"
+end
+
 function Util.pack(...)
   return {n = select("#", ...), ...}
 end

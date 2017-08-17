@@ -166,7 +166,7 @@ function HereticLootFrame_Update(frame)
   HereticLootButton_Update(frame, frame.entry)
   local name, realm = Util.DecomposeName(frame.entry.donator)
   local from = _G[frame:GetName() .. "FromButtonText"];
-  from:SetText(name);
+  from:SetText(Util.GetColoredPlayerName(frame.entry.donator));
   local dateText = _G[frame:GetName() .. "FromButtonDate"];
   dateText:SetText(date("%H:%M %d.%m.", frame.entry.time));
   frame:Show();
