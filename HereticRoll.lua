@@ -14,7 +14,7 @@ function HereticRoll:New(name, roll, max)
 end
 
 function HereticRoll.GetCategories()
-  return {25, 50, 100}
+  return {0, 25, 50, 100}
 end
 
 function HereticRoll.CategoryForMax(max)
@@ -32,16 +32,34 @@ function HereticRoll:GetCategory()
   return HereticRoll.CategoryForMax(self.max)
 end
 
+function HereticRoll.GetCategoryName(category)
+  if category == 1 then
+    return "Manual (Unassigned)"
+  elseif category == 2 then
+    return "Style"
+  elseif category == 3 then
+    return "Second"
+  elseif category == 4 then
+    return "First"
+  end
+  return "Invalid"
+end
+
+function HereticRoll.GetColoredCategoryName(category)
+  local _, _, _, hex = HereticRoll.ColorForCategory(category)
+  return "|c" .. hex .. HereticRoll.GetCategoryName(category) .. "|r"
+end
+
 function HereticRoll.ColorForCategory(category)
   if (category == 0) then
     return 1.0, 0, 0, "FFFF0000"
   end
-  return GetItemQualityColor(category)
+  return GetItemQualityColor(category - 1)
 end
 
 function HereticRoll.ColorForMax(max)
   local category = HereticRoll.CategoryForMax(max)
-  return GetItemQualityColor(category)
+  return HereticRoll.ColorForCategory(category)
 end
 
 function HereticRoll:GetColor()

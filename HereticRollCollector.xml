@@ -49,6 +49,7 @@
         <Scripts>
             <OnLoad>
                 self:RegisterForDrag("LeftButton");
+                self:RegisterForClicks("RightButtonUp");
             </OnLoad>
             <OnEnter>
               self:SetBackdropBorderColor(1.0, 1.0, 0.0)
@@ -56,6 +57,7 @@
             <OnLeave>
               self:SetBackdropBorderColor(0.2, 0.2, 0.2)
             </OnLeave>
+            <OnClick function="HereticRollFrame_OnClick"/>
             <OnDragStart function="HereticRollFrame_OnDragStart"/>
             <OnDragStop function="HereticRollFrame_OnDragStop"/>
         </Scripts>
