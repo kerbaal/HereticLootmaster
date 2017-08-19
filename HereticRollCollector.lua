@@ -174,3 +174,65 @@ function HereticRollFrame_OnDragStop(button)
   HereticRollDragFrame:Hide();
   HereticRollDragFrame:SetUserPlaced(false);
 end
+
+local HereticPlayerMenuFrame = CreateFrame("Frame", "HereticAssignMenuFrame", UIParent, "UIDropDownMenuTemplate")
+
+function HereticPlayerMenu(anchor, x, y, button)
+  UIDropDownMenu_Initialize(HereticPlayerMenuFrame, HereticPlayerMenu_Initialize, "MENU", nil, button);
+  ToggleDropDownMenu(1, nil, HereticPlayerMenuFrame, anchor, x, y, button);
+end
+
+function HereticPlayerMenu_Initialize( frame, level, button )
+  print("on EasyMenu_Initialize")
+  print(button)
+  local title = { text = "Assign to Player", isTitle = true};
+  UIDropDownMenu_AddButton(title);
+  for name,unitId in pairs(KetzerischerLootverteilerRaidInfo.unitids) do
+    local coloredName = Util.GetColoredPlayerName(name);
+    local value =
+      { text = coloredName,
+        func = function() print("You've chosen " .. coloredName);
+          print(button)
+                 HereticRollFrame_SetWinner(button, HereticRoll:New(name, 0, 0));
+
+               end };
+    UIDropDownMenu_AddButton( value, level );
+  end
+end
+
+function HereticRollCategoryMenu(anchor, x, y, button)
+  UIDropDownMenu_Initialize(HereticPlayerMenuFrame, HereticRollCategoryMenu_Initialize, "MENU", nil, button);
+  ToggleDropDownMenu(1, nil, HereticPlayerMenuFrame, anchor, x, y, button);
+end
+
+function HereticRollCategoryMenu_Initialize( frame, level, button )
+  if not button.roll then
+    Util.dbgprint("HereticRollCategoryMenu_Initialize called on button without roll")
+    return
+  end
+  local title = { text = "Change Category", isTitle = true};
+  UIDropDownMenu_AddButton(title);
+  for category,max in pairs(HereticRoll.GetCategories()) do
+    local coloredCategory = HereticRoll.GetColoredCategoryName(category);
+    local value =
+      { text = coloredCategory,
+        func = function() print("You've chosen " .. coloredCategory);
+                           button.roll.max = max;
+               end };
+    UIDropDownMenu_AddButton( value, level );
+  end
+end
+
+function HereticRollFrame_OnClick(button)
+  if button.HereticOnRightClick then
+    button:HereticOnRightClick()
+  end
+end
+
+function HereticRollFrame_OnClick(button)
+  if button.roll then
+    HereticRollCategoryMenu("cursor", 0 , 0, button);
+  else
+    HereticPlayerMenu("cursor", 0 , 0, button);
+  end
+end

@@ -129,6 +129,8 @@ function RaidInfo:DebugPrint()
   for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
 end
 
+KetzerischerLootverteilerRaidInfo = RaidInfo
+
 -- This function assumes that there is at most one saved ID for each
 -- instance name and difficulty.
 function FindSavedInstanceID(instanceName, instanceDifficultyID)
