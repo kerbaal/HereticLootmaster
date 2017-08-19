@@ -3,9 +3,9 @@
     <Script file="KetzerischerLootverteiler.lua"/>
 
     <Frame name="KetzerischerLootverteilerFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
-        <Size x="370" y="310"/>
+        <Size x="470" y="310"/>
         <TitleRegion>
-            <Size x="370" y="20"/>
+            <Size x="470" y="20"/>
             <Anchors><Anchor point="TOP"/>
             </Anchors>
         </TitleRegion>
@@ -53,7 +53,7 @@
                 </Anchors>
             </Button>
             <Frame name="$parentTabView1" parentArray="tabView" hidden="true">
-              <Size x="370" y="280"/>
+              <Size x="470" y="280"/>
               <Anchors>
                   <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
                       <Offset x="0" y="-30"/>
@@ -80,7 +80,7 @@
               </Frames>
             </Frame>
             <Frame name="$parentTabView2" parentArray="tabView" hidden="true">
-              <Size x="370" y="280"/>
+              <Size x="470" y="280"/>
               <Anchors>
                   <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
                       <Offset x="0" y="-30"/>

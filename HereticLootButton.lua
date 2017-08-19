@@ -45,6 +45,36 @@ function HereticLootButton_FromId(id)
   return _G["HereticLootFrame"..id.."Button"];
 end
 
+local GetMoreItemInfo
+do
+	local tooltipName = "PhanxScanningTooltip" .. random(100000, 10000000)
+
+	local tooltip = CreateFrame("GameTooltip", tooltipName, UIParent, "GameTooltipTemplate")
+	tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+
+	local textures = {}
+	for i = 1, 10 do
+		textures[i] = _G[tooltipName .. "Texture" .. i]
+	end
+
+	local cache = setmetatable({}, { __index = function(t, link)
+		tooltip:SetHyperlink(link)
+    local info = {tex = {}}
+    for i = 1, 10 do
+		  if textures[i]:IsShown() then
+        info.tex[i] = textures[i]:GetTexture()
+      end
+    end
+    t[link] = info
+		return info
+	end })
+
+	function GetMoreItemInfo(link)
+    if not link then return nil end
+		return cache[link]
+	end
+end
+
 function HereticLootButton_Update(parent, entry)
   local button = _G[parent:GetName() .. "Button"]
   if (button == nil) then
@@ -60,7 +90,7 @@ function HereticLootButton_Update(parent, entry)
 
   local itemName, itemLink, quality, itemLevel, itemMinLevel, itemType,
   itemSubType, itemStackCount, itemEquipLoc, itemTexture,
-  itemSellPrice = GetItemInfo(entry.itemLink)
+  itemSellPrice, 	itemClassID, itemSubClassID = GetItemInfo(entry.itemLink)
   local locked = false;
   local isQuestItem = false;
   local questId = nil;
@@ -102,6 +132,27 @@ function HereticLootButton_Update(parent, entry)
       countString:Hide();
     end
     button.quality = quality;
+
+    local itemLevelText = _G[parent:GetName() .. "ButtonTextItemLevel"];
+    itemLevelText:SetText(""..itemLevel);
+    local itemSlotText = _G[parent:GetName() .. "ButtonTextItemSlot"];
+    itemSlotText:SetText(""..(_G[itemEquipLoc] or ""));
+    local itemTypeText = _G[parent:GetName() .. "ButtonTextItemType"];
+    if (itemSubClassID ~= 0 and itemClassID == 4) then
+      itemTypeText:SetText(""..itemSubType);
+    else
+      itemTypeText:SetText("")
+    end
+
+    local info = GetMoreItemInfo(itemLink);
+    local itemSocketTexture = _G[parent:GetName() .. "ButtonTexture"];
+    if info.tex[1] then
+      itemSocketTexture:SetTexture(info.tex[1])
+      itemSocketTexture:Show()
+    else
+      itemSocketTexture:Hide()
+    end
+
     button:Enable();
   else
     text:SetText("");

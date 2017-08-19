@@ -62,7 +62,7 @@
   </Frame>
 
   <Frame name="HereticListViewTemplate" virtual="true">
-    <Size x="370" y="280"/>
+    <Size x="470" y="280"/>
     <Frames>
       <Button name="$parentHereticLootFrame1" inherits="HereticLootFrame" id="1" parentArray="lootFrames">
           <Anchors>
