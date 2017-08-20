@@ -95,9 +95,12 @@ function HereticRollCollectorFrame_Update(self, ...)
 end
 
 function HereticRollCollectorFrame_Toggle(self)
-  if self:IsVisible() then return end
-  HereticRollCollectorFrame_Update(self)
-  self:Show()
+  if self:IsVisible() then
+    self:Hide()
+  else
+    HereticRollCollectorFrame_Update(self)
+    self:Show()
+  end
 end
 
 function HereticRollCollectorFrame_BeginRollCollection(self, entry)

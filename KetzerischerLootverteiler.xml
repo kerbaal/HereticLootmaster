@@ -77,6 +77,30 @@
                         </Anchor>
                     </Anchors>
                 </Button>
+                <Button name="$parentRollButton">
+                  <Size>
+                    <AbsDimension x="24" y="24"/>
+                  </Size>
+                  <Scripts>
+                      <OnClick function="KetzerischerLootverteilerRollButton_OnClick"/>
+                      <OnEnter>
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                        GameTooltip:SetText("Click here toggle the roll collector");
+                      </OnEnter>
+                      <OnLeave>
+                        GameTooltip:Hide();
+                      </OnLeave>
+                  </Scripts>
+                  <Anchors>
+                      <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="KetzerischerLootverteilerRarityDropDown">
+                          <Offset x="0" y="-2"/>
+                      </Anchor>
+                  </Anchors>
+                  <DisabledTexture file="Interface\ButtonsUI-GroupLoot-Dice-Disabled"/>
+                  <NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up"/>
+                  <PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down"/>
+                  <HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD"/>
+                </Button>
               </Frames>
             </Frame>
             <Frame name="$parentTabView2" parentArray="tabView" hidden="true">
