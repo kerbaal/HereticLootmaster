@@ -29,6 +29,7 @@ end
 
 function PagedView:SetNumberOfItems(count)
   self.maxPages = max(ceil(count / self.itemsPerPage), 1);
+  self.currentPage = min(self.currentPage, self.maxPages);
 end
 
 function PagedView:GetNavigationStatus()
@@ -39,20 +40,21 @@ end
 function HereticNavigationFrame_OnLoad()
 end
 
-local function HereticNavigationFrame_Update(self)
-  self.pagination:SetNumberOfItems(self.itemList:Size())
-  local prev, next, currentPage, maxPages = self.pagination:GetNavigationStatus()
-  self.navigation.prevButton:SetEnabled(prev);
-  self.navigation.nextButton:SetEnabled(next);
-  self.navigation.pageText:SetFormattedText("%d / %d", currentPage, maxPages);
+local function HereticNavigationFrame_Update(self, pagination)
+  local prev, next, currentPage, maxPages = pagination:GetNavigationStatus()
+  self.prevButton:SetEnabled(prev);
+  self.nextButton:SetEnabled(next);
+  self.pageText:SetFormattedText("%d / %d", currentPage, maxPages);
 end
 
 function HereticListView_SetItemList(self, itemList)
   self.itemList = itemList
+  self.pagination.currentPage = 1
 end
 
 function HereticListView_Update(self)
-  HereticNavigationFrame_Update(self)
+  self.pagination:SetNumberOfItems(self.itemList:Size())
+  HereticNavigationFrame_Update(self.navigation, self.pagination)
 
   for i,frame in pairs(self.lootFrames) do
     local itemIndex = self.pagination:IdToIndex(i);
