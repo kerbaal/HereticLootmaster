@@ -10,10 +10,13 @@ local function getActiveTab()
   return KetzerischerLootverteilerFrame.tabView[tab]
 end
 
+function HereticTabView_Update(self)
+  self.itemView:HereticUpdate()
+end
+
 local function update(reason)
   Util.dbgprint("Updating UI (" .. reason ..")..")
-  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
-  HereticListView_Update(getActiveTab().itemView)
+  HereticTabView_Update(getActiveTab())
 end
 
 function KetzerischerLootverteilerShow()
@@ -425,7 +428,8 @@ function Addon:ProcessRenounceMaster(name)
   end
 end
 
-function KetzerischerLootverteilerFrame_OnUpdate(self, elapsed)
+function KetzerischerLootverteilerFrame_Update(self, elapsed)
+  getActiveTab():Update()
 end
 
 -- Eventhandler
@@ -735,9 +739,16 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[1].itemView, MasterLootItem_OnClick)
   HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
   HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[2].itemView, HistoryLootItem_OnClick)
+  KetzerischerLootverteilerFrame.tabView[1].itemView.HereticUpdate = HereticListView_Update
+  KetzerischerLootverteilerFrame.tabView[2].itemView.HereticUpdate =
+  function (self)
+    HereticListView_SetItemList(self, Addon:GetActiveHistory())
+    HereticListView_Update(self)
+  end
+  KetzerischerLootverteilerFrame.tabView[3].itemView.HereticUpdate = function () end
 
   KetzerischerLootverteilerFrame.GetItemAtCursor = KetzerischerLootverteilerFrame_GetItemAtCursor
-  PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, 2);
+  PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, #KetzerischerLootverteilerFrame.tabView);
   HereticTab_SetActiveTab(1)
 end
 

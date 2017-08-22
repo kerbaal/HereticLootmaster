@@ -130,11 +130,35 @@
                 </Button>
               </Frames>
             </Frame>
+            <Frame name="$parentTabView3" parentArray="tabView" hidden="true">
+              <Size x="470" y="280"/>
+              <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                      <Offset x="0" y="-30"/>
+                  </Anchor>
+              </Anchors>
+              <Frames>
+                <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
+                  <Anchors>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="0" y="0"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-28" y="0"/>
+                  </Anchors>
+                  <Frames>
+                    <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
+                      <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-20"/>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="20"/>
+                      </Anchors>
+                    </Slider>
+                  </Frames>
+                </ScrollFrame>
+              </Frames>
+            </Frame>
             <Button name="$parentTab1" inherits="CharacterFrameTabButtonTemplate" id="1" text="Master">
                 <Anchors>
-                    <Anchor point="CENTER" relativePoint="BOTTOMLEFT">
+                    <Anchor point="LEFT" relativePoint="BOTTOMLEFT">
                         <Offset>
-                            <AbsDimension x="60" y="-12"/>
+                            <AbsDimension x="16" y="-12"/>
                         </Offset>
                     </Anchor>
                 </Anchors>
@@ -155,10 +179,21 @@
                   <OnClick function="HereticTab_OnClick"></OnClick>
                 </Scripts>
             </Button>
+            <Button name="$parentTab3" inherits="CharacterFrameTabButtonTemplate" id="3" text="Raid">
+                <Anchors>
+                    <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT">
+                        <Offset>
+                            <AbsDimension x="-16" y="0"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <Scripts>
+                  <OnClick function="HereticTab_OnClick"></OnClick>
+                </Scripts>
+            </Button>
         </Frames>
         <Scripts>
             <OnLoad>KetzerischerLootverteilerFrame_OnLoad(self);</OnLoad>
-            <OnUpdate function="KetzerischerLootverteilerFrame_OnUpdate"/>
             <OnDragStart>KetzerischerLootverteilerFrame_OnDragStart(self);</OnDragStart>
             <OnDragStop>KetzerischerLootverteilerFrame_OnDragStop(self);</OnDragStop>
         </Scripts>
