@@ -842,6 +842,51 @@ function KetzerischerLootverteilerRollButton_OnClick(self)
    HereticRollCollectorFrame:Toggle()
 end
 
+function HereticPlayerInfo_OnClick(self)
+  Util.dbgprint("clicked")
+end
+
+function HereticPlayerInfo_OnEnter(self)
+
+end
+
+function HereticPlayerInfoScrollFrame_OnLoad(self)
+  HybridScrollFrame_OnLoad(self);
+  self.update = HereticPlayerInfoScrollFrame_Update;
+  self.scrollBar.doNotHide = true
+  HybridScrollFrame_CreateButtons(self, "HereticPlayerInfoTemplate");
+end
+
+function HereticPlayerInfoScrollFrame_Update(self)
+  local scrollFrame = KetzerischerLootverteilerFrameTabView3Container
+  local offset = HybridScrollFrame_GetOffset(scrollFrame);
+  local buttons = scrollFrame.buttons;
+  local numButtons = #buttons;
+  local buttonHeight = buttons[1]:GetHeight();
+
+  local playernames={}
+  local n=0
+
+  for k,v in pairs(RaidInfo.unitids) do
+    n=n+1
+    playernames[n]=k
+  end
+
+  for i=1, numButtons do
+    local frame = buttons[i];
+    local index = i + offset;
+    if (index <= n) then
+      frame:SetID(index);
+      frame.difficulty:SetText("test");
+      frame.name:SetText(Util.GetColoredPlayerName(playernames[i]));
+      frame.reset:SetFormattedText("|cff808080%s|r", RAID_INSTANCE_EXPIRES_EXPIRED);
+      frame:Show()
+    else
+      frame:Hide()
+    end
+  end
+  HybridScrollFrame_Update(scrollFrame, n * buttonHeight, scrollFrame:GetHeight());
+end
 --local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
 --  Suffix, Unique, LinkLvl, reforging, Name = string.find(arg, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
 --print("Got item" .. Id);
