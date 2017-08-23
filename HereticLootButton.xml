@@ -18,7 +18,7 @@
           <Texture name="$parentNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
             <Size x="240" y="30"/>
             <Anchors>
-              <Anchor point="BOTTOMLEFT" x="30" y="-7"/>
+              <Anchor point="BOTTOMLEFT" x="20" y="-7"/>
             </Anchors>
           </Texture>
           <FontString name="$parentText" inherits="GameFontNormal" justifyH="LEFT">
