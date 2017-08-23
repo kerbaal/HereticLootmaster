@@ -2,9 +2,9 @@
   ..\FrameXML\UI.xsd">
   <Script file="HereticLootButton.lua"/>
   <Button name="HereticLootButton" inherits="ItemButtonTemplate" virtual="true">
-      <HitRectInsets>
+      <!-- <HitRectInsets>
           <AbsInset left="0" right="-207" top="0" bottom="0"/>
-      </HitRectInsets>
+      </HitRectInsets>-->
       <Layers>
         <Layer level="OVERLAY">
           <Texture name="$parentIconQuestTexture">
@@ -48,13 +48,6 @@
               <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="70" y="0"/>
             </Anchors>
           </FontString>
-          <FontString name="$parentTextItemType" inherits="GameFontNormal" justifyH="RIGHT">
-            <Color r="1" g="1" b="1" a="1"/>
-            <Size x="70" y="18"/>
-            <Anchors>
-              <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="215" y="0"/>
-            </Anchors>
-          </FontString>
         </Layer>
       </Layers>
       <Scripts>
@@ -75,6 +68,32 @@
           </OnUpdate>
           <OnClick function="HereticLootButton_OnClick"/>
       </Scripts>
+      <Frames>
+        <Button name="$parentTextItem">
+          <Size x="70" y="18"/>
+          <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="210" y="-3"/>
+          </Anchors>
+          <Layers>
+            <Layer level="OVERLAY">
+              <FontString name="$parentType" inherits="GameFontNormal" justifyH="RIGHT">
+                <Color r="1" g="1" b="1" a="1"/>
+                <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+                </Anchors>
+              </FontString>
+            </Layer>
+          </Layers>
+          <Scripts>
+            <OnEnter>
+                HereticLootButtonItemType_OnEnter(self, motion)
+            </OnEnter>
+            <OnLeave>
+                GameTooltip:Hide();
+            </OnLeave>
+          </Scripts>
+        </Button>
+      </Frames>
   </Button>
 
   <Button name="HereticSlotButtonTemplate" virtual="true" hidden="true">

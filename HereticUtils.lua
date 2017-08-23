@@ -59,6 +59,31 @@ function Util.GetItemIdFromLink(itemLink)
   return itemId
 end
 
+local CLASS_TO_ARMOR_TYPE = {
+  [0] = {}, -- None
+  [1] = {[4] = true}, -- Warrior
+  [2] = {[4] = true}, -- Paladin
+  [3] = {[3] = true}, -- Hunter
+  [4] = {[2] = true}, -- Rogue
+  [5] = {[1] = true}, -- Priest
+  [6] = {[4] = true}, -- DeathKnight
+  [7] = {[3] = true}, -- Shaman
+  [8] = {[1] = true}, -- Mage
+  [9] = {[1] = true}, -- Warlock
+  [10] = {[2] = true}, -- Monk
+  [11] = {[2] = true}, -- Druid
+  [12] = {[2] = true}, -- Demon Hunter
+}
+
+function Util.CanWearArmorType(fullPlayerName, itemClassID, itemSubClassID)
+  local name = Util.ShortenFullName(fullPlayerName)
+  local class, classFileName, classID = UnitClass(name)
+  if (not classID or itemClassID ~= 4) then
+    return true
+  end
+  return CLASS_TO_ARMOR_TYPE[classID][itemSubClassID] or false
+end
+
 function Util.GetColoredPlayerName(fullPlayerName)
   local name = Util.ShortenFullName(fullPlayerName)
   local class, classFileName = UnitClass(name)

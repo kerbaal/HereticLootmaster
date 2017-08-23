@@ -41,38 +41,64 @@ function HereticLootButton_OnEnter(self, motion)
   end
 end
 
+function HereticLootButtonItemType_OnEnter(self, motion)
+  local lootButton = self:GetParent()
+  local parent = lootButton:GetParent()
+  local itemLink = parent.entry.itemLink
+  if itemLink then
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+
+    local itemName, _, quality, itemLevel, itemMinLevel, itemType,
+    itemSubType, itemStackCount, itemEquipLoc, itemTexture,
+    itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(itemLink)
+
+    local tooltip = ""
+    local notfirst = false
+    for name,unitId in pairs(KetzerischerLootverteilerRaidInfo.unitids) do
+      if Util.CanWearArmorType(name, itemClassID, itemSubClassID) then
+        if notfirst then
+          tooltip = tooltip .. " "
+        end
+        notfirst = true
+        tooltip = tooltip .. Util.GetColoredPlayerName(name)
+      end
+    end
+    GameTooltip:SetText(tooltip);
+  end
+end
+
 function HereticLootButton_FromId(id)
   return _G["HereticLootFrame"..id.."Button"];
 end
 
 local GetMoreItemInfo
 do
-	local tooltipName = "PhanxScanningTooltip" .. random(100000, 10000000)
+  local tooltipName = "PhanxScanningTooltip" .. random(100000, 10000000)
 
-	local tooltip = CreateFrame("GameTooltip", tooltipName, UIParent, "GameTooltipTemplate")
-	tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+  local tooltip = CreateFrame("GameTooltip", tooltipName, UIParent, "GameTooltipTemplate")
+  tooltip:SetOwner(UIParent, "ANCHOR_NONE")
 
-	local textures = {}
-	for i = 1, 10 do
-		textures[i] = _G[tooltipName .. "Texture" .. i]
-	end
+  local textures = {}
+  for i = 1, 10 do
+    textures[i] = _G[tooltipName .. "Texture" .. i]
+  end
 
-	local cache = setmetatable({}, { __index = function(t, link)
-		tooltip:SetHyperlink(link)
+  local cache = setmetatable({}, { __index = function(t, link)
+    tooltip:SetHyperlink(link)
     local info = {tex = {}}
     for i = 1, 10 do
-		  if textures[i]:IsShown() then
+      if textures[i]:IsShown() then
         info.tex[i] = textures[i]:GetTexture()
       end
     end
     t[link] = info
-		return info
-	end })
+    return info
+  end })
 
-	function GetMoreItemInfo(link)
+  function GetMoreItemInfo(link)
     if not link then return nil end
-		return cache[link]
-	end
+    return cache[link]
+  end
 end
 
 function HereticLootButton_Update(parent, entry)
