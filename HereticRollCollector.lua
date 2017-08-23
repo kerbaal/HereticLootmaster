@@ -30,25 +30,6 @@ local function eventHandler(self, event, ...)
   end
 end
 
-local function colorCount(hex, count)
-  local v = count or 0
-  if v == 0 then hex = "00000000" end
-  return "|c" .. hex .. v .. "|r"
-end
-
-local function formatLootCount(count)
-  local str = ""
-  local sep = ""
-  for i,cat in pairs(HereticRoll.GetCategories()) do
-    local _, _, _, hex = HereticRoll.ColorForMax(cat)
-    str = colorCount(hex, count[i]) .. sep .. str
-    sep = " "
-  end
-  local _, _, _, hex = HereticRoll.ColorForCategory(0)
-  str = str .. sep .. colorCount(hex, count[0])
-  return str
-end
-
 function HereticRollFrame_SetRoll(rollFrame, roll, showDropTarget)
   if not rollFrame then return end
   if not roll and not showDropTarget == true then
@@ -67,7 +48,7 @@ function HereticRollFrame_SetRoll(rollFrame, roll, showDropTarget)
     rollText:SetTextColor(roll:GetColor())
     rollText:Show()
     local count = Addon:CountLootFor(roll.name)
-    itemCountText:SetText(formatLootCount(count))
+    itemCountText:SetText(Util.formatLootCount(count))
     itemCountText:Show()
     slotText:Hide()
   else

@@ -93,4 +93,23 @@ function Util.table_contains(t, x)
   return false
 end
 
+local function colorCount(hex, count)
+  local v = count or 0
+  if v == 0 then hex = "00000000" end
+  return "|c" .. hex .. v .. "|r"
+end
+
+function Util.formatLootCount(count)
+  local str = ""
+  local sep = ""
+  for i,cat in pairs(HereticRoll.GetCategories()) do
+    local _, _, _, hex = HereticRoll.ColorForMax(cat)
+    str = colorCount(hex, count[i]) .. sep .. str
+    sep = " "
+  end
+  local _, _, _, hex = HereticRoll.ColorForCategory(0)
+  str = str .. sep .. colorCount(hex, count[0])
+  return str
+end
+
 Addon.Util = Util

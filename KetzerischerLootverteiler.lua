@@ -879,7 +879,8 @@ function HereticPlayerInfoScrollFrame_Update(self)
       frame:SetID(index);
       frame.difficulty:SetText("test");
       frame.name:SetText(Util.GetColoredPlayerName(playernames[i]));
-      frame.reset:SetFormattedText("|cff808080%s|r", RAID_INSTANCE_EXPIRES_EXPIRED);
+      local count = Addon:CountLootFor(playernames[i])
+      frame.reset:SetText(Util.formatLootCount(count))
       frame:Show()
     else
       frame:Hide()
