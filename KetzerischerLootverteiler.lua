@@ -878,8 +878,8 @@ function HereticPlayerInfoScrollFrame_Update(self)
     if (index <= n) then
       frame:SetID(index);
       frame.difficulty:SetText("test");
-      frame.name:SetText(Util.GetColoredPlayerName(playernames[i]));
-      local count = Addon:CountLootFor(playernames[i])
+      frame.name:SetText(Util.GetColoredPlayerName(playernames[index]));
+      local count = Addon:CountLootFor(playernames[index])
       frame.reset:SetText(Util.formatLootCount(count))
       frame:Show()
     else
