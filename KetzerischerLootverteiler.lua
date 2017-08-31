@@ -324,7 +324,7 @@ function Addon:AddItem(itemString, from, sender)
   local historyIndex, history = Addon:GetHistoryForCurrentInstance()
   history:AddEntry(item)
   --PlaySound("igBackPackCoinSelect")
-  PlaySound("TellMessage");
+  PlaySound(SOUNDKIT.TELL_MESSAGE);
   --PlaySound("igMainMenuOptionCheckBoxOn")
 
   if Addon:IsMaster() then
@@ -348,7 +348,7 @@ function Addon:DeleteItem(index)
   end
 
   Addon.itemList:DeleteEntryAt(index)
-  PlaySound("igMainMenuOptionCheckBoxOff");
+  PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
   update("DeleteItem")
 end
 

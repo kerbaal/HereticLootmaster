@@ -201,9 +201,9 @@ end
 
 function HereticLootFrame_SetWinner(frame, roll)
   if roll then
-    PlaySound("igCharacterInfoTab");
+    PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB);
   else
-    PlaySound("INTERFACESOUND_LOSTTARGETUNIT");
+    PlaySound(SOUNDKIT.INTERFACE_SOUND_LOST_TARGET_UNIT);
   end
   local prevWinner = frame.entry.winner
   frame.entry.winner = roll
