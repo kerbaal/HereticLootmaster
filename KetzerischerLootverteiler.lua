@@ -741,11 +741,14 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[2].itemView, HistoryLootItem_OnClick)
   KetzerischerLootverteilerFrame.tabView[1].itemView.HereticUpdate = HereticListView_Update
   KetzerischerLootverteilerFrame.tabView[2].itemView.HereticUpdate =
-  function (self)
-    HereticListView_SetItemList(self, Addon:GetActiveHistory())
-    HereticListView_Update(self)
-  end
-  KetzerischerLootverteilerFrame.tabView[3].itemView.HereticUpdate = function () end
+    function (self)
+      HereticListView_SetItemList(self, Addon:GetActiveHistory())
+      HereticListView_Update(self)
+    end
+  KetzerischerLootverteilerFrame.tabView[3].itemView.HereticUpdate =
+    function (self)
+
+    end
 
   KetzerischerLootverteilerFrame.GetItemAtCursor = KetzerischerLootverteilerFrame_GetItemAtCursor
   PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, #KetzerischerLootverteilerFrame.tabView);
