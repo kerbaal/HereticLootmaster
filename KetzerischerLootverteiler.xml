@@ -185,7 +185,7 @@
                 <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
                   <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="5" y="0"/>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-28" y="0"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-28" y="10"/>
                   </Anchors>
                   <Frames>
                     <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">

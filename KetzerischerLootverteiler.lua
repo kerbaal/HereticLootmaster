@@ -813,6 +813,7 @@ end
 local function KetzerischerLootverteilerHistoryDropDown_OnClick(self)
   UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerHistoryDropDown, self:GetID())
   Addon:SetHistoryDropDown(self:GetID())
+  Addon:RecomputeLootCount()
 end
 
 
