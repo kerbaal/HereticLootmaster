@@ -64,10 +64,13 @@ end
 
 function HereticRaidInfo:GetPlayerClassColor(fullName)
   local cacheEntry = HereticRaidInfo.classCache[fullName]
-  local classFileName
+  local class, classFileName
   if not cacheEntry then
     local name = Util.ShortenFullName(fullName)
-    _, classFileName = UnitClass(name)
+    class, classFileName = UnitClass(name)
+    if class and classFileName then
+      HereticRaidInfo.classCache[fullName] = {class, classFileName}
+    end
   else
     classFileName = cacheEntry[2]
   end
@@ -131,4 +134,18 @@ end
 
 function HereticRaidInfo:DebugPrint()
   for index,value in pairs(HereticRaidInfo.unitids) do Util.dbgprint(index," ",value) end
+end
+
+function HereticRaidInfo:Serialize(obj)
+  obj.HereticRaidInfo = {}
+  obj.HereticRaidInfo.classCache = HereticRaidInfo.classCache
+end
+
+function HereticRaidInfo:Deserialize(obj)
+  if not obj.HereticRaidInfo then return end
+  if not obj.HereticRaidInfo.classCache then return end
+  local cache = HereticRaidInfo.classCache
+  for k,v in pairs(obj.HereticRaidInfo.classCache) do
+    cache[k] = v
+  end
 end

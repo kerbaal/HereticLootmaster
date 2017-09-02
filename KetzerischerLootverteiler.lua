@@ -374,10 +374,12 @@ local function eventHandlerLogout(self, event)
   KetzerischerLootverteilerData.master = Addon.master
   KetzerischerLootverteilerData.minRarity = Addon.minRarity
   KetzerischerLootverteilerData.activeTab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
+  HereticRaidInfo:Serialize(KetzerischerLootverteilerData)
 end
 
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
+    HereticRaidInfo:Deserialize(KetzerischerLootverteilerData)
     HereticRaidInfo:Update()
     if KetzerischerLootverteilerData.activeHistoryIndex then
       Addon.activeHistoryIndex = KetzerischerLootverteilerData.activeHistoryIndex
