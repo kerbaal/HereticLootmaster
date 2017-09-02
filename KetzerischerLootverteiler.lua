@@ -226,17 +226,33 @@ function Addon:RecomputeLootCount()
   for i,entry in pairs(Addon:GetActiveHistory().entries) do
     if (entry.winner) then
       local cat = entry.winner:GetCategory()
-      local count = Addon.lootCount[entry.winner.name] or {}
+      local record = Addon.lootCount[entry.winner.name] or {}
+      Addon.lootCount[entry.winner.name] = record
+      local count = record.count or {}
+      record.count = count
       count[cat] = (count[cat] or 0) + 1
-      Addon.lootCount[entry.winner.name] = count
+    end
+    if (entry.donator) then
+      Util.dbgprint(entry.donator)
+      local record = Addon.lootCount[entry.donator] or {}
+      Addon.lootCount[entry.donator] = record
+      local donations = record.donations or 0
+      record.donations = donations + 1
     end
   end
 end
 
 function Addon:CountLootFor(name, cat)
-  local count = Addon.lootCount[name] or {}
+  local entry = Addon.lootCount[name] or {}
+  local count = entry.count or {}
   if cat == nil then return count end
   return count[cat] or 0
+end
+
+function Addon:CountDonationsFor(name)
+  local entry = Addon.lootCount[name] or {}
+  local donations = entry.donations or 0
+  return donations
 end
 
 function Addon:OnWinnerUpdate(entry, prevWinner)
@@ -845,6 +861,30 @@ function HereticPlayerInfoScrollFrame_OnLoad(self)
   HybridScrollFrame_CreateButtons(self, "HereticPlayerInfoTemplate");
 end
 
+function HereticLootTally_OnEnter(self)
+  GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+  local categories = ""
+  local first = true
+  for category,max in pairs(HereticRoll.GetCategories()) do
+    local coloredCategory = HereticRoll.GetColoredCategoryName(category);
+    categories = coloredCategory .. (first and " " or ", ") .. categories
+    first = false
+  end
+  local text = "Shows items |cff00ccffdonated|r and received in categories "
+  GameTooltip:SetText(text .. categories);
+end
+
+function HereticLootTally_SetFromPlayer(self, name)
+  local donations = Addon:CountDonationsFor(name)
+  if donations > 0 then
+    self.donated:SetFormattedText("|cff00ccff%d|r /", donations);
+  else
+    self.donated:SetText("");
+  end
+  local count = Addon:CountLootFor(name)
+  self.received:SetText(Util.formatLootCount(count))
+end
+
 function HereticPlayerInfoScrollFrame_Update(self)
   local scrollFrame = KetzerischerLootverteilerFrameTabView3Container
   local offset = HybridScrollFrame_GetOffset(scrollFrame);
@@ -855,7 +895,7 @@ function HereticPlayerInfoScrollFrame_Update(self)
   local playernames={}
   local n=0
 
-  for k,v in pairs(RaidInfo.unitids) do
+  for k,v in pairs(Addon.lootCount) do
     n=n+1
     playernames[n]=k
   end
@@ -865,10 +905,8 @@ function HereticPlayerInfoScrollFrame_Update(self)
     local index = i + offset;
     if (index <= n) then
       frame:SetID(index);
-      frame.difficulty:SetText("test");
       frame.name:SetText(Util.GetColoredPlayerName(playernames[index]));
-      local count = Addon:CountLootFor(playernames[index])
-      frame.reset:SetText(Util.formatLootCount(count))
+      HereticLootTally_SetFromPlayer(frame.lootTally, playernames[index])
       frame:Show()
     else
       frame:Hide()
