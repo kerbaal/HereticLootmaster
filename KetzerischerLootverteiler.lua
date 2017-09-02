@@ -3,7 +3,6 @@ local ADDON, Addon = ...
 local Util = Addon.Util
 
 KetzerischerLootverteilerData = {}
-local RaidInfo = {}
 
 local function getActiveTab()
   local tab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
@@ -31,108 +30,6 @@ function KetzerischerLootverteilerToggle()
     KetzerischerLootverteilerShow()
   end
 end
-
-function RaidInfo:Initialize()
-  RaidInfo.unitids = {}
-  RaidInfo.newPlayers = {}
-  RaidInfo.stale = "stale"
-  RaidInfo.timer = nil
-end
-
-local function RaidInfoUpdate()
-  Util.dbgprint("Reindexing Raid through timer...")
-  RaidInfo:Update()
-end
-
-function RaidInfo:ProvideReindexing()
-  if RaidInfo.timer then RaidInfo.timer:Cancel() end
-  RaidInfo.timer = nil
-end
-
-function RaidInfo:RequestReindexing()
-  if (RaidInfo.timer == nil) then
-    Util.dbgprint("Request Reindexing...")
-    RaidInfo.timer = C_Timer.NewTimer(2, RaidInfoUpdate)
-  end
-end
-
-function RaidInfo:markStale()
-  for i,v in pairs(RaidInfo.unitids) do
-    RaidInfo.unitids[i] = RaidInfo.stale
-  end
-end
-
-function RaidInfo:clearStale()
-  for i,v in pairs(RaidInfo.unitids) do
-    if (v == RaidInfo.stale ) then
-      RaidInfo.unitids[i] = nil
-    end
-  end
-end
-
-function RaidInfo:recordByUnitId(unitId)
-  local fullName = Util.GetFullUnitName(unitId)
-  if (not fullName) then return end
-  local first, _ = Util.DecomposeName(fullName)
-  if (first == UNKNOWNOBJECT) then
-     RaidInfo:RequestReindexing()
-     return
-   end
-  if RaidInfo.unitids[fullName] == nil then
-    table.insert(RaidInfo.newPlayers, fullName)
-  end
-  RaidInfo.unitids[fullName] = unitId
-end
-
-function RaidInfo:printNewPlayers(unitId)
-  local players = ""
-  for i,v in pairs(RaidInfo.newPlayers) do
-    players = players .. " " .. v
-  end
-  Util.dbgprint ("New players (" .. table.getn(RaidInfo.newPlayers) .. "):" .. players)
-end
-
-function RaidInfo:GetNewPlayers()
-  return RaidInfo.newPlayers
-end
-
-function RaidInfo:Update()
-  RaidInfo:ProvideReindexing()
-
-  RaidInfo:markStale()
-  wipe(RaidInfo.newPlayers)
-  RaidInfo.unitids [Util.GetFullUnitName("player")] = "player";
-  local numMembers = GetNumGroupMembers(LE_PARTY_CATEGORY_HOME)
-  if (numMembers > 0) then
-    local prefix = "raid"
-    if ( not IsInRaid(LE_PARTY_CATEGORY_HOME) ) then
-      prefix = "party"
-      -- Party ids don't include the player, hence decrement.
-      numMembers = numMembers - 1
-    end
-
-    for index = 1, numMembers do
-      local unitId = prefix .. index
-      RaidInfo:recordByUnitId(unitId)
-    end
-  end
-  RaidInfo:printNewPlayers()
-  RaidInfo:clearStale()
-end
-
-function RaidInfo:GetUnitId(name)
-  local id = RaidInfo.unitids[name]
-  if id then return id end
-
-  local realm = GetRealmName():gsub("%s+", "")
-  return RaidInfo.unitids[name .. "-" .. realm]
-end
-
-function RaidInfo:DebugPrint()
-  for index,value in pairs(RaidInfo.unitids) do Util.dbgprint(index," ",value) end
-end
-
-KetzerischerLootverteilerRaidInfo = RaidInfo
 
 -- This function assumes that there is at most one saved ID for each
 -- instance name and difficulty.
@@ -409,7 +306,7 @@ function Addon:ProcessClaimMaster(name)
   if (Addon.master == name) then return end
   Util.dbgprint(name .. " claims lootmastership")
 
-  local unitId = RaidInfo:GetUnitId(name)
+  local unitId = HereticRaidInfo:GetUnitId(name)
   if (Addon:IsAuthorizedToClaimMaster(unitId)) then
     Addon:SetMaster(name)
     print ("You accepted " .. name .. " as your Ketzerischer Lootverteiler.")
@@ -481,7 +378,7 @@ end
 
 local function eventHandlerAddonLoaded(self, event, addonName)
    if (addonName == ADDON) then
-    RaidInfo:Update()
+    HereticRaidInfo:Update()
     if KetzerischerLootverteilerData.activeHistoryIndex then
       Addon.activeHistoryIndex = KetzerischerLootverteilerData.activeHistoryIndex
     end
@@ -559,10 +456,10 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
 end
 
 local function eventHandlerRaidRosterUpdate(self, event, arg)
-  RaidInfo:Update()
+  HereticRaidInfo:Update()
   if Addon:IsMaster() then
     if Addon:IsAuthorizedToClaimMaster("player") then
-      for i,v in pairs(RaidInfo:GetNewPlayers()) do
+      for i,v in pairs(HereticRaidInfo:GetNewPlayers()) do
         SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", v)
       end
     else
@@ -648,7 +545,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
       print ("Debug is now off.")
     end
   elseif (msg:match("^%s*raid%s*$")) then
-    RaidInfo:DebugPrint()
+    HereticRaidInfo:DebugPrint()
   end
 end
 
@@ -720,7 +617,7 @@ end
 
 function KetzerischerLootverteilerFrame_OnLoad(self)
   Addon:Initialize()
-  RaidInfo:Initialize()
+  HereticRaidInfo:Initialize()
   KetzerischerLootverteilerFrame:SetScript("OnEvent", eventHandler);
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_WHISPER");
   KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_BN_WHISPER");
@@ -905,7 +802,7 @@ function HereticPlayerInfoScrollFrame_Update(self)
     local index = i + offset;
     if (index <= n) then
       frame:SetID(index);
-      frame.name:SetText(Util.GetColoredPlayerName(playernames[index]));
+      frame.name:SetText(HereticRaidInfo:GetColoredPlayerName(playernames[index]));
       HereticLootTally_SetFromPlayer(frame.lootTally, playernames[index])
       frame:Show()
     else

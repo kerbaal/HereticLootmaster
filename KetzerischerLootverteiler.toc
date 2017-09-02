@@ -6,6 +6,7 @@
 ## SavedVariablesPerCharacter: KetzerischerLootverteilerData
 
 HereticUtils.lua
+HereticRaidInfo.lua
 HereticRoll.lua
 HereticRollCollector.xml
 HereticItemList.lua

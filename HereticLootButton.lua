@@ -54,13 +54,13 @@ function HereticLootButtonItemType_OnEnter(self, motion)
 
     local tooltip = ""
     local notfirst = false
-    for name,unitId in pairs(KetzerischerLootverteilerRaidInfo.unitids) do
+    for name,unitId in pairs(HereticRaidInfo.unitids) do
       if Util.CanWearArmorType(name, itemClassID, itemSubClassID) then
         if notfirst then
           tooltip = tooltip .. " "
         end
         notfirst = true
-        tooltip = tooltip .. Util.GetColoredPlayerName(name)
+        tooltip = tooltip .. HereticRaidInfo:GetColoredPlayerName(name)
       end
     end
     GameTooltip:SetText(tooltip);
@@ -252,7 +252,7 @@ function HereticLootFrame_Update(frame)
   HereticLootButton_Update(frame, frame.entry)
   local name, realm = Util.DecomposeName(frame.entry.donator)
   local from = _G[frame:GetName() .. "FromButtonText"];
-  from:SetText(Util.GetColoredPlayerName(frame.entry.donator));
+  from:SetText(HereticRaidInfo:GetColoredPlayerName(frame.entry.donator));
   local dateText = _G[frame:GetName() .. "FromButtonDate"];
   dateText:SetText(date("%H:%M %d.%m.", frame.entry.time));
   frame:Show();
@@ -272,8 +272,8 @@ function HereticPlayerMenu_Initialize( frame, level, button )
   print(button)
   local title = { text = "Assign to Player", isTitle = true};
   UIDropDownMenu_AddButton(title);
-  for name,unitId in pairs(KetzerischerLootverteilerRaidInfo.unitids) do
-    local coloredName = Util.GetColoredPlayerName(name);
+  for name,unitId in pairs(HereticRaidInfo.unitids) do
+    local coloredName = HereticRaidInfo:GetColoredPlayerName(name);
     local value =
       { text = coloredName,
         func = function() print("You've chosen " .. coloredName);
