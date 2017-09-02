@@ -233,21 +233,6 @@ function Addon:RecomputeLootCount()
   end
 end
 
-function Addon:UpdateLootCount(fromWinner, toWinner)
-  if fromWinner then
-    local cat = fromWinner:GetCategory()
-    local count = Addon.lootCount[fromWinner.name] or {}
-    count[cat] = (count[cat] or 0) - 1
-    Addon.lootCount[fromWinner.name] = count
-  end
-  if toWinner then
-    local cat = toWinner:GetCategory()
-    local count = Addon.lootCount[toWinner.name] or {}
-    count[cat] = (count[cat] or 0) + 1
-    Addon.lootCount[toWinner.name] = count
-  end
-end
-
 function Addon:CountLootFor(name, cat)
   local count = Addon.lootCount[name] or {}
   if cat == nil then return count end
@@ -255,7 +240,6 @@ function Addon:CountLootFor(name, cat)
 end
 
 function Addon:OnWinnerUpdate(entry, prevWinner)
-  --Addon:UpdateLootCount(prevWinner, entry.winner)
   Addon:RecomputeLootCount()
   update("on winner update")
   if (Addon:IsMaster()) then
