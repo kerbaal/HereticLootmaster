@@ -42,7 +42,7 @@ function HereticRollFrame_SetRoll(rollFrame, roll, showDropTarget)
   local itemCountText = _G[rollFrame:GetName() .. "ItemCount"]
   local slotText = _G[rollFrame:GetName() .. "SlotText"]
   if roll then
-    nameText:SetText(Util.ShortenFullName(roll.name))
+    nameText:SetText(Util.GetColoredPlayerName(roll.name))
     nameText:Show()
     rollText:SetText(""..roll.roll)
     rollText:SetTextColor(roll:GetColor())
