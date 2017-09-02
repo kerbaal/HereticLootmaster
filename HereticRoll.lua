@@ -34,7 +34,7 @@ end
 
 function HereticRoll.GetCategoryName(category)
   if category == 1 then
-    return "Manual (Unassigned)"
+    return "Manual"
   elseif category == 2 then
     return "Style"
   elseif category == 3 then
