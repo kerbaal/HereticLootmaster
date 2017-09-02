@@ -146,6 +146,8 @@ function HereticRaidInfo:Deserialize(obj)
   if not obj.HereticRaidInfo.classCache then return end
   local cache = HereticRaidInfo.classCache
   for k,v in pairs(obj.HereticRaidInfo.classCache) do
-    cache[k] = v
+    if (#v == 2) then
+      cache[k] = v
+    end
   end
 end
