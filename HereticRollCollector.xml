@@ -160,15 +160,6 @@
                      <Offset x="0" y="0"/>
                  </Anchor>
              </Anchors>
-             <Scripts>
-               <OnEnter>
-                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-                 GameTooltip:SetText("Closing this window discards all rolls");
-               </OnEnter>
-               <OnLeave>
-                 GameTooltip:Hide();
-               </OnLeave>
-             </Scripts>
          </Button>
         </Frames>
         <Scripts>
