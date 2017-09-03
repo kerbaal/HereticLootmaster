@@ -130,7 +130,6 @@ function Addon:RecomputeLootCount()
       count[cat] = (count[cat] or 0) + 1
     end
     if (entry.donator) then
-      Util.dbgprint(entry.donator)
       local record = Addon.lootCount[entry.donator] or {}
       Addon.lootCount[entry.donator] = record
       local donations = record.donations or 0
@@ -562,7 +561,6 @@ StaticPopupDialogs["HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY"] = {
   OnCancel = function()
     -- Do nothing and keep item.
   end,
-  sound = "levelup2",
   timeout = 10,
   whileDead = true,
   hideOnEscape = true,
@@ -634,16 +632,20 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
 
   self:RegisterForDrag("LeftButton");
 
-  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[1].itemView, Addon.itemList)
-  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[1].itemView, MasterLootItem_OnClick)
-  HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
-  HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[2].itemView, HistoryLootItem_OnClick)
-  KetzerischerLootverteilerFrame.tabView[1].itemView.HereticUpdate = HereticListView_Update
+  --HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[1].itemView, Addon.itemList)
+  --HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[1].itemView, MasterLootItem_OnClick)
+  --HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
+  --HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[2].itemView, HistoryLootItem_OnClick)
+  KetzerischerLootverteilerFrame.tabView[1].itemView.HereticUpdate = HereticHistoryScrollFrame_Update
+  KetzerischerLootverteilerFrame.tabView[1].itemView.itemList = Addon.itemList
+  KetzerischerLootverteilerFrame.tabView[1].itemView.HereticOnItemClicked =  MasterLootItem_OnClick
   KetzerischerLootverteilerFrame.tabView[2].itemView.HereticUpdate =
     function (self)
-      HereticListView_SetItemList(self, Addon:GetActiveHistory())
-      HereticListView_Update(self)
+      self.itemList = Addon:GetActiveHistory()
+      HereticHistoryScrollFrame_Update(self)
     end
+  KetzerischerLootverteilerFrame.tabView[2].itemView.itemList = Addon.histories[1]
+  KetzerischerLootverteilerFrame.tabView[2].itemView.HereticOnItemClicked = HistoryLootItem_OnClick
   KetzerischerLootverteilerFrame.tabView[3].itemView.HereticUpdate =
     function (self)
 
@@ -817,7 +819,34 @@ function HereticPlayerInfoScrollFrame_Update(self)
   end
   HybridScrollFrame_Update(scrollFrame, n * buttonHeight, scrollFrame:GetHeight());
 end
---local _, _, Color, Ltype, Id, Enchant, Gem1, Gem2, Gem3, Gem4,
---  Suffix, Unique, LinkLvl, reforging, Name = string.find(arg, "|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
---print("Got item" .. Id);
--- _G["GameTooltipTextLeft14"]
+
+function HereticHistoryScrollFrame_OnLoad(self)
+  HybridScrollFrame_OnLoad(self);
+  self.update = HereticHistoryScrollFrame_Update;
+  self.scrollBar.doNotHide = true
+  --self.dynamic =
+  --  function (offset)
+  --    return math.floor(offset / 20), offset % 20
+  --  end
+  HybridScrollFrame_CreateButtons(self, "HereticLootFrame");
+end
+
+function HereticHistoryScrollFrame_Update(self)
+  if not self or not self.itemList then return end
+  local scrollFrame = self
+  local offset = HybridScrollFrame_GetOffset(scrollFrame);
+  local buttons = scrollFrame.buttons;
+  local numButtons = #buttons;
+  local buttonHeight = buttons[1]:GetHeight();
+  local itemList = self.itemList
+  local n = itemList:Size();
+  Util.dbgprint("update history list")
+  for i=1, numButtons do
+    local frame = buttons[i];
+    local index = i + offset;
+    HereticLootFrame_SetLoot(frame, index, itemList:GetEntry(index))
+    HereticLootFrame_Update(frame)
+    frame.HereticOnClick = scrollFrame.HereticOnItemClicked
+  end
+  HybridScrollFrame_Update(scrollFrame, n * buttonHeight, scrollFrame:GetHeight());
+end

@@ -112,6 +112,7 @@
             </Layer>
         </Layers>
           <Frames>
+
             <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
                 <Size x="24" y="24"/>
                 <Anchors>
@@ -120,6 +121,7 @@
                     </Anchor>
                 </Anchors>
             </Button>
+
             <Frame name="$parentTabView1" parentArray="tabView" hidden="true">
               <Size x="470" y="280"/>
               <Anchors>
@@ -128,13 +130,26 @@
                   </Anchor>
               </Anchors>
               <Frames>
-                <Frame name="$parentItemViewMaster" inherits="HereticListViewTemplate" parentKey="itemView">
+                <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
                   <Anchors>
-                      <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
-                          <Offset x="0" y="0"/>
-                      </Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="0"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="35"/>
                   </Anchors>
-                </Frame>
+                  <Frames>
+                    <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
+                      <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-14"/>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="14"/>
+                      </Anchors>
+                    </Slider>
+                  </Frames>
+                  <Scripts>
+                    <OnLoad function="HereticHistoryScrollFrame_OnLoad"/>
+                    <OnShow>
+                      HereticHistoryScrollFrame_Update()
+                    </OnShow>
+                  </Scripts>
+                </ScrollFrame>
                 <Button name="KetzerischerLootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
                     <Scripts>
                         <OnShow function="KetzerischerLootverteilerRarityDropDown_OnShow"/>
@@ -171,6 +186,7 @@
                 </Button>
               </Frames>
             </Frame>
+
             <Frame name="$parentTabView2" parentArray="tabView" hidden="true">
               <Size x="470" y="280"/>
               <Anchors>
@@ -179,13 +195,26 @@
                   </Anchor>
               </Anchors>
               <Frames>
-                <Frame name="$parentItemViewHistory" inherits="HereticListViewTemplate" parentKey="itemView">
+                <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
                   <Anchors>
-                      <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
-                          <Offset x="0" y="0"/>
-                      </Anchor>
+                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="0"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="35"/>
                   </Anchors>
-                </Frame>
+                  <Frames>
+                    <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
+                      <Anchors>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-14"/>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="14"/>
+                      </Anchors>
+                    </Slider>
+                  </Frames>
+                  <Scripts>
+                    <OnLoad function="HereticHistoryScrollFrame_OnLoad"/>
+                    <OnShow>
+                      HereticHistoryScrollFrame_Update()
+                    </OnShow>
+                  </Scripts>
+                </ScrollFrame>
                 <Button name="KetzerischerLootverteilerHistoryDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
                     <Scripts>
                       <OnShow function="KetzerischerLootverteilerHistoryDropDown_OnShow"/>
@@ -198,6 +227,7 @@
                 </Button>
               </Frames>
             </Frame>
+
             <Frame name="$parentTabView3" parentArray="tabView" hidden="true">
               <Size x="470" y="280"/>
               <Anchors>
@@ -209,13 +239,13 @@
                 <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
                   <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="5" y="0"/>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-28" y="10"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="10"/>
                   </Anchors>
                   <Frames>
                     <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
                       <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-20"/>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="20"/>
+                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-14"/>
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="14"/>
                       </Anchors>
                     </Slider>
                   </Frames>
@@ -228,6 +258,8 @@
                 </ScrollFrame>
               </Frames>
             </Frame>
+
+
             <Button name="$parentTab1" inherits="CharacterFrameTabButtonTemplate" id="1" text="Master">
                 <Anchors>
                     <Anchor point="LEFT" relativePoint="BOTTOMLEFT">
@@ -241,6 +273,7 @@
                     </OnClick>
                 </Scripts>
             </Button>
+
             <Button name="$parentTab2" inherits="CharacterFrameTabButtonTemplate" id="2" text="History">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT">
@@ -253,6 +286,7 @@
                   <OnClick function="HereticTab_OnClick"></OnClick>
                 </Scripts>
             </Button>
+
             <Button name="$parentTab3" inherits="CharacterFrameTabButtonTemplate" id="3" text="Raid">
                 <Anchors>
                     <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT">
@@ -265,6 +299,7 @@
                   <OnClick function="HereticTab_OnClick"></OnClick>
                 </Scripts>
             </Button>
+
         </Frames>
         <Scripts>
             <OnLoad>KetzerischerLootverteilerFrame_OnLoad(self);</OnLoad>
