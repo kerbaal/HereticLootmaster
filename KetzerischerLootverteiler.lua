@@ -757,6 +757,10 @@ function HereticPlayerInfoScrollFrame_OnLoad(self)
   HybridScrollFrame_OnLoad(self);
   self.update = HereticPlayerInfoScrollFrame_Update;
   self.scrollBar.doNotHide = true
+  self.dynamic =
+    function (offset)
+      return math.floor(offset / 20), offset % 20
+    end
   HybridScrollFrame_CreateButtons(self, "HereticPlayerInfoTemplate");
 end
 
