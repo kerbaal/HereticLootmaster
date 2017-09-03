@@ -632,10 +632,6 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
 
   self:RegisterForDrag("LeftButton");
 
-  --HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[1].itemView, Addon.itemList)
-  --HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[1].itemView, MasterLootItem_OnClick)
-  --HereticListView_SetItemList(KetzerischerLootverteilerFrame.tabView[2].itemView, Addon:GetActiveHistory())
-  --HereticListView_SetOnClickHandler(KetzerischerLootverteilerFrame.tabView[2].itemView, HistoryLootItem_OnClick)
   KetzerischerLootverteilerFrame.tabView[1].itemView.HereticUpdate = HereticHistoryScrollFrame_Update
   KetzerischerLootverteilerFrame.tabView[1].itemView.itemList = Addon.itemList
   KetzerischerLootverteilerFrame.tabView[1].itemView.HereticOnItemClicked =  MasterLootItem_OnClick
