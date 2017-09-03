@@ -606,7 +606,7 @@ function HistoryLootItem_OnClick(self, button, down)
 end
 
 function KetzerischerLootverteilerFrame_GetItemAtCursor(self)
-  local frame = HereticListView_GetItemAtCursor(getActiveTab().itemView)
+  local frame = HereticHistoryScrollFrame_GetItemAtCursor(getActiveTab().itemView)
   if frame then return frame end
   frame = HereticRollCollectorFrame
   if (frame and frame:IsMouseOver() and frame:IsVisible()) then
@@ -849,4 +849,17 @@ function HereticHistoryScrollFrame_Update(self)
     frame.HereticOnClick = scrollFrame.HereticOnItemClicked
   end
   HybridScrollFrame_Update(scrollFrame, n * buttonHeight, scrollFrame:GetHeight());
+end
+
+function HereticHistoryScrollFrame_GetItemAtCursor(self)
+  if not self or not self.itemList then return nil end
+  local buttons = self.buttons;
+  local numButtons = #buttons;
+  for i=1, numButtons do
+    local frame = buttons[i];
+    if (frame and frame:IsMouseOver() and frame:IsVisible()) then
+      return frame
+    end
+  end
+  return nil
 end
