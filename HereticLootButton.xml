@@ -16,36 +16,36 @@
         </Layer>
         <Layer level="ARTWORK">
           <Texture name="$parentNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
-            <Size x="240" y="30"/>
+            <Size x="280" y="30"/>
             <Anchors>
-              <Anchor point="BOTTOMLEFT" x="20" y="-7"/>
+              <Anchor point="BOTTOMLEFT" x="20" y="13"/>
             </Anchors>
           </Texture>
           <FontString name="$parentText" inherits="GameFontNormal" justifyH="LEFT">
-            <Size x="193" y="18"/>
+            <Size x="233" y="18"/>
             <Anchors>
-              <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" x="8" y="0"/>
+              <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="8" y="0"/>
             </Anchors>
           </FontString>
-          <FontString name="$parentTextItemLevel" inherits="GameFontNormal" justifyH="LEFT">
+          <FontString name="$parentTextItemLevel" inherits="GameFontNormal" justifyH="LEFT" hidden="true">
             <Size x="30" y="18"/>
             <Anchors>
-              <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="8" y="0"/>
+              <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="4" y="0"/>
             </Anchors>
           </FontString>
           <Texture name="$parentTexture" hidden="true">
-          <Size>
-            <AbsDimension x="12" y="12"/>
-          </Size>
-          <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="38" y="-3"/>
-          </Anchors>
-        </Texture>
+            <Size>
+              <AbsDimension x="12" y="12"/>
+            </Size>
+            <Anchors>
+              <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parentTextItemLevel" x="2" y="2"/>
+            </Anchors>
+          </Texture>
           <FontString name="$parentTextItemSlot" inherits="GameFontNormal" justifyH="CENTER">
             <Color r="1" g="1" b="1" a="1"/>
             <Size x="100" y="18"/>
             <Anchors>
-              <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="70" y="0"/>
+              <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="220" y="0"/>
             </Anchors>
           </FontString>
         </Layer>
@@ -72,7 +72,7 @@
         <Button name="$parentTextItem">
           <Size x="70" y="18"/>
           <Anchors>
-            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="210" y="-3"/>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="390" y="-3"/>
           </Anchors>
           <Layers>
             <Layer level="OVERLAY">
@@ -134,7 +134,7 @@
 
   <Frame name="HereticLootFrame" virtual="true">
     <Size>
-      <AbsDimension x="430" y="40"/>
+      <AbsDimension x="430" y="60"/>
     </Size>
     <Frames>
       <Button name="$parentButton" inherits="HereticLootButton" virtual="true">
@@ -146,12 +146,12 @@
       </Button>
       <Button name="$parentFromButton" inherits="HereticSlotButtonTemplate" hidden="false">
         <Anchors>
-          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-20"/>
         </Anchors>
       </Button>
       <Button name="$parentWinnerFrame" inherits="HereticRollFrameTemplate" hidden="true">
         <Anchors>
-          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-18"/>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-38"/>
         </Anchors>
       </Button>
     </Frames>
