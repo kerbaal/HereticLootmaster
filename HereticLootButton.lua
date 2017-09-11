@@ -159,8 +159,8 @@ function HereticLootButton_Update(parent, entry)
     end
     button.quality = quality;
 
-    local itemLevelText = _G[parent:GetName() .. "ButtonTextItemLevel"];
-    itemLevelText:SetText(""..itemLevel);
+    --local itemLevelText = _G[parent:GetName() .. "ButtonTextItemLevel"];
+    --itemLevelText:SetText(""..itemLevel);
     local itemSlotText = _G[parent:GetName() .. "ButtonTextItemSlot"];
     itemSlotText:SetText(""..(_G[itemEquipLoc] or ""));
     local itemTypeText = _G[parent:GetName() .. "ButtonTextItemType"];
@@ -170,14 +170,14 @@ function HereticLootButton_Update(parent, entry)
       itemTypeText:SetText("")
     end
 
-    local info = GetMoreItemInfo(itemLink);
-    local itemSocketTexture = _G[parent:GetName() .. "ButtonTexture"];
-    if info.tex[1] then
-      itemSocketTexture:SetTexture(info.tex[1])
-      itemSocketTexture:Show()
-    else
-      itemSocketTexture:Hide()
-    end
+    --local info = GetMoreItemInfo(itemLink);
+    --local itemSocketTexture = _G[parent:GetName() .. "ButtonTexture"];
+    --if info.tex[1] then
+    --  itemSocketTexture:SetTexture(info.tex[1])
+    --  itemSocketTexture:Show()
+    --else
+    --  itemSocketTexture:Hide()
+    --end
 
     button:Enable();
   else
@@ -188,6 +188,10 @@ function HereticLootButton_Update(parent, entry)
     button:Disable();
   end
   button:Show();
+end
+
+function HereticDropButton_Update(parent, entry)
+
 end
 
 function HereticLootFrame_FromId(self, id)
@@ -234,8 +238,7 @@ function HereticLootFrameWinnerFrame_OnRightClick(button)
 end
 
 function HereticLootFrame_OnLoad(frame)
-  local slotText = _G[frame:GetName() .. "WinnerFrameSlotText"];
-  slotText:SetText("|cFF333311Drag Roll Here|r");
+  frame.dropButton.slotText:SetText("|cFF333311Drag Roll Here|r");
 
   local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
   winnerFrame.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
