@@ -38,7 +38,7 @@
                         <Anchor point="LEFT" relativeTo="$parentRoll" relativePoint="RIGHT" x="2" y="0"/>
                     </Anchors>
                 </FontString>
-                <FontString name="$parentSlotText" inherits="GameFontNormalSmall" justifyH="CENTER">
+                <FontString name="$parentSlotText" inherits="GameFontNormalSmall" justifyH="CENTER" parentKey="slotText">
                     <Size x="154" y="8"/>
                     <Anchors>
                         <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="10" y="0"/>

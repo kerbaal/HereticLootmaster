@@ -223,7 +223,7 @@ function HereticLootFrameWinnerFrame_OnRightClick(button)
 end
 
 function HereticDropButton_OnLoad(frame)
-  --frame.slotText:SetText("|cFF333311Drag Roll Here|r");
+  frame.winnerFrame.slotText:SetText("|cFF333311Drag Roll Here|r");
 
   frame.winnerFrame.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
   frame.winnerFrame.HereticOnDragStop = HereticLootFrameWinnerFrame_HereticOnDragStop
