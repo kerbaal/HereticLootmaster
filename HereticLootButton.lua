@@ -159,8 +159,6 @@ function HereticLootButton_Update(parent, entry)
     end
     button.quality = quality;
 
-    --local itemLevelText = _G[parent:GetName() .. "ButtonTextItemLevel"];
-    --itemLevelText:SetText(""..itemLevel);
     local itemSlotText = _G[parent:GetName() .. "ButtonTextItemSlot"];
     itemSlotText:SetText(""..(_G[itemEquipLoc] or ""));
     local itemTypeText = _G[parent:GetName() .. "ButtonTextItemType"];
@@ -169,15 +167,6 @@ function HereticLootButton_Update(parent, entry)
     else
       itemTypeText:SetText("")
     end
-
-    --local info = GetMoreItemInfo(itemLink);
-    --local itemSocketTexture = _G[parent:GetName() .. "ButtonTexture"];
-    --if info.tex[1] then
-    --  itemSocketTexture:SetTexture(info.tex[1])
-    --  itemSocketTexture:Show()
-    --else
-    --  itemSocketTexture:Hide()
-    --end
 
     button:Enable();
   else
@@ -188,10 +177,6 @@ function HereticLootButton_Update(parent, entry)
     button:Disable();
   end
   button:Show();
-end
-
-function HereticDropButton_Update(parent, entry)
-
 end
 
 function HereticLootFrame_FromId(self, id)
@@ -220,7 +205,7 @@ end
 
 function HereticLootFrameWinnerFrame_HereticOnDragStop(self,dragFrame,winner)
   local frame = self:GetParent()
-  HereticLootFrame_SetWinner(frame, winner)
+  HereticLootFrame_SetWinner(frame:GetParent(), winner)
 end
 
 function HereticLootFrameWinnerFrame_HereticOnDrop(frame, button)
@@ -237,14 +222,34 @@ function HereticLootFrameWinnerFrame_OnRightClick(button)
   end
 end
 
-function HereticLootFrame_OnLoad(frame)
-  frame.dropButton.slotText:SetText("|cFF333311Drag Roll Here|r");
+function HereticDropButton_OnLoad(frame)
+  --frame.slotText:SetText("|cFF333311Drag Roll Here|r");
 
-  local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
-  winnerFrame.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
-  winnerFrame.HereticOnDragStop = HereticLootFrameWinnerFrame_HereticOnDragStop
-  frame.HereticOnDrop = HereticLootFrameWinnerFrame_HereticOnDrop
-  winnerFrame.HereticOnRightClick = HereticLootFrameWinnerFrame_OnRightClick
+  frame.winnerFrame.HereticOnDragStart = HereticLootFrameWinnerFrame_HereticOnDragStart
+  frame.winnerFrame.HereticOnDragStop = HereticLootFrameWinnerFrame_HereticOnDragStop
+  frame:GetParent().HereticOnDrop = HereticLootFrameWinnerFrame_HereticOnDrop
+  frame.winnerFrame.HereticOnRightClick = HereticLootFrameWinnerFrame_OnRightClick
+end
+
+function HereticDropButton_Update(frame, entry)
+  HereticRollFrame_SetRoll(frame.winnerFrame, entry.winner, true)
+  local name, realm = Util.DecomposeName(entry.donator)
+  frame.donatorText:SetText(HereticRaidInfo:GetColoredPlayerName(entry.donator));
+  frame.dateText:SetText(date("%H:%M %d.%m.", entry.time));
+
+  local itemName, itemLink, quality, itemLevel, itemMinLevel, itemType,
+  itemSubType, itemStackCount, itemEquipLoc, itemTexture,
+  itemSellPrice, 	itemClassID, itemSubClassID = GetItemInfo(entry.itemLink)
+
+  frame.itemLevelText:SetText(""..(itemLevel or ""));
+
+  local info = GetMoreItemInfo(itemLink);
+  if info.tex[1] then
+    frame.itemSocketTexture:SetTexture(info.tex[1])
+    frame.itemSocketTexture:Show()
+  else
+    frame.itemSocketTexture:Hide()
+  end
 end
 
 function HereticLootFrame_Update(frame)
@@ -253,14 +258,8 @@ function HereticLootFrame_Update(frame)
     return
   end
   HereticLootButton_Update(frame, frame.entry)
-  local name, realm = Util.DecomposeName(frame.entry.donator)
-  local from = _G[frame:GetName() .. "FromButtonText"];
-  from:SetText(HereticRaidInfo:GetColoredPlayerName(frame.entry.donator));
-  local dateText = _G[frame:GetName() .. "FromButtonDate"];
-  dateText:SetText(date("%H:%M %d.%m.", frame.entry.time));
+  HereticDropButton_Update(frame.dropButton, frame.entry)
   frame:Show();
-  local winnerFrame = _G[frame:GetName() .. "WinnerFrame"];
-  HereticRollFrame_SetRoll(winnerFrame, frame.entry.winner, true)
 end
 
 local HereticPlayerMenuFrame = CreateFrame("Frame", "HereticAssignMenuFrame", UIParent, "UIDropDownMenuTemplate")
@@ -271,8 +270,6 @@ function HereticPlayerMenu(anchor, x, y, button)
 end
 
 function HereticPlayerMenu_Initialize( frame, level, button )
-  print("on EasyMenu_Initialize")
-  print(button)
   local title = { text = "Assign to Player", isTitle = true};
   UIDropDownMenu_AddButton(title);
   for name,unitId in pairs(HereticRaidInfo.unitids) do
@@ -280,8 +277,7 @@ function HereticPlayerMenu_Initialize( frame, level, button )
     local value =
       { text = coloredName,
         func = function() print("You've chosen " .. coloredName);
-          print(button)
-                 HereticLootFrame_SetWinner(button:GetParent(), HereticRoll:New(name, 0, 0));
+                 HereticLootFrame_SetWinner(button:GetParent():GetParent(), HereticRoll:New(name, 0, 0));
                end };
     UIDropDownMenu_AddButton( value, level );
   end
