@@ -244,7 +244,7 @@ function HereticDropButton_Update(frame, entry)
   frame.itemLevelText:SetText(""..(itemLevel or ""));
 
   local info = GetMoreItemInfo(itemLink);
-  if info.tex[1] then
+  if info and info.tex[1] then
     frame.itemSocketTexture:SetTexture(info.tex[1])
     frame.itemSocketTexture:Show()
   else
