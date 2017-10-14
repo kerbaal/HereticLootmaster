@@ -301,8 +301,8 @@ function HereticRollCategoryMenu_Initialize( frame, level, button )
       { text = coloredCategory,
         func = function() print("You've chosen " .. coloredCategory);
                            button.roll.max = max;
-                           HereticLootFrame_Update(button:GetParent())
-                           Addon:OnWinnerUpdate(button:GetParent().entry)
+                           HereticLootFrame_Update(button:GetParent():GetParent())
+                           Addon:OnWinnerUpdate(button:GetParent():GetParent().entry)
                end };
     UIDropDownMenu_AddButton( value, level );
   end
