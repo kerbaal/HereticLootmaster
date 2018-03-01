@@ -184,6 +184,34 @@
                   <PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down"/>
                   <HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD"/>
                 </Button>
+                <Button name="$parent_Help" parentKey="help">
+                  <Size x="25" y="34"/>
+                  <Layers>
+                    <Layer level="ARTWORK" textureSubLevel="1">
+                      <Texture parentKey="QuestionMark" inherits="QuestIcon-QuestionMark" hidden="false">
+                        <Size x="13" y="22"/>
+                        <Anchors>
+                          <Anchor point="CENTER" relativeKey="$parent.QuestIconBg" x="0.5" />
+                        </Anchors>
+                      </Texture>
+                    </Layer>
+                  </Layers>
+                  <Anchors>
+                      <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent">
+                          <Offset x="0" y="0"/>
+                      </Anchor>
+                  </Anchors>
+                  <Scripts>
+                      <OnClick function="KetzerischerLootverteilerRollButton_OnClick"/>
+                      <OnEnter>
+                        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+                        GameTooltip:SetText("Shift-RightClick on item icon to delete.\nAlt+LeftClick on item icon to post in raid chat and clear roll collector.");
+                      </OnEnter>
+                      <OnLeave>
+                        GameTooltip:Hide();
+                      </OnLeave>
+                  </Scripts>
+                </Button>
               </Frames>
             </Frame>
 
