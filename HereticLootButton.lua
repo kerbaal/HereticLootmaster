@@ -34,7 +34,7 @@ end
 function HereticLootButton_OnEnter(self, motion)
   local parent = self:GetParent()
   local itemLink = parent.entry.itemLink
-  if itemLink then
+  if itemLink and not InCombatLockdown() then
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
     GameTooltip:SetHyperlink(itemLink);
     CursorUpdate(self);
@@ -45,7 +45,7 @@ function HereticLootButtonItemType_OnEnter(self, motion)
   local lootButton = self:GetParent()
   local parent = lootButton:GetParent()
   local itemLink = parent.entry.itemLink
-  if itemLink then
+  if itemLink and not InCombatLockdown() then
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 
     local itemName, _, quality, itemLevel, itemMinLevel, itemType,
