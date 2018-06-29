@@ -7,6 +7,7 @@ function HereticList:New(instanceName, difficultyID, instanceID)
     instanceName = instanceName,
     difficultyID = difficultyID,
     instanceID = instanceID,
+    created = time(),
     entries = {},
   }
   setmetatable(obj, self)
