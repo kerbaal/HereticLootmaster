@@ -644,7 +644,7 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
   KetzerischerLootverteilerFrame.tabView[2].itemView.HereticOnItemClicked = HistoryLootItem_OnClick
   KetzerischerLootverteilerFrame.tabView[3].itemView.HereticUpdate =
     function (self)
-
+      HereticPlayerInfoScrollFrame_Update(self)
     end
 
   KetzerischerLootverteilerFrame.GetItemAtCursor = KetzerischerLootverteilerFrame_GetItemAtCursor
@@ -703,6 +703,7 @@ end
 
 function Addon:SetHistoryDropDown(id)
   Addon.activeHistoryIndex = id
+  Addon:RecomputeLootCount()
   update("change history")
 end
 
@@ -710,7 +711,6 @@ end
 local function KetzerischerLootverteilerHistoryDropDown_OnClick(self)
   UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerHistoryDropDown, self:GetID())
   Addon:SetHistoryDropDown(self:GetID())
-  Addon:RecomputeLootCount()
 end
 
 

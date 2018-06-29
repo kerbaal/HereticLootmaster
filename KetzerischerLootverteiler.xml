@@ -122,6 +122,17 @@
                 </Anchors>
             </Button>
 
+            <Button name="KetzerischerLootverteilerHistoryDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
+                <Scripts>
+                  <OnShow function="KetzerischerLootverteilerHistoryDropDown_OnShow"/>
+                </Scripts>
+                <Anchors>
+                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent_Close">
+                        <Offset x="-10" y="-2"/>
+                    </Anchor>
+                </Anchors>
+            </Button>
+
             <Frame name="$parentTabView1" parentArray="tabView" hidden="true">
               <Size x="470" y="280"/>
               <Anchors>
@@ -243,16 +254,6 @@
                     </OnShow>
                   </Scripts>
                 </ScrollFrame>
-                <Button name="KetzerischerLootverteilerHistoryDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
-                    <Scripts>
-                      <OnShow function="KetzerischerLootverteilerHistoryDropDown_OnShow"/>
-                    </Scripts>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
-                            <Offset x="-10" y="-2"/>
-                        </Anchor>
-                    </Anchors>
-                </Button>
               </Frames>
             </Frame>
 
