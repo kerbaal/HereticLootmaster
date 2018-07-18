@@ -111,7 +111,7 @@ function Addon:Initialize()
   Addon.master = nil;
   Addon.lootCount = {};
   Addon.rolls = {};
-  RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
+  C_ChatInfo.RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
 end
 
 function Addon:GetActiveHistory()
@@ -166,7 +166,7 @@ function Addon:OnWinnerUpdate(entry, prevWinner)
     end
 
     Util.dbgprint ("Announcing winner: " .. msg)
-    SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
+    C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
   HereticRollCollectorFrame_Update(HereticRollCollectorFrame)
 end
@@ -226,7 +226,7 @@ function Addon:AddItem(itemString, from, sender)
   if Addon:IsMaster() then
     local msg = Addon.MSG_ANNOUNCE_LOOT .. " " .. from .. " " .. itemString
     Util.dbgprint("Announcing loot")
-    SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
+    C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
   update("AddItem")
@@ -240,7 +240,7 @@ function Addon:DeleteItem(index)
   if Addon:IsMaster() then
     local msg = Addon.MSG_DELETE_LOOT .. " " .. entry.donator .. " " .. entry.itemLink
     Util.dbgprint("Announcing loot deletion")
-    SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
+    C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
   Addon.itemList:DeleteEntryAt(index)
@@ -288,8 +288,8 @@ end
 function Addon:ClaimMaster()
   if Addon:IsAuthorizedToClaimMaster("player") then
     print ("You proclaim yourself Ketzerischer Lootverteiler.")
-    SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "RAID")
-    SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", Util.GetFullUnitName("player"))
+    C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "RAID")
+    C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", Util.GetFullUnitName("player"))
   else
     print ("Only leader or assistant may become Ketzerischer Lootverteiler.")
   end
@@ -315,7 +315,7 @@ end
 function Addon:RenounceMaster()
   if (Addon.master ~= Util.GetFullUnitName("player")) then return end
   print ("You renounce your title of Ketzerischer Lootverteiler.")
-  SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_RENOUNCE_MASTER, "RAID")
+  C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_RENOUNCE_MASTER, "RAID")
 end
 
 function Addon:ProcessRenounceMaster(name)
@@ -409,7 +409,7 @@ local function eventHandlerAddonLoaded(self, event, addonName)
       KetzerischerLootverteilerShow()
     end
     if (KetzerischerLootverteilerData.master and IsPlayerInPartyOrRaid()) then
-      SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CHECK_MASTER, "WHISPER",
+      C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CHECK_MASTER, "WHISPER",
         KetzerischerLootverteilerData.master)
     end
     if KetzerischerLootverteilerData.activeTab then
@@ -452,7 +452,7 @@ local function eventHandlerAddonMessage(self, event, prefix, message, channel, s
       Addon:SetWinner(itemString, from, sender, winnerName, roll, rollMax)
     end
   elseif (type == Addon.MSG_CHECK_MASTER) then
-    SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", sender)
+    C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", sender)
   end
 end
 
@@ -461,7 +461,7 @@ local function eventHandlerRaidRosterUpdate(self, event, arg)
   if Addon:IsMaster() then
     if Addon:IsAuthorizedToClaimMaster("player") then
       for i,v in pairs(HereticRaidInfo:GetNewPlayers()) do
-        SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", v)
+        C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", v)
       end
     else
       Addon:RenounceMaster()
