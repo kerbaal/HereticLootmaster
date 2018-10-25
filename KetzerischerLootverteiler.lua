@@ -83,6 +83,7 @@ end
 
 function Addon:GetHistoryForCurrentInstance()
   local instanceName, instanceID, difficultyName, instanceDifficultyID = Addon:GetCurrentInstance()
+  instanceID = 0
   if instanceName then
     local i, history = Addon:GetHistoryForInstanceID(instanceName, instanceDifficultyID, instanceID)
     if history then return i, history end
