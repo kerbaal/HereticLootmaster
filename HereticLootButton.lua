@@ -3,7 +3,7 @@ local ADDON, Addon = ...
 local Util = Addon.Util
 
 function HereticLootButton_OnClick(self, button, down)
-  local parent = self:GetParent()
+  local parent = self:GetParent():GetParent();
   if (parent.HereticOnClick and parent:HereticOnClick(button, down, parent.entry)) then
     return
   end
@@ -101,8 +101,8 @@ do
   end
 end
 
-function HereticLootButton_Update(parent, entry)
-  local button = _G[parent:GetName() .. "Button"]
+function HereticLootButton_Update(lootButton, entry)
+  local button = lootButton.iconButton;
   if (button == nil) then
     return
   end
@@ -121,24 +121,24 @@ function HereticLootButton_Update(parent, entry)
   local isQuestItem = false;
   local questId = nil;
   local isActive = false;
-  local text = _G[parent:GetName() .. "ButtonText"];
+  local text = lootButton.itemName;
 
   if ( itemTexture ) then
     local color = ITEM_QUALITY_COLORS[quality];
-    SetItemButtonQuality(button, quality, itemId);
-    _G[parent:GetName() .. "ButtonIconTexture"]:SetTexture(itemTexture);
+    _G.SetItemButtonQuality(button, quality, itemId);
+    button.icon:SetTexture(itemTexture);
     text:SetText(itemName);
     if( locked ) then
-      SetItemButtonNameFrameVertexColor(button, 1.0, 0, 0);
-      SetItemButtonTextureVertexColor(button, 0.9, 0, 0);
-      SetItemButtonNormalTextureVertexColor(button, 0.9, 0, 0);
+      --_G.SetItemButtonNameFrameVertexColor(button, 1.0, 0, 0);
+      _G.SetItemButtonTextureVertexColor(button, 0.9, 0, 0);
+      _G.SetItemButtonNormalTextureVertexColor(button, 0.9, 0, 0);
     else
-      SetItemButtonNameFrameVertexColor(button, 0.5, 0.5, 0.5);
-      SetItemButtonTextureVertexColor(button, 1.0, 1.0, 1.0);
-      SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
+      --_G.SetItemButtonNameFrameVertexColor(button, 0.5, 0.5, 0.5);
+      _G.SetItemButtonTextureVertexColor(button, 1.0, 1.0, 1.0);
+      _G.SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
     end
 
-    local questTexture = _G[parent:GetName() .. "ButtonIconQuestTexture"];
+    local questTexture = lootButton.questTexture;
     if ( questId and not isActive ) then
       questTexture:SetTexture(TEXTURE_ITEM_QUEST_BANG);
       questTexture:Show();
@@ -150,7 +150,7 @@ function HereticLootButton_Update(parent, entry)
     end
 
     text:SetVertexColor(color.r, color.g, color.b);
-    local countString = _G[parent:GetName() .. "ButtonCount"];
+    local countString = button.Count;
     if ( itemStackCount > 1 ) then
       countString:SetText(itemStackCount);
       countString:Show();
@@ -159,9 +159,9 @@ function HereticLootButton_Update(parent, entry)
     end
     button.quality = quality;
 
-    local itemSlotText = _G[parent:GetName() .. "ButtonTextItemSlot"];
+    local itemSlotText = lootButton.itemText.itemSlot;
     itemSlotText:SetText(""..(_G[itemEquipLoc] or ""));
-    local itemTypeText = _G[parent:GetName() .. "ButtonTextItemType"];
+    local itemTypeText = lootButton.itemText.itemType;
     if (itemSubClassID ~= 0 and itemClassID == 4) then
       itemTypeText:SetText(""..itemSubType);
     else
@@ -171,9 +171,9 @@ function HereticLootButton_Update(parent, entry)
     button:Enable();
   else
     text:SetText("");
-    _G[parent:GetName() .. "ButtonIconTexture"]:SetTexture(nil);
-    SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
-    --LootFrame:SetScript("OnUpdate", LootFrame_OnUpdate);
+    button.icon:SetTexture(nil);
+    _G.SetItemButtonNormalTextureVertexColor(button, 1.0, 1.0, 1.0);
+    LootFrame:SetScript("OnUpdate", LootFrame_OnUpdate);
     button:Disable();
   end
   button:Show();
@@ -257,7 +257,7 @@ function HereticLootFrame_Update(frame)
     frame:Hide()
     return
   end
-  HereticLootButton_Update(frame, frame.entry)
+  HereticLootButton_Update(frame.itemButton, frame.entry)
   HereticDropButton_Update(frame.dropButton, frame.entry)
   frame:Show();
 end

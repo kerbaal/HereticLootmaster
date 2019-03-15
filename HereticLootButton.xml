@@ -1,10 +1,11 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
-  ..\FrameXML\UI.xsd">
+..\FrameXML\UI.xsd">
   <Script file="HereticLootButton.lua"/>
-  <Button name="HereticLootButton" inherits="ItemButtonTemplate" virtual="true">
+  <Button name="HereticLootButton" registerForClicks="LeftButtonUp, RightButtonUp" virtual="true">
+    <Size x="430" y="41" />
       <Layers>
         <Layer level="OVERLAY">
-          <Texture name="$parentIconQuestTexture">
+          <Texture name="$parentIconQuestTexture" parentKey="questTexture">
             <Size x="37" y="38"/>
             <Anchors>
               <Anchor point="TOP" x="0" y="0"/>
@@ -13,57 +14,56 @@
         </Layer>
         <Layer level="ARTWORK">
           <Texture name="$parentNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
-            <Size x="280" y="30"/>
+            <Size x="260" y="30"/>
             <Anchors>
               <Anchor point="BOTTOMLEFT" x="20" y="13"/>
             </Anchors>
           </Texture>
           <FontString name="$parentText" inherits="GameFontNormal" justifyH="LEFT" parentKey="itemName">
-            <Size x="225" y="18"/>
+            <Size x="210" y="18"/>
             <Anchors>
-              <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="12" y="0"/>
-            </Anchors>
-          </FontString>
-
-          <FontString name="$parentTextItemSlot" inherits="GameFontNormal" justifyH="CENTER">
-            <Color r="1" g="1" b="1" a="1"/>
-            <Size x="100" y="18"/>
-            <Anchors>
-              <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="230" y="0"/>
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parentNameFrame" x="25" y="-6"/>
             </Anchors>
           </FontString>
         </Layer>
       </Layers>
-      <Scripts>
-          <OnLoad>
-              self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
-              self.hasItem = 1;
-          </OnLoad>
-          <OnEnter>
-              HereticLootButton_OnEnter(self, motion)
-          </OnEnter>
-          <OnLeave>
-              GameTooltip:Hide();
-              ResetCursor();
-          </OnLeave>
-          <OnUpdate>
-              if ( GameTooltip:IsOwned(self) ) then HereticLootButton_OnEnter(self) end
-              CursorOnUpdate(self);
-          </OnUpdate>
-          <OnClick function="HereticLootButton_OnClick"/>
-      </Scripts>
       <Frames>
-        <Button name="$parentTextItem">
-          <Size x="70" y="18"/>
+        <ItemButton name="$parentItemButton" parentKey="iconButton">
           <Anchors>
-            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="390" y="-3"/>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-3"/>
+          </Anchors>
+          <Scripts>
+              <OnEnter>
+                  HereticLootButton_OnEnter(self:GetParent(), motion)
+              </OnEnter>
+              <OnLeave>
+                  GameTooltip:Hide();
+                  ResetCursor();
+              </OnLeave>
+              <OnUpdate>
+                  if ( GameTooltip:IsOwned(self:GetParent()) ) then HereticLootButton_OnEnter(self:GetParent()) end
+                  CursorOnUpdate(self:GetParent());
+              </OnUpdate>
+              <OnClick function="HereticLootButton_OnClick"/>
+          </Scripts>
+        </ItemButton>
+        <Button name="$parentTextItem" parentKey="itemText">
+          <Size x="170" y="18"/>
+          <Anchors>
+            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent" x="-3" y="-3"/>
           </Anchors>
           <Layers>
             <Layer level="OVERLAY">
-              <FontString name="$parentType" inherits="GameFontNormal" justifyH="RIGHT">
+              <FontString name="$parentTextItemSlot" inherits="GameFontNormal" justifyH="LEFT" parentKey="itemSlot">
                 <Color r="1" g="1" b="1" a="1"/>
                 <Anchors>
-                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="3" y="-3"/>
+                </Anchors>
+              </FontString>
+              <FontString name="$parentType" inherits="GameFontNormal" justifyH="RIGHT" parentKey="itemType">
+                <Color r="1" g="1" b="1" a="1"/>
+                <Anchors>
+                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent" x="-3" y="-3"/>
                 </Anchors>
               </FontString>
             </Layer>
