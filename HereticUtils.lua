@@ -124,16 +124,51 @@ local function colorCount(hex, count)
   return "|c" .. hex .. v .. "|r"
 end
 
-function Util.formatLootCount(count)
+function Util.formatLootCount(count, skip, verbose)
   local str = ""
   local sep = ""
   for i,cat in pairs(HereticRoll.GetCategories()) do
-    local _, _, _, hex = HereticRoll.ColorForMax(cat)
-    str = colorCount(hex, count[i]) .. sep .. str
-    sep = " "
+    if not skip or (count[i] and count[i] > 0) then
+      local _, _, _, hex = HereticRoll.ColorForMax(cat)
+      if verbose then
+        str = colorCount(hex, HereticRoll.GetCategoryName(i)) .. sep .. str
+        sep = " "
+      end
+      str = colorCount(hex, count[i]) .. sep .. str
+      sep = " "
+    end
   end
   local _, _, _, hex = HereticRoll.ColorForCategory(0)
-  str = str .. sep .. colorCount(hex, count[0])
+  if not skip or (count[0] and count[0] > 0) then
+    if verbose then
+      str = HereticRoll.GetCategoryName(i) .. sep .. str
+      sep = " "
+    end
+    str = str .. sep .. colorCount(hex, count[0])
+  end
+  return str
+end
+
+function Util.formatLootCountMono(count, skip, verbose)
+  local str = ""
+  local sep = ""
+  for i,cat in pairs(HereticRoll.GetCategories()) do
+    if not skip or (count[i] and count[i] > 0) then
+      if verbose then
+        str = HereticRoll.GetCategoryName(i) .. sep .. str
+        sep = " "
+      end
+      str = count[i] .. sep .. str
+      sep = " "
+    end
+  end
+  if not skip or (count[0] and count[0] > 0) then
+    if verbose then
+      str = HereticRoll.GetCategoryName(i) .. sep .. str
+      sep = " "
+    end
+    str = str .. sep .. count[0]
+  end
   return str
 end
 
