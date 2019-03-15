@@ -789,7 +789,6 @@ function HereticPlayerInfoScrollFrame_OnLoad(self)
 end
 
 function HereticLootTally_OnEnter(self)
-  if InCombatLockdown() then return end
   GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
   local categories = ""
   local first = true
