@@ -126,6 +126,7 @@ function Addon:RecomputeLootCount()
       local cat = entry.winner:GetCategory()
       local record = Addon.lootCount[entry.winner.name] or {}
       Addon.lootCount[entry.winner.name] = record
+      record.name = entry.winner.name
       local count = record.count or {}
       record.count = count
       count[cat] = (count[cat] or 0) + 1
@@ -133,9 +134,29 @@ function Addon:RecomputeLootCount()
     if (entry.donator) then
       local record = Addon.lootCount[entry.donator] or {}
       Addon.lootCount[entry.donator] = record
+      record.name = entry.donator
       local donations = record.donations or 0
       record.donations = donations + 1
     end
+  end
+end
+
+function Addon:AnnouceLootCount()
+  Addon:RecomputeLootCount()
+  local n = 0
+  for k,v in pairs(Addon.lootCount) do
+    n=n+1
+    local line = Util.ShortenFullName(v.name)
+    if (v.donations) then
+      line = line .. " donated " .. v.donations .. ""
+    end
+    if (v.count) then
+      if (v.donations) then line = line .. " and" end
+      line = line ..  " received " .. Util.formatLootCountMono(v.count, true, true)
+    end
+    line = line .. "."
+    print(line)
+    SendChatMessage(line, "RAID")
   end
 end
 
@@ -532,6 +553,8 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   elseif (msg:match("^%s*clear%s*$")) then
     Addon.itemList:DeleteAllEntries()
     update("clear")
+  elseif (msg:match("^%s*list%s*$")) then
+    Addon:AnnouceLootCount()
   elseif (msg:match("^%s*clearall%s*$")) then
     Addon.itemList:DeleteAllEntries()
     wipe(Addon.histories)
@@ -548,6 +571,8 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     end
   elseif (msg:match("^%s*raid%s*$")) then
     HereticRaidInfo:DebugPrint()
+  else
+    print ("Unknown option.")
   end
 end
 
