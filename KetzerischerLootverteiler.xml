@@ -33,7 +33,7 @@
     </Button>
 
     <Button name="HereticPlayerInfoTemplate" virtual="true">
-      <Size x="430" y="20"/>
+      <Size x="455" y="20"/>
       <Layers>
         <Layer level="BACKGROUND">
           <FontString name="$parentName" inherits="GameFontNormal" justifyH="LEFT" parentKey="name">
@@ -71,9 +71,9 @@
     </Button>
 
     <Frame name="KetzerischerLootverteilerFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
-        <Size x="470" y="310"/>
+        <Size x="495" y="310"/>
         <TitleRegion>
-            <Size x="470" y="20"/>
+            <Size x="495" y="20"/>
             <Anchors><Anchor point="TOP"/>
             </Anchors>
         </TitleRegion>
@@ -93,12 +93,11 @@
         </Backdrop>
         <Layers>
             <Layer level="OVERLAY">
-                <FontString name="KetzerischerLootverteilerTitleText" inherits="GameFontNormal" text="Ketzerischer Lootverteiler" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
+                <FontString name="KetzerischerLootverteilerTitleText" font="Fonts/MORPHEUS.ttf" text="Ketzerischer Lootverteiler" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
                     <Anchors>
-                        <Anchor point="TOP" x="0" y="-5"/>
-                        <Anchor point="LEFT" x="10"/>
-                        <Anchor point="RIGHT" x="-10"/>
+                      <Anchor point="TOPLEFT" relativeTo="$parent" x="10" y="-5" />
                     </Anchors>
+                    <FontHeight val="18"/>
                 </FontString>
                 <FontString name="KetzerischerLootverteilerStatusText" inherits="GameFontNormal" justifyH="LEFT" text="">
                     <Size>
@@ -134,9 +133,9 @@
             </Button>
 
             <Frame name="$parentTabView1" parentArray="tabView" hidden="true">
-              <Size x="470" y="280"/>
+              <Size x="495" y="280"/>
               <Anchors>
-                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
                       <Offset x="0" y="-30"/>
                   </Anchor>
               </Anchors>
@@ -227,9 +226,9 @@
             </Frame>
 
             <Frame name="$parentTabView2" parentArray="tabView" hidden="true">
-              <Size x="470" y="280"/>
+              <Size x="495" y="280"/>
               <Anchors>
-                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
                       <Offset x="0" y="-30"/>
                   </Anchor>
               </Anchors>
@@ -258,9 +257,9 @@
             </Frame>
 
             <Frame name="$parentTabView3" parentArray="tabView" hidden="true">
-              <Size x="470" y="280"/>
+              <Size x="495" y="280"/>
               <Anchors>
-                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
                       <Offset x="0" y="-30"/>
                   </Anchor>
               </Anchors>

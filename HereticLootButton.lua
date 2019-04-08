@@ -288,13 +288,22 @@ function HereticRollCategoryMenu(anchor, x, y, button)
   ToggleDropDownMenu(1, nil, HereticPlayerMenuFrame, anchor, x, y, button);
 end
 
+function AnnounceLootWinner(entry)
+  if entry.winner then
+    local itemLink = select(2,GetItemInfo(entry.itemLink));
+    local raidMsg = "Gz " .. Util.ShortenFullName(entry.winner.name) .. ", du kannst " .. itemLink .. " bei " .. Util.ShortenFullName(entry.donator) .. " abholen.";
+    SendChatMessage(raidMsg, "RAID");
+    --print(raidMsg)
+  end
+end
+
 function HereticRollCategoryMenu_Initialize( frame, level, button )
   if not button.roll then
     Util.dbgprint("HereticRollCategoryMenu_Initialize called on button without roll")
     return
   end
-  local title = { text = "Change Category", isTitle = true};
-  UIDropDownMenu_AddButton(title);
+  local titleChangeCategory = { text = "Change Category", isTitle = true};
+  UIDropDownMenu_AddButton(titleChangeCategory);
   for category,max in pairs(HereticRoll.GetCategories()) do
     local coloredCategory = HereticRoll.GetColoredCategoryName(category);
     local value =
@@ -306,4 +315,13 @@ function HereticRollCategoryMenu_Initialize( frame, level, button )
                end };
     UIDropDownMenu_AddButton( value, level );
   end
+  local titleActions = { text = "Actions", isTitle = true};
+  UIDropDownMenu_AddButton(titleActions);
+  local announceButton =
+    { text = "Announce Winner",
+      func = function()  print("You've chosen announcing winner");
+               local entry = button:GetParent():GetParent().entry;
+               AnnounceLootWinner(entry);
+             end };
+  UIDropDownMenu_AddButton( announceButton, level );
 end

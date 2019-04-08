@@ -155,7 +155,6 @@ function Addon:AnnouceLootCount()
       line = line ..  " received " .. Util.formatLootCountMono(v.count, true, true)
     end
     line = line .. "."
-    print(line)
     SendChatMessage(line, "RAID")
   end
 end

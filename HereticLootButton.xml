@@ -139,7 +139,7 @@
 
   <Frame name="HereticLootFrame" virtual="true">
     <Size>
-      <AbsDimension x="430" y="41"/>
+      <AbsDimension x="455" y="41"/>
     </Size>
     <Frames>
       <Button name="$parentButton" inherits="HereticLootButton" virtual="true" parentKey="itemButton">
@@ -151,8 +151,24 @@
       </Button>
       <Button name="$parentDropButton" inherits="HereticDropButtonTemplate" hidden="false" parentKey="dropButton">
         <Anchors>
-          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="-20"/>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-25" y="-20"/>
         </Anchors>
+      </Button>
+      <Button name="AnnounceLootButton">
+        <Size x="20" y="20"/>
+        <Anchors>
+          <Anchor point="BOTTOMRIGHT" relativeTo="$parent" relativePoint="BOTTOMRIGHT" x="0" y="1"/>
+        </Anchors>
+        <Scripts>
+          <OnClick>
+            local entry = self:GetParent().entry;
+            AnnounceLootWinner(entry);
+          </OnClick>
+        </Scripts>
+        <NormalTexture file="Interface\ChatFrame\UI-ChatIcon-Chat-Up"/>
+        <PushedTexture file="Interface\ChatFrame\UI-ChatIcon-Chat-Down"/>
+        <DisabledTexture file="Interface\ChatFrame\UI-ChatIcon-Chat-Disabled"/>
+        <HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
       </Button>
     </Frames>
   </Frame>

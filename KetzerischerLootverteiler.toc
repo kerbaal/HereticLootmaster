@@ -1,4 +1,4 @@
-## Interface: 70300
+## Interface: 80100
 ## Title: Ketzerischer Lootverteiler
 ## Notes: Helps distributing loot if master loot is unavailable
 ## Author: Kerbaal
