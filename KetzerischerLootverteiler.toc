@@ -1,6 +1,6 @@
-## Interface: 80100
+## Interface: 80200
 ## Title: Ketzerischer Lootverteiler
-## Notes: Helps distributing loot if master loot is unavailable
+## Notes: Helps distributing loot on a donation basis
 ## Author: Kerbaal
 ## SavedVariables:
 ## SavedVariablesPerCharacter: KetzerischerLootverteilerData
