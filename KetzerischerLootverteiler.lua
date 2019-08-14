@@ -95,24 +95,24 @@ function Addon:GetHistoryForCurrentInstance()
 end
 
 function Addon:Initialize()
-  Addon.MSG_PREFIX = "KTZR_LT_VERT"
-  Addon.MSG_CLAIM_MASTER = "ClaimMaster"
-  Addon.MSG_CHECK_MASTER = "CheckMaster"
-  Addon.MSG_DELETE_LOOT = "DeleteLoot"
-  Addon.MSG_DELETE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
-  Addon.MSG_RENOUNCE_MASTER = "RenounceMaster"
-  Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce"
-  Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$"
-  Addon.MSG_ANNOUNCE_WINNER = "Winner"
-  Addon.MSG_ANNOUNCE_WINNER_PATTERN = "^%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)$"
-  Addon.TITLE_TEXT = "Ketzerischer Lootverteiler"
-  Addon.itemList = HereticList:New("master")
-  Addon.histories = { HereticList:New("default") }
-  Addon.activeHistoryIndex = 1
+  Addon.MSG_PREFIX = "KTZR_LT_VERT";
+  Addon.MSG_CLAIM_MASTER = "ClaimMaster";
+  Addon.MSG_CHECK_MASTER = "CheckMaster";
+  Addon.MSG_DELETE_LOOT = "DeleteLoot";
+  Addon.MSG_DELETE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$";
+  Addon.MSG_RENOUNCE_MASTER = "RenounceMaster";
+  Addon.MSG_ANNOUNCE_LOOT = "LootAnnounce";
+  Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$";
+  Addon.MSG_ANNOUNCE_WINNER = "Winner";
+  Addon.MSG_ANNOUNCE_WINNER_PATTERN = "^%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)$";
+  Addon.TITLE_TEXT = "Ketzerischer Lootverteiler";
+  Addon.itemList = HereticList:New("master");
+  Addon.histories = { HereticList:New("default") };
+  Addon.activeHistoryIndex = 1;
   Addon.master = nil;
   Addon.lootCount = {};
   Addon.rolls = {};
-  C_ChatInfo.RegisterAddonMessagePrefix(Addon.MSG_PREFIX)
+  C_ChatInfo.RegisterAddonMessagePrefix(Addon.MSG_PREFIX);
 end
 
 function Addon:GetActiveHistory()
@@ -348,8 +348,6 @@ end
 function KetzerischerLootverteilerFrame_Update(self, elapsed)
   getActiveTab():Update()
 end
-
--- Eventhandler
 
 local function eventHandlerLoot(self, event, message, sender)
   local LOOT_SELF_REGEX = gsub(LOOT_ITEM_SELF, "%%s", "(.+)")
