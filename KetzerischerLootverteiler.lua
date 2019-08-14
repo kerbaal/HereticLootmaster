@@ -13,14 +13,14 @@ function HereticTabView_Update(self)
   self.itemView:HereticUpdate()
 end
 
-local function update(reason)
+function Addon:update(reason)
   Util.dbgprint("Updating UI (" .. reason ..")..")
   HereticTabView_Update(getActiveTab())
 end
 
 function KetzerischerLootverteilerShow()
   KetzerischerLootverteilerFrame:Show()
-  update("show")
+  Addon:update("show")
 end
 
 function KetzerischerLootverteilerToggle()
@@ -174,7 +174,7 @@ end
 
 function Addon:OnWinnerUpdate(entry, prevWinner)
   Addon:RecomputeLootCount()
-  update("on winner update")
+  Addon:update("on winner update")
   if (Addon:IsMaster()) then
     local msg = Addon.MSG_ANNOUNCE_WINNER .. " " .. entry.donator .. " " ..
       entry.itemLink .. " "
@@ -250,7 +250,7 @@ function Addon:AddItem(itemString, from, sender)
     C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, msg, "RAID")
   end
 
-  update("AddItem")
+  Addon:update("AddItem")
   showIfNotCombat()
 end
 
@@ -266,7 +266,7 @@ function Addon:DeleteItem(index)
 
   Addon.itemList:DeleteEntryAt(index)
   PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-  update("DeleteItem")
+  Addon:update("DeleteItem")
 end
 
 local function updateTitle()
@@ -349,22 +349,6 @@ function KetzerischerLootverteilerFrame_Update(self, elapsed)
   getActiveTab():Update()
 end
 
-local function eventHandlerLoot(self, event, message, sender)
-  local LOOT_SELF_REGEX = gsub(LOOT_ITEM_SELF, "%%s", "(.+)")
-  local LOOT_REGEX = gsub(LOOT_ITEM, "%%s", "(.+)")
-  local _, _, sPlayer, itemlink = string.find(message, LOOT_REGEX)
-  if not sPlayer then
-    _, _, itemlink = string.find(message, LOOT_SELF_REGEX)
-    sPlayer = Util.GetFullUnitName("player")
-  else
-    sPlayer = Util.CompleteUnitName(sPlayer)
-  end
-  if itemlink then
-    local _, _, itemId = string.find(itemlink, "item:(%d+):")
-    Util.dbgprint(sPlayer .. " got " .. itemlink)
-  end
-end
-
 function Addon:AddAllItems(itemStrings, from, sender)
   for itemString in string.gmatch(itemStrings, "item[%-?%d:]+") do
     Addon:AddItem(itemString, from, sender)
@@ -375,157 +359,46 @@ function Addon:IsTrackedDifficulity(difficultyID)
   return 14 <= difficultyID and difficultyID <= 16
 end
 
-local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID, raidSize, endStatus)
-  if (endStatus == 1 and Addon:IsTrackedDifficulity(difficultyID) and
-      (not Addon.minRarity or Addon.minRarity[1] < 1000)) then
-    KetzerischerLootverteilerShow()
+function Addon:OnAddonLoaded()
+  HereticRaidInfo:Deserialize(KetzerischerLootverteilerData)
+  HereticRaidInfo:Update()
+  if KetzerischerLootverteilerData.activeHistoryIndex then
+    Addon.activeHistoryIndex = KetzerischerLootverteilerData.activeHistoryIndex
   end
-  if (Addon:IsMaster() and Addon:IsAuthorizedToClaimMaster("player") ) then
-    Addon:ClaimMaster()
-  end
-end
-
-local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.histories = Addon.histories
-  KetzerischerLootverteilerData.activeHistoryIndex = Addon.activeHistoryIndex
-  KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
-  KetzerischerLootverteilerData.master = Addon.master
-  KetzerischerLootverteilerData.minRarity = Addon.minRarity
-  KetzerischerLootverteilerData.activeTab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
-  HereticRaidInfo:Serialize(KetzerischerLootverteilerData)
-end
-
-local function eventHandlerAddonLoaded(self, event, addonName)
-   if (addonName == ADDON) then
-    HereticRaidInfo:Deserialize(KetzerischerLootverteilerData)
-    HereticRaidInfo:Update()
-    if KetzerischerLootverteilerData.activeHistoryIndex then
-      Addon.activeHistoryIndex = KetzerischerLootverteilerData.activeHistoryIndex
-    end
-    if KetzerischerLootverteilerData.histories then
-      wipe(Addon.histories)
-      for i,history in pairs(KetzerischerLootverteilerData.histories) do
-        if HereticList.Validate(history) then
-          table.insert(Addon.histories, history)
-          for i,entry in pairs(history.entries) do
-            if entry.isCurrent then
-              Addon.itemList:AddEntry(entry)
-            end
+  if KetzerischerLootverteilerData.histories then
+    wipe(Addon.histories)
+    for i,history in pairs(KetzerischerLootverteilerData.histories) do
+      if HereticList.Validate(history) then
+        table.insert(Addon.histories, history)
+        for i,entry in pairs(history.entries) do
+          if entry.isCurrent then
+            Addon.itemList:AddEntry(entry)
           end
         end
       end
-      if #Addon.histories == 0 then
-        Addon.histories = { HereticList:New("default") }
-        Addon.activeHistoryIndex = 1
-      end
     end
-    Addon:RecomputeLootCount()
-    if KetzerischerLootverteilerData.minRarity then
-      Addon.minRarity = KetzerischerLootverteilerData.minRarity
-    end
-    if (KetzerischerLootverteilerData.isVisible == nil or
-        KetzerischerLootverteilerData.isVisible == true) then
-      KetzerischerLootverteilerShow()
-    end
-    if (KetzerischerLootverteilerData.master and IsPlayerInPartyOrRaid()) then
-      C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CHECK_MASTER, "WHISPER",
-        KetzerischerLootverteilerData.master)
-    end
-    if KetzerischerLootverteilerData.activeTab then
-      HereticTab_SetActiveTab(Util.toRange(KetzerischerLootverteilerFrame.tabView, KetzerischerLootverteilerData.activeTab))
-    end
-    update("addon loaded")
-  end
-end
-
-local function eventHandlerAddonMessage(self, event, prefix, message, channel, sender)
-  if (prefix ~= Addon.MSG_PREFIX) then return end
-  local type, msg = message:match("^%s*([^ ]+)(.*)$")
-  if (type == nil) then return end
-  Util.dbgprint ("Received: " .. type)
-  if (type == Addon.MSG_CLAIM_MASTER) then
-    Addon:ProcessClaimMaster(sender)
-  elseif (type == Addon.MSG_RENOUNCE_MASTER) then
-    Addon:ProcessRenounceMaster(sender)
-  elseif (type == Addon.MSG_ANNOUNCE_LOOT) then
-    if not msg then return end
-    local from, itemString = msg:match(Addon.MSG_ANNOUNCE_LOOT_PATTERN)
-    Util.dbgprint ("Announcement: " .. from .. " " .. itemString)
-    if (sender == Addon.master and not Addon:IsMaster()) then
-      Addon:AddItem(itemString, from, sender)
-    end
-  elseif (type == Addon.MSG_DELETE_LOOT) then
-    if not msg then return end
-    local donator, itemString = msg:match(Addon.MSG_DELETE_LOOT_PATTERN)
-    Util.dbgprint ("Deletion: " .. donator .. " " .. itemString)
-    if (sender == Addon.master and not Addon:IsMaster()) then
-      local index = Addon.itemList:GetEntryId(itemString, donator, sender)
-      if (index) then Addon:DeleteItem(index) end
-    end
-  elseif (type == Addon.MSG_ANNOUNCE_WINNER) then
-    if not msg then return end
-    local from, itemString, winnerName, roll, rollMax = msg:match(Addon.MSG_ANNOUNCE_WINNER_PATTERN)
-    Util.dbgprint ("Winner: " .. from .. " " .. itemString .. " "
-      .. winnerName .. " " .. roll .. " " .. rollMax)
-    if (sender == Addon.master and not Addon:IsMaster()) then
-      Addon:SetWinner(itemString, from, sender, winnerName, roll, rollMax)
-    end
-  elseif (type == Addon.MSG_CHECK_MASTER) then
-    C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", sender)
-  end
-end
-
-local function eventHandlerRaidRosterUpdate(self, event, arg)
-  HereticRaidInfo:Update()
-  if Addon:IsMaster() then
-    if Addon:IsAuthorizedToClaimMaster("player") then
-      for i,v in pairs(HereticRaidInfo:GetNewPlayers()) do
-        C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", v)
-      end
-    else
-      Addon:RenounceMaster()
+    if #Addon.histories == 0 then
+      Addon.histories = { HereticList:New("default") }
+      Addon.activeHistoryIndex = 1
     end
   end
-end
-
-local function eventHandlerWhisper(self, event, msg, from)
-  Addon:AddAllItems(msg, from, from)
-end
-
-local function eventHandlerBNChat(self, event, msg, sender, u1, u2, u3, u4, u5, u6, u7, u8, cnt, u9, bnetIDAccount)
-  local bnetIDGameAccount = select(6,BNGetFriendInfoByID(bnetIDAccount))
-  local _, name, client, realm = BNGetGameAccountInfo(bnetIDGameAccount)
-  Util.dbgprint("BN: " .. sender .. " " .. bnetIDAccount .. " " .. name .. "-" .. realm)
-
-  Addon:AddAllItems(msg, name .. "-" .. realm, sender)
-end
-
-local function eventHandler(self, event, ...)
-  if event == "CHAT_MSG_WHISPER" then
-    eventHandlerWhisper(self, event, ...)
-  elseif event == "CHAT_MSG_BN_WHISPER" then
-    eventHandlerBNChat(self, event, ...)
-  elseif (event == "ENCOUNTER_END") then
-    eventHandlerEncounterEnd(self, event, ...)
-  elseif (event == "CHAT_MSG_LOOT") then
-    eventHandlerLoot(self, event, ...)
-  elseif (event == "PLAYER_LOGOUT") then
-    eventHandlerLogout(self, event, ...)
-  elseif (event == "ADDON_LOADED") then
-    eventHandlerAddonLoaded(self, event, ...)
-  elseif (event == "CHAT_MSG_ADDON") then
-    eventHandlerAddonMessage(self, event, ...)
-  elseif (event == "GROUP_ROSTER_UPDATE") then
-    eventHandlerRaidRosterUpdate(self, event, ...)
-  elseif (event == "GET_ITEM_INFO_RECEIVED") then
-    update("ItemInfoReceived")
-  elseif (event == "RAID_INSTANCE_WELCOME") then
-    Util.dbgprint("RaidInstanceWelcome: " .. (select(1, ...) .. " " .. select(2, ...)))
-  elseif (event == "UPDATE_INSTANCE_INFO") then
-    Util.dbgprint("UpdateInstanceInfo")
+  Addon:RecomputeLootCount()
+  if KetzerischerLootverteilerData.minRarity then
+    Addon.minRarity = KetzerischerLootverteilerData.minRarity
   end
+  if (KetzerischerLootverteilerData.isVisible == nil or
+      KetzerischerLootverteilerData.isVisible == true) then
+    KetzerischerLootverteilerShow()
+  end
+  if (KetzerischerLootverteilerData.master and IsPlayerInPartyOrRaid()) then
+    C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CHECK_MASTER, "WHISPER",
+      KetzerischerLootverteilerData.master)
+  end
+  if KetzerischerLootverteilerData.activeTab then
+    HereticTab_SetActiveTab(Util.toRange(KetzerischerLootverteilerFrame.tabView, KetzerischerLootverteilerData.activeTab))
+  end
+  Addon:update("addon loaded")
 end
-
 
 -- Keybindings
 BINDING_HEADER_KETZERISCHER_LOOTVERTEILER = "Ketzerischer Lootverteiler"
@@ -549,7 +422,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     end
   elseif (msg:match("^%s*clear%s*$")) then
     Addon.itemList:DeleteAllEntries()
-    update("clear")
+    Addon:update("clear")
   elseif (msg:match("^%s*list%s*$")) then
     Addon:AnnouceLootCount()
   elseif (msg:match("^%s*clearall%s*$")) then
@@ -558,7 +431,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
     Addon.histories[1] = HereticList:New("default")
     Addon.activeHistoryIndex = 1
     HereticTab_SetActiveTab(1)
-    update("clearall")
+    Addon:update("clearall")
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
     if KetzerischerLootverteilerData.debug then
@@ -579,7 +452,7 @@ StaticPopupDialogs["HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY"] = {
   button2 = "No",
   OnAccept = function(self)
     self.data.list:DeleteEntryAt(self.data.index)
-    update("delete from history")
+    Addon:update("delete from history")
   end,
   OnCancel = function()
     -- Do nothing and keep item.
@@ -641,17 +514,7 @@ end
 function KetzerischerLootverteilerFrame_OnLoad(self)
   Addon:Initialize()
   HereticRaidInfo:Initialize()
-  KetzerischerLootverteilerFrame:SetScript("OnEvent", eventHandler);
-  KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_WHISPER");
-  KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_BN_WHISPER");
-  KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_LOOT");
-  KetzerischerLootverteilerFrame:RegisterEvent("ENCOUNTER_END");
-  KetzerischerLootverteilerFrame:RegisterEvent("ADDON_LOADED");
-  KetzerischerLootverteilerFrame:RegisterEvent("PLAYER_LOGOUT");
-  KetzerischerLootverteilerFrame:RegisterEvent("CHAT_MSG_ADDON");
-  KetzerischerLootverteilerFrame:RegisterEvent("RAID_ROSTER_UPDATE");
-  KetzerischerLootverteilerFrame:RegisterEvent("GROUP_ROSTER_UPDATE");
-  KetzerischerLootverteilerFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
+  Addon:InitializeEventHandlers(KetzerischerLootverteilerFrame);
 
   self:RegisterForDrag("LeftButton");
 
@@ -716,7 +579,7 @@ function HereticTab_SetActiveTab(id)
       tab:Hide();
     end
   end
-  update("set active tab")
+  Addon:update("set active tab")
 end
 
 function HereticTab_OnClick(self)
@@ -727,7 +590,7 @@ end
 function Addon:SetHistoryDropDown(id)
   Addon.activeHistoryIndex = id
   Addon:RecomputeLootCount()
-  update("change history")
+  Addon:update("change history")
 end
 
 
