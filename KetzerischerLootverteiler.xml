@@ -121,9 +121,9 @@
                 </Anchors>
             </Button>
 
-            <Button name="KetzerischerLootverteilerHistoryDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
+            <Button name="HereticHistoryDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
                 <Scripts>
-                  <OnShow function="KetzerischerLootverteilerHistoryDropDown_OnShow"/>
+                  <OnShow function="HereticHistoryDropDown_OnShow"/>
                 </Scripts>
                 <Anchors>
                     <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent_Close">
