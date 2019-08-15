@@ -41,7 +41,7 @@ local function eventHandlerLoot(self, event, message, sender)
 end
 
 local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.histories = Addon.histories
+  KetzerischerLootverteilerData.histories = HereticHistory.histories
   KetzerischerLootverteilerData.activeHistoryIndex = Addon.activeHistoryIndex
   KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
   KetzerischerLootverteilerData.master = Addon.master

@@ -7,15 +7,22 @@ local function HereticHistoryDropDown_OnClick(self)
   Addon:SetCurrentHistory(self:GetID())
 end
 
+local function DifficultyIDToString(difficultyID)
+  return GetDifficultyInfo(difficultyID)
+end
 
 function HereticHistoryDropDown_Initialize(self, level)
   UIDropDownMenu_SetWidth(self, 200);
   UIDropDownMenu_JustifyText(self, "LEFT")
-  if not Addon.histories or not Addon.activeHistoryIndex or #Addon.histories < 1 then return end
+  if not HereticHistory.histories
+     or not Addon.activeHistoryIndex
+     or HereticHistory.NumberOfItemLists() < 1 then
+    return
+  end
 
-  for i, h in ipairs(Addon.histories or {}) do
+  for i, h in ipairs(HereticHistory.histories or {}) do
     local info = UIDropDownMenu_CreateInfo()
-    info.text = h.instanceName .. " " .. ((h.difficultyID and "("..Addon:DifficultyIDToString(h.difficultyID) .. ")") or "") .. " " .. (h.instanceID or "")
+    info.text = h.instanceName .. " " .. ((h.difficultyID and "(".. DifficultyIDToString(h.difficultyID) .. ")") or "") .. " " .. (h.instanceID or "")
     info.value = i
     info.func = HereticHistoryDropDown_OnClick
     UIDropDownMenu_AddButton(info, level)

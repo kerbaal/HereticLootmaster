@@ -44,56 +44,6 @@ function FindSavedInstanceID(instanceName, instanceDifficultyID)
   return nil
 end
 
-function Addon:GetCurrentInstance()
-  local instanceName, instanceType, instanceDifficultyID, difficultyName, maxPlayers, playerDifficulty, isDynamicInstance, mapID, instanceGroupSize = GetInstanceInfo()
-  if (instanceType == "raid" or instanceType == "party") then
-    local instanceID = FindSavedInstanceID(instanceName, instanceDifficultyID)
-    return instanceName, instanceID, difficultyName, instanceDifficultyID
-  end
-  return nil
-end
-
-function Addon:DifficultyIDToString(difficultyID)
-  return GetDifficultyInfo(difficultyID)
-end
-
-function Addon:GetHistoryForInstanceID(instanceName, instanceDifficultyID, instanceID)
-  local match_i, match_history, noid_i, noid_history
-  for i,history in ipairs(Addon.histories) do
-    if instanceID and history.instanceID == instanceID and
-       history.difficultyID == instanceDifficultyID and
-       history.instanceName == instanceName then
-      match_i, match_history = i, history
-    end
-    if history.instanceID == nil and
-       history.difficultyID == instanceDifficultyID and
-       history.instanceName == instanceName then
-      noid_i, noid_history = i, history
-    end
-  end
-  if match_i and match_history then
-    return match_i, match_history
-  end
-  if noid_i and noid_history then
-    noid_history.instanceID = instanceID
-    return noid_i, noid_history
-  end
-  return nil
-end
-
-function Addon:GetHistoryForCurrentInstance()
-  local instanceName, instanceID, difficultyName, instanceDifficultyID = Addon:GetCurrentInstance()
-  instanceID = 0
-  if instanceName then
-    local i, history = Addon:GetHistoryForInstanceID(instanceName, instanceDifficultyID, instanceID)
-    if history then return i, history end
-    local newHistory = HereticList:New(instanceName, instanceDifficultyID, instanceID)
-    table.insert(Addon.histories, 2, newHistory)
-    return 2, newHistory
-  end
-  return 1, Addon.histories[1]
-end
-
 function Addon:Initialize()
   Addon.MSG_PREFIX = "KTZR_LT_VERT";
   Addon.MSG_CLAIM_MASTER = "ClaimMaster";
@@ -107,7 +57,6 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_WINNER_PATTERN = "^%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)$";
   Addon.TITLE_TEXT = "Ketzerischer Lootverteiler";
   Addon.itemList = HereticList:New("master");
-  Addon.histories = { HereticList:New("default") };
   Addon.activeHistoryIndex = 1;
   Addon.master = nil;
   Addon.lootCount = {};
@@ -116,7 +65,7 @@ function Addon:Initialize()
 end
 
 function Addon:GetActiveHistory()
-  return Addon.histories[Addon.activeHistoryIndex]
+  return HereticHistory:GetItemListByIndex(Addon.activeHistoryIndex)
 end
 
 function Addon:RecomputeLootCount()
@@ -238,8 +187,8 @@ function Addon:AddItem(itemString, from, sender)
 
   local item = HereticItem:New(itemString, from, sender)
   Addon.itemList:AddEntry(item)
-  local historyIndex, history = Addon:GetHistoryForCurrentInstance()
-  history:AddEntry(item)
+  local itemList = HereticHistory:GetItemListForCurrentInstance()
+  itemList:AddEntry(item)
   --PlaySound("igBackPackCoinSelect")
   PlaySound(SOUNDKIT.TELL_MESSAGE);
   --PlaySound("igMainMenuOptionCheckBoxOn")
@@ -362,25 +311,12 @@ end
 function Addon:OnAddonLoaded()
   HereticRaidInfo:Deserialize(KetzerischerLootverteilerData)
   HereticRaidInfo:Update()
-  if KetzerischerLootverteilerData.activeHistoryIndex then
-    Addon.activeHistoryIndex = KetzerischerLootverteilerData.activeHistoryIndex
-  end
   if KetzerischerLootverteilerData.histories then
-    wipe(Addon.histories)
-    for i,history in pairs(KetzerischerLootverteilerData.histories) do
-      if HereticList.Validate(history) then
-        table.insert(Addon.histories, history)
-        for i,entry in pairs(history.entries) do
-          if entry.isCurrent then
-            Addon.itemList:AddEntry(entry)
-          end
-        end
-      end
-    end
-    if #Addon.histories == 0 then
-      Addon.histories = { HereticList:New("default") }
-      Addon.activeHistoryIndex = 1
-    end
+    HereticHistory:Deserialize(KetzerischerLootverteilerData.histories)
+  end
+  if KetzerischerLootverteilerData.activeHistoryIndex then
+    local deserialized = KetzerischerLootverteilerData.activeHistoryIndex
+    Addon.activeHistoryIndex = math.min(deserialized, HereticHistory:NumberOfItemLists())
   end
   Addon:RecomputeLootCount()
   if KetzerischerLootverteilerData.minRarity then
@@ -484,7 +420,7 @@ function KetzerischerLootverteilerFrame_OnLoad(self)
       self.itemList = Addon:GetActiveHistory()
       HereticHistoryScrollFrame_Update(self)
     end
-  KetzerischerLootverteilerFrame.tabView[2].itemView.itemList = Addon.histories[1]
+  KetzerischerLootverteilerFrame.tabView[2].itemView.itemList = HereticHistory.histories[1]
   KetzerischerLootverteilerFrame.tabView[2].itemView.HereticOnItemClicked = HistoryLootItem_OnClick
   KetzerischerLootverteilerFrame.tabView[3].itemView.HereticUpdate =
     function (self)
@@ -504,8 +440,6 @@ function KetzerischerLootverteilerFrame_OnDragStop()
   KetzerischerLootverteilerFrame:StopMovingOrSizing();
 end
 
-
-
 function HereticTab_SetActiveTab(id)
   PanelTemplates_SetTab(KetzerischerLootverteilerFrame, id);
   for i,tab in pairs(KetzerischerLootverteilerFrame.tabView) do
@@ -521,7 +455,6 @@ end
 function HereticTab_OnClick(self)
   HereticTab_SetActiveTab(self:GetID())
 end
-
 
 function Addon:SetCurrentHistory(id)
   Addon.activeHistoryIndex = id
