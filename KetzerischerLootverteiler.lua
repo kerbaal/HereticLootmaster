@@ -504,28 +504,6 @@ function KetzerischerLootverteilerFrame_OnDragStop()
   KetzerischerLootverteilerFrame:StopMovingOrSizing();
 end
 
-local function KetzerischerLootverteilerRarityDropDown_OnClick(self)
-   UIDropDownMenu_SetSelectedID(KetzerischerLootverteilerRarityDropDown, self:GetID())
-   Addon.minRarity = { self.value, self:GetID() }
-end
-
-function KetzerischerLootverteilerRarityDropDown_Initialize(self, level)
-  for i = 0, 5 do
-    local r, g, b, hex = GetItemQualityColor(i)
-    local info = UIDropDownMenu_CreateInfo()
-    info.text = "|c" .. hex .. _G["ITEM_QUALITY" .. i .. "_DESC"] .. "|r"
-    info.value = i
-    info.func = KetzerischerLootverteilerRarityDropDown_OnClick
-    UIDropDownMenu_AddButton(info, level)
-  end
-  local info = UIDropDownMenu_CreateInfo()
-  info.text = "|cFFFF0000" .. DISABLE .. "|r"
-  info.value = 1000
-  info.func = KetzerischerLootverteilerRarityDropDown_OnClick
-  UIDropDownMenu_AddButton(info, level)
-  UIDropDownMenu_JustifyText(self, "LEFT")
-  UIDropDownMenu_SetWidth(self, 100);
-end
 
 
 function HereticTab_SetActiveTab(id)

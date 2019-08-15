@@ -22,12 +22,6 @@ function HereticHistoryDropDown_Initialize(self, level)
   end
 end
 
-function KetzerischerLootverteilerRarityDropDown_OnShow(self)
-  UIDropDownMenu_Initialize(self, KetzerischerLootverteilerRarityDropDown_Initialize);
-  if not Addon.minRarity then return end
-  UIDropDownMenu_SetSelectedID(self, Addon.minRarity[2])
-end
-
 function HereticHistoryDropDown_OnShow(self)
   UIDropDownMenu_Initialize(self, HereticHistoryDropDown_Initialize);
   UIDropDownMenu_SetSelectedID(self, Addon.activeHistoryIndex)

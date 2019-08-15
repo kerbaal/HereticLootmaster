@@ -160,9 +160,9 @@
                     </OnShow>
                   </Scripts>
                 </ScrollFrame>
-                <Button name="KetzerischerLootverteilerRarityDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
+                <Button name="HereticRarityDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
                     <Scripts>
-                        <OnShow function="KetzerischerLootverteilerRarityDropDown_OnShow"/>
+                        <OnShow function="HereticRarityDropDown_OnShow"/>
                     </Scripts>
                     <Anchors>
                         <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
@@ -185,7 +185,7 @@
                       </OnLeave>
                   </Scripts>
                   <Anchors>
-                      <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="KetzerischerLootverteilerRarityDropDown">
+                      <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="HereticRarityDropDown">
                           <Offset x="0" y="-2"/>
                       </Anchor>
                   </Anchors>
