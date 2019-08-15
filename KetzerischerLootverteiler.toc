@@ -14,5 +14,6 @@ EventHandling.lua
 SlashCommands.lua
 HereticLootButton.xml
 HereticHistoryDropDown.lua
+HereticHistoryScrollFrame.lua
 KetzerischerLootverteiler.xml
 Bindings.xml
