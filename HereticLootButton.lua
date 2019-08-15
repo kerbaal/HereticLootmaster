@@ -10,7 +10,7 @@ function HereticLootButton_OnClick(self, button, down)
 
   if (button == "LeftButton") then
     local name, _ = Util.DecomposeName(parent.entry.donator)
-    local itemLink = select(2,GetItemInfo(parent.entry.itemLink))
+    local itemLink = select(2, GetItemInfo(parent.entry.itemLink))
     if ( IsModifiedClick() ) then
       HandleModifiedItemClick(itemLink);
     else
