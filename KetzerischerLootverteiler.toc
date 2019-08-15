@@ -11,7 +11,7 @@ HereticRoll.lua
 HereticRollCollector.xml
 HereticItemList.lua
 EventHandling.lua
+SlashCommands.lua
 HereticLootButton.xml
 KetzerischerLootverteiler.xml
-
 Bindings.xml
