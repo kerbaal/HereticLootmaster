@@ -15,13 +15,7 @@ local function eventHandlerBNChat(self, event, msg, sender, u1, u2, u3, u4, u5, 
 end
 
 local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID, raidSize, endStatus)
-  if (endStatus == 1 and Addon:IsTrackedDifficulity(difficultyID) and
-      (not Addon.minRarity or Addon.minRarity[1] < 1000)) then
-    KetzerischerLootverteilerShow()
-  end
-  if (Addon:IsMaster() and Addon:IsAuthorizedToClaimMaster("player") ) then
-    Addon:ClaimMaster()
-  end
+  Addon:OnEncounterEnd(event, encounterID, encounterName, difficultyID, raidSize, endStatus)
 end
 
 local function eventHandlerLoot(self, event, message, sender)

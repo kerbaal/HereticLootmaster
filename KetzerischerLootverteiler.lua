@@ -346,6 +346,17 @@ function Addon:Serialize()
   HereticRaidInfo:Serialize(KetzerischerLootverteilerData)
 end
 
+function Addon:OnEncounterEnd(event, encounterID, encounterName, difficultyID, raidSize, endStatus)
+  if (endStatus == 1 and Addon:IsTrackedDifficulity(difficultyID) and
+    (not Addon.minRarity or Addon.minRarity[1] < 1000)) then
+  KetzerischerLootverteilerShow()
+  end
+  if (Addon:IsMaster() and Addon:IsAuthorizedToClaimMaster("player") ) then
+  Addon:ClaimMaster()
+  end
+end
+
+
 -- Keybindings
 BINDING_HEADER_KETZERISCHER_LOOTVERTEILER = "Ketzerischer Lootverteiler"
 BINDING_NAME_KETZERISCHER_LOOTVERTEILER_TOGGLE = "Toggle window"
