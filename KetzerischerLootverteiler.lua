@@ -336,6 +336,16 @@ function Addon:OnAddonLoaded()
   Addon:update("addon loaded")
 end
 
+function Addon:Serialize()
+  KetzerischerLootverteilerData.histories = HereticHistory.histories
+  KetzerischerLootverteilerData.activeHistoryIndex = Addon.activeHistoryIndex
+  KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
+  KetzerischerLootverteilerData.master = Addon.master
+  KetzerischerLootverteilerData.minRarity = Addon.minRarity
+  KetzerischerLootverteilerData.activeTab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
+  HereticRaidInfo:Serialize(KetzerischerLootverteilerData)
+end
+
 -- Keybindings
 BINDING_HEADER_KETZERISCHER_LOOTVERTEILER = "Ketzerischer Lootverteiler"
 BINDING_NAME_KETZERISCHER_LOOTVERTEILER_TOGGLE = "Toggle window"

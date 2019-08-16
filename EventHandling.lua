@@ -41,13 +41,7 @@ local function eventHandlerLoot(self, event, message, sender)
 end
 
 local function eventHandlerLogout(self, event)
-  KetzerischerLootverteilerData.histories = HereticHistory.histories
-  KetzerischerLootverteilerData.activeHistoryIndex = Addon.activeHistoryIndex
-  KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
-  KetzerischerLootverteilerData.master = Addon.master
-  KetzerischerLootverteilerData.minRarity = Addon.minRarity
-  KetzerischerLootverteilerData.activeTab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
-  HereticRaidInfo:Serialize(KetzerischerLootverteilerData)
+  Addon:Serialize()
 end
 
 local function eventHandlerAddonLoaded(self, event, addonName)
