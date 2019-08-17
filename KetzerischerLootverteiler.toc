@@ -8,14 +8,19 @@
 HereticUtils.lua
 HereticRaidInfo.lua
 HereticRoll.lua
+# The following file automatically loads HereticLootTally.lua via a <Script> tag.
 HereticRollCollector.xml
 HereticItemList.lua
 EventHandling.lua
 SlashCommands.lua
+# The following file automatically loads HereticLootButton.lua via a <Script> tag.
 HereticLootButton.xml
 HereticHistoryDropDown.lua
 HereticHistoryScrollFrame.lua
 HereticRarityDropDown.lua
 HereticHistory.lua
+# The following file automatically loads HereticLootTally.lua via a <Script> tag.
+HereticLootTally.xml
+# The following file automatically loads KertzerischerLootverteiler.lua via a <Script> tag.
 KetzerischerLootverteiler.xml
 Bindings.xml
