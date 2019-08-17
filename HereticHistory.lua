@@ -76,3 +76,25 @@ end
 function HereticHistory:NumberOfItemLists()
   return #HereticHistory.histories
 end
+
+function HereticHistory:ComputeLootCount(lootCount)
+  wipe(lootCount)
+  for i,entry in pairs(Addon:GetActiveHistory().entries) do
+    if (entry.winner) then
+      local cat = entry.winner:GetCategory()
+      local record = lootCount[entry.winner.name] or {}
+      lootCount[entry.winner.name] = record
+      record.name = entry.winner.name
+      local count = record.count or {}
+      record.count = count
+      count[cat] = (count[cat] or 0) + 1
+    end
+    if (entry.donator) then
+      local record = lootCount[entry.donator] or {}
+      lootCount[entry.donator] = record
+      record.name = entry.donator
+      local donations = record.donations or 0
+      record.donations = donations + 1
+    end
+  end
+end

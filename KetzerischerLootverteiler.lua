@@ -68,30 +68,8 @@ function Addon:GetActiveHistory()
   return HereticHistory:GetItemListByIndex(Addon.activeHistoryIndex)
 end
 
-function Addon:RecomputeLootCount()
-  wipe(Addon.lootCount)
-  for i,entry in pairs(Addon:GetActiveHistory().entries) do
-    if (entry.winner) then
-      local cat = entry.winner:GetCategory()
-      local record = Addon.lootCount[entry.winner.name] or {}
-      Addon.lootCount[entry.winner.name] = record
-      record.name = entry.winner.name
-      local count = record.count or {}
-      record.count = count
-      count[cat] = (count[cat] or 0) + 1
-    end
-    if (entry.donator) then
-      local record = Addon.lootCount[entry.donator] or {}
-      Addon.lootCount[entry.donator] = record
-      record.name = entry.donator
-      local donations = record.donations or 0
-      record.donations = donations + 1
-    end
-  end
-end
-
 function Addon:AnnouceLootCount()
-  Addon:RecomputeLootCount()
+  HereticHistory:ComputeLootCount(Addon.lootCount)
   local n = 0
   for k,v in pairs(Addon.lootCount) do
     n=n+1
@@ -122,7 +100,7 @@ function Addon:CountDonationsFor(name)
 end
 
 function Addon:OnWinnerUpdate(entry, prevWinner)
-  Addon:RecomputeLootCount()
+  HereticHistory:ComputeLootCount(Addon.lootCount)
   Addon:update("on winner update")
   if (Addon:IsMaster()) then
     local msg = Addon.MSG_ANNOUNCE_WINNER .. " " .. entry.donator .. " " ..
@@ -318,7 +296,7 @@ function Addon:OnAddonLoaded()
     local deserialized = KetzerischerLootverteilerData.activeHistoryIndex
     Addon.activeHistoryIndex = math.min(deserialized, HereticHistory:NumberOfItemLists())
   end
-  Addon:RecomputeLootCount()
+  HereticHistory:ComputeLootCount(Addon.lootCount)
   if KetzerischerLootverteilerData.minRarity then
     Addon.minRarity = KetzerischerLootverteilerData.minRarity
   end
@@ -479,7 +457,7 @@ end
 
 function Addon:SetCurrentHistory(id)
   Addon.activeHistoryIndex = id
-  Addon:RecomputeLootCount()
+  HereticHistory:ComputeLootCount(Addon.lootCount)
   Addon:update("change history")
 end
 

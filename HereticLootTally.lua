@@ -1,3 +1,7 @@
+local ADDON, Addon = ...
+
+local Util = Addon.Util
+
 function HereticLootTally_OnEnter(self)
   GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
   local categories = ""
