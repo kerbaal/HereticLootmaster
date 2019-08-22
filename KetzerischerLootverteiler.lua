@@ -206,6 +206,14 @@ local function updateTitle()
   end
 end
 
+function Addon:ClearHistory()
+  Addon.itemList:DeleteAllEntries()
+  HereticHistory:Wipe();
+  Addon.activeHistoryIndex = 1
+  HereticTab_SetActiveTab(1)
+  Addon:update("DeleteAllEntries")
+end
+
 function Addon:IsMaster()
   return Util.GetFullUnitName("player") == Addon.master
 end

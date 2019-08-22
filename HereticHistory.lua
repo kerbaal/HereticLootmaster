@@ -98,3 +98,8 @@ function HereticHistory:ComputeLootCount(lootCount)
     end
   end
 end
+
+function HereticHistory:Wipe()
+  wipe(HereticHistory.histories)
+  HereticHistory.histories[1] = HereticList:New("default")
+end

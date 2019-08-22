@@ -23,12 +23,7 @@ function SlashCmdList.KetzerischerLootverteiler(msg, editbox)
   elseif (msg:match("^%s*list%s*$")) then
     Addon:AnnouceLootCount()
   elseif (msg:match("^%s*clearall%s*$")) then
-    Addon.itemList:DeleteAllEntries()
-    wipe(Addon.histories)
-    HereticHistory.histories[1] = HereticList:New("default")
-    Addon.activeHistoryIndex = 1
-    HereticTab_SetActiveTab(1)
-    Addon:update("clearall")
+    Addon:ClearHistory()
   elseif (msg:match("^%s*debug%s*$")) then
     KetzerischerLootverteilerData.debug = not KetzerischerLootverteilerData.debug
     if KetzerischerLootverteilerData.debug then
