@@ -375,9 +375,12 @@ function MasterLootItem_OnClick(self, button, down, entry)
     return true
   end
   if (button == "LeftButton" and IsModifiedClick("ALT")) then
-    local itemLink = select(2,GetItemInfo(entry.itemLink))
-    local text = itemLink .. " (" .. Util.ShortenFullName(entry.donator) .. ")"
+    local itemName, itemLink, quality, itemLevel, itemMinLevel, itemType,
+    itemSubType, itemStackCount, itemEquipLoc, itemTexture,
+    itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(entry.itemLink);
+    local text = itemLink .. " " .. itemLevel .. " (" .. Util.ShortenFullName(entry.donator) .. ")"
     SendChatMessage(text, "RAID")
+
     HereticRollCollectorFrame_BeginRollCollection(HereticRollCollectorFrame, entry)
     return true
   end
