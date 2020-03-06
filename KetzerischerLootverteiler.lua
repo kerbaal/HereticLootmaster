@@ -469,6 +469,7 @@ end
 function Addon:SetCurrentHistory(id)
   Addon.activeHistoryIndex = id
   HereticHistory:ComputeLootCount(Addon.lootCount)
+  HereticRollCollectorFrame_Update(HereticRollCollectorFrame)
   Addon:update("change history")
 end
 
