@@ -71,36 +71,6 @@ function HereticLootButton_FromId(id)
   return _G["HereticLootFrame"..id.."Button"];
 end
 
-local GetMoreItemInfo
-do
-  local tooltipName = "PhanxScanningTooltip" .. random(100000, 10000000)
-
-  local tooltip = CreateFrame("GameTooltip", tooltipName, UIParent, "GameTooltipTemplate")
-  tooltip:SetOwner(UIParent, "ANCHOR_NONE")
-
-  local textures = {}
-  for i = 1, 10 do
-    textures[i] = _G[tooltipName .. "Texture" .. i]
-  end
-
-  local cache = setmetatable({}, { __index = function(t, link)
-    tooltip:SetHyperlink(link)
-    local info = {tex = {}}
-    for i = 1, 10 do
-      if textures[i]:IsShown() then
-        info.tex[i] = textures[i]:GetTexture()
-      end
-    end
-    t[link] = info
-    return info
-  end })
-
-  function GetMoreItemInfo(link)
-    if not link then return nil end
-    return cache[link]
-  end
-end
-
 function HereticLootButton_Update(lootButton, entry)
   local button = lootButton.iconButton;
   if (button == nil) then
@@ -243,7 +213,7 @@ function HereticDropButton_Update(frame, entry)
 
   frame.itemLevelText:SetText(""..(itemLevel or ""));
 
-  local info = GetMoreItemInfo(itemLink);
+  local info = Util.GetMoreItemInfo(itemLink);
   if info and info.tex[1] then
     frame.itemSocketTexture:SetTexture(info.tex[1])
     frame.itemSocketTexture:Show()

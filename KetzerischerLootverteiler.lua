@@ -378,7 +378,8 @@ function MasterLootItem_OnClick(self, button, down, entry)
     local itemName, itemLink, quality, itemLevel, itemMinLevel, itemType,
     itemSubType, itemStackCount, itemEquipLoc, itemTexture,
     itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(entry.itemLink);
-    local text = itemLink .. " " .. itemLevel .. " (" .. Util.ShortenFullName(entry.donator) .. ")"
+    local moreInfo = Util.GetMoreItemInfo(itemLink)
+    local text = itemLink .. " " .. itemLevel .. " " .. (moreInfo.isCorrupted or "") .. " (" .. Util.ShortenFullName(entry.donator) .. ")"
     SendChatMessage(text, "RAID")
 
     HereticRollCollectorFrame_BeginRollCollection(HereticRollCollectorFrame, entry)

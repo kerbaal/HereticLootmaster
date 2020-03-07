@@ -172,4 +172,50 @@ function Util.formatLootCountMono(count, skip, verbose)
   return str
 end
 
+local GetMoreItemInfo
+do
+  local tooltipName = "PhanxScanningTooltip" .. random(100000, 10000000)
+
+  local tooltip = CreateFrame("GameTooltip", tooltipName, UIParent, "GameTooltipTemplate")
+  tooltip:SetOwner(UIParent, "ANCHOR_NONE")
+
+  local textures = {}
+  for i = 1, 10 do
+    textures[i] = _G[tooltipName .. "Texture" .. i]
+  end
+
+  local cache = setmetatable({}, { __index = function(t, link)
+    tooltip:SetHyperlink(link)
+    local info = {tex = {}, isCorrupted = false, hasSocket = false}
+    for i = 1, 10 do
+      if textures[i]:IsShown() then
+        info.tex[i] = textures[i]:GetTexture()
+      end
+    end
+
+    info.hasSocket = info.tex[1];
+
+    local regions = {tooltip:GetRegions()};
+    for i, region in ipairs(regions) do
+      if region and region:GetObjectType() == "FontString" then
+        local text = region:GetText()
+        if text and text:find("%d Verderbnis") then
+          info.isCorrupted = text;
+          --print("" .. i .. name .. " " .. text)
+        end
+      end
+    end
+
+    t[link] = info
+    return info
+  end })
+
+  function GetMoreItemInfo(link)
+    if not link then return nil end
+    return cache[link]
+  end
+end
+
+Util.GetMoreItemInfo = GetMoreItemInfo;
+
 Addon.Util = Util
