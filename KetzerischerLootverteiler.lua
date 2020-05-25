@@ -335,10 +335,10 @@ end
 function Addon:OnEncounterEnd(event, encounterID, encounterName, difficultyID, raidSize, endStatus)
   if (endStatus == 1 and Addon:IsTrackedDifficulity(difficultyID) and
     (not Addon.minRarity or Addon.minRarity[1] < 1000)) then
-  KetzerischerLootverteilerShow()
+    KetzerischerLootverteilerShow()
   end
   if (Addon:IsMaster() and Addon:IsAuthorizedToClaimMaster("player") ) then
-  Addon:ClaimMaster()
+    Addon:ClaimMaster()
   end
 end
 

@@ -2,6 +2,13 @@ local ADDON, Addon = ...
 
 local Util = Addon.Util
 
+-- `HereticRaidInfo` implements a cache for player infos in raids. It's main
+-- use is to provide class coloring for the addon. The class uses a timer
+-- to continously index the players in the raid, which gets initialized in
+-- `RequestReindexing`. HereticRaidInfo:Update iterates over all players in
+-- the raid and records class information. The information may be persisted
+-- via Serialize/Deserialize to a saved variable.
+
 HereticRaidInfo = {}
 
 function HereticRaidInfo:Initialize()

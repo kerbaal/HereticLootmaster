@@ -6,12 +6,16 @@ local function eventHandlerWhisper(self, event, msg, from)
   Addon:AddAllItems(msg, from, from)
 end
 
-local function eventHandlerBNChat(self, event, msg, sender, u1, u2, u3, u4, u5, u6, u7, u8, cnt, u9, bnetIDAccount)
-  local bnetIDGameAccount = select(6, BNGetFriendInfoByID(bnetIDAccount))
-  local _, name, client, realm = BNGetGameAccountInfo(bnetIDGameAccount)
-  Util.dbgprint("BN: " .. sender .. " " .. bnetIDAccount .. " " .. name .. "-" .. realm)
-
-  Addon:AddAllItems(msg, name .. "-" .. realm, sender)
+local function eventHandlerBNChat(self, event, msg, sender, languageName, channelName, playerName2, specialFlags, zoneChannelID, channelIndex, channelBaseName, unused, lineID, guid, bnSenderID, isMobile, isSubtitle)
+  local accountInfo = C_BattleNet.GetAccountInfoByID(bnSenderID);
+  local gameAccountInfo = accountInfo.gameAccountInfo
+  if gameAccountInfo then
+    local name, realm = gameAccountInfo.characterName, gameAccountInfo.realmName
+    Util.dbgprint("BN: " .. sender .. " " .. name .. "-" .. realm)
+    if name and realm then
+      Addon:AddAllItems(msg, name .. "-" .. realm, sender)
+    end
+  end
 end
 
 local function eventHandlerEncounterEnd(self, event, encounterID, encounterName, difficultyID, raidSize, endStatus)
@@ -40,7 +44,7 @@ end
 
 local function eventHandlerAddonLoaded(self, event, addonName)
   if (addonName == ADDON) then
-   Addon:OnAddonLoaded()
+    Addon:OnAddonLoaded()
  end
 end
 
