@@ -143,7 +143,7 @@ end
 
 function HereticRollFrame_OnDragStop(button)
   if not button.roll or not Addon:CanModify() then return end
-  local dropFrame = KetzerischerLootverteilerFrame:GetItemAtCursor()
+  local dropFrame = HereticLootmasterFrame:GetItemAtCursor()
   local data = nil
   if dropFrame and dropFrame.HereticOnDrop then
     data = dropFrame:HereticOnDrop(button)

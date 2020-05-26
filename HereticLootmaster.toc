@@ -1,9 +1,9 @@
 ## Interface: 80200
-## Title: Ketzerischer Lootverteiler
+## Title: Heretic Lootmaster
 ## Notes: Helps distributing loot on a donation basis
 ## Author: Kerbaal
 ## SavedVariables:
-## SavedVariablesPerCharacter: KetzerischerLootverteilerData
+## SavedVariablesPerCharacter: HereticLootmasterData
 
 HereticUtils.lua
 HereticRaidInfo.lua
@@ -22,5 +22,5 @@ HereticHistory.lua
 # The following file automatically loads HereticLootTally.lua via a <Script> tag.
 HereticLootTally.xml
 # The following file automatically loads KertzerischerLootverteiler.lua via a <Script> tag.
-KetzerischerLootverteiler.xml
+HereticLootmaster.xml
 Bindings.xml

@@ -3,7 +3,7 @@ local ADDON, Addon = ...
 local Util = {}
 
 function Util.dbgprint(...)
-  if KetzerischerLootverteilerData.debug then
+  if HereticLootmasterData.debug then
     print(...)
   end
 end

@@ -82,7 +82,7 @@
         <Layers>
             <Layer level="OVERLAY">
                 <FontString name="$parentTitleText" inherits="GameFontNormal"
-                  text="Ketzerischer Wurfsammler" parentKey="TitleText" wordwrap="false"
+                  text="Heretic rollcollector" parentKey="TitleText" wordwrap="false"
                   justifyH="LEFT">
                     <Anchors>
                         <Anchor point="TOP" x="0" y="-5"/>

@@ -46,7 +46,7 @@ function HereticPlayerInfoScrollFrame_OnLoad(self)
 end
 
 function HereticPlayerInfoScrollFrame_Update(self)
-  local scrollFrame = KetzerischerLootverteilerFrameTabView3Container
+  local scrollFrame = HereticLootmasterFrameTabView3Container
   local offset = HybridScrollFrame_GetOffset(scrollFrame);
   local buttons = scrollFrame.buttons;
   local numButtons = #buttons;

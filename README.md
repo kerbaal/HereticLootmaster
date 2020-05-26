@@ -1,4 +1,4 @@
-# Ketzerischer Lootverteiler
+# Heretic Lootmaster
 
 A World of Warcraft addon that helps with distributing items in
 raids without master loot. Lootverteiler captures all items whispered to
@@ -19,6 +19,6 @@ The addon now also supports a keybinding for show/hide toggle.
 
 ## Understanding the source code
 
-Start reading the source code in `KetzerischerLootverteiler.lua` with the
-function `KetzerischerLootverteilerFrame_OnLoad`. That function handles
+Start reading the source code in `HereticLootmaster.lua` with the
+function `HereticLootmasterFrame_OnLoad`. That function handles
 initialization of the addon window.

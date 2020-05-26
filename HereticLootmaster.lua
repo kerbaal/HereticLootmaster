@@ -2,11 +2,11 @@ local ADDON, Addon = ...
 
 local Util = Addon.Util
 
-KetzerischerLootverteilerData = {}
+HereticLootmasterData = {}
 
 local function getActiveTab()
-  local tab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
-  return KetzerischerLootverteilerFrame.tabView[tab]
+  local tab = PanelTemplates_GetSelectedTab(HereticLootmasterFrame)
+  return HereticLootmasterFrame.tabView[tab]
 end
 
 function HereticTabView_Update(self)
@@ -18,16 +18,16 @@ function Addon:update(reason)
   HereticTabView_Update(getActiveTab())
 end
 
-function KetzerischerLootverteilerShow()
-  KetzerischerLootverteilerFrame:Show()
+function HereticLootmasterShow()
+  HereticLootmasterFrame:Show()
   Addon:update("show")
 end
 
-function KetzerischerLootverteilerToggle()
-  if (KetzerischerLootverteilerFrame:IsVisible()) then
-    KetzerischerLootverteilerFrame:Hide()
+function HereticLootmasterToggle()
+  if (HereticLootmasterFrame:IsVisible()) then
+    HereticLootmasterFrame:Hide()
   else
-    KetzerischerLootverteilerShow()
+    HereticLootmasterShow()
   end
 end
 
@@ -55,7 +55,7 @@ function Addon:Initialize()
   Addon.MSG_ANNOUNCE_LOOT_PATTERN = "^%s+([^ ]+)%s+(.*)$";
   Addon.MSG_ANNOUNCE_WINNER = "Winner";
   Addon.MSG_ANNOUNCE_WINNER_PATTERN = "^%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)%s+([^ ]+)$";
-  Addon.TITLE_TEXT = "Ketzerischer Lootverteiler";
+  Addon.TITLE_TEXT = "Heretic Lootmaster";
   Addon.itemList = HereticList:New("master");
   Addon.activeHistoryIndex = 1;
   Addon.master = nil;
@@ -143,7 +143,7 @@ end
 
 local function showIfNotCombat()
   if not UnitAffectingCombat("player") then
-    KetzerischerLootverteilerShow()
+    HereticLootmasterShow()
   end
 end
 
@@ -199,10 +199,10 @@ end
 local function updateTitle()
   if (Addon.master) then
     local name, _ = Util.DecomposeName(Addon.master)
-    KetzerischerLootverteilerTitleText:SetText(Addon.TITLE_TEXT .. ": "
+    HereticLootmasterTitleText:SetText(Addon.TITLE_TEXT .. ": "
       .. Util.GetPlayerLink(Addon.master, name))
   else
-    KetzerischerLootverteilerTitleText:SetText(Addon.TITLE_TEXT)
+    HereticLootmasterTitleText:SetText(Addon.TITLE_TEXT)
   end
 end
 
@@ -243,11 +243,11 @@ end
 
 function Addon:ClaimMaster()
   if Addon:IsAuthorizedToClaimMaster("player") then
-    print ("You proclaim yourself Ketzerischer Lootverteiler.")
+    print ("You proclaim yourself Heretic Lootmaster.")
     C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "RAID")
     C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CLAIM_MASTER, "WHISPER", Util.GetFullUnitName("player"))
   else
-    print ("Only leader or assistant may become Ketzerischer Lootverteiler.")
+    print ("Only leader or assistant may become Heretic Lootmaster.")
   end
 end
 
@@ -264,13 +264,13 @@ function Addon:ProcessClaimMaster(name)
   local unitId = HereticRaidInfo:GetUnitId(name)
   if (Addon:IsAuthorizedToClaimMaster(unitId)) then
     Addon:SetMaster(name)
-    print ("You accepted " .. name .. " as your Ketzerischer Lootverteiler.")
+    print ("You accepted " .. name .. " as your Heretic Lootmaster.")
   end
 end
 
 function Addon:RenounceMaster()
   if (Addon.master ~= Util.GetFullUnitName("player")) then return end
-  print ("You renounce your title of Ketzerischer Lootverteiler.")
+  print ("You renounce your title of Heretic Lootmaster.")
   C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_RENOUNCE_MASTER, "RAID")
 end
 
@@ -280,7 +280,7 @@ function Addon:ProcessRenounceMaster(name)
   end
 end
 
-function KetzerischerLootverteilerFrame_Update(self, elapsed)
+function HereticLootmasterFrame_Update(self, elapsed)
   getActiveTab():Update()
 end
 
@@ -295,47 +295,47 @@ function Addon:IsTrackedDifficulity(difficultyID)
 end
 
 function Addon:OnAddonLoaded()
-  HereticRaidInfo:Deserialize(KetzerischerLootverteilerData)
+  HereticRaidInfo:Deserialize(HereticLootmasterData)
   HereticRaidInfo:Update()
-  if KetzerischerLootverteilerData.histories then
-    HereticHistory:Deserialize(KetzerischerLootverteilerData.histories)
+  if HereticLootmasterData.histories then
+    HereticHistory:Deserialize(HereticLootmasterData.histories)
   end
-  if KetzerischerLootverteilerData.activeHistoryIndex then
-    local deserialized = KetzerischerLootverteilerData.activeHistoryIndex
+  if HereticLootmasterData.activeHistoryIndex then
+    local deserialized = HereticLootmasterData.activeHistoryIndex
     Addon.activeHistoryIndex = math.min(deserialized, HereticHistory:NumberOfItemLists())
   end
   HereticHistory:ComputeLootCount(Addon.lootCount)
-  if KetzerischerLootverteilerData.minRarity then
-    Addon.minRarity = KetzerischerLootverteilerData.minRarity
+  if HereticLootmasterData.minRarity then
+    Addon.minRarity = HereticLootmasterData.minRarity
   end
-  if (KetzerischerLootverteilerData.isVisible == nil or
-      KetzerischerLootverteilerData.isVisible == true) then
-    KetzerischerLootverteilerShow()
+  if (HereticLootmasterData.isVisible == nil or
+      HereticLootmasterData.isVisible == true) then
+    HereticLootmasterShow()
   end
-  if (KetzerischerLootverteilerData.master and IsPlayerInPartyOrRaid()) then
+  if (HereticLootmasterData.master and IsPlayerInPartyOrRaid()) then
     C_ChatInfo.SendAddonMessage(Addon.MSG_PREFIX, Addon.MSG_CHECK_MASTER, "WHISPER",
-      KetzerischerLootverteilerData.master)
+      HereticLootmasterData.master)
   end
-  if KetzerischerLootverteilerData.activeTab then
-    HereticTab_SetActiveTab(Util.toRange(KetzerischerLootverteilerFrame.tabView, KetzerischerLootverteilerData.activeTab))
+  if HereticLootmasterData.activeTab then
+    HereticTab_SetActiveTab(Util.toRange(HereticLootmasterFrame.tabView, HereticLootmasterData.activeTab))
   end
   Addon:update("addon loaded")
 end
 
 function Addon:Serialize()
-  KetzerischerLootverteilerData.histories = HereticHistory.histories
-  KetzerischerLootverteilerData.activeHistoryIndex = Addon.activeHistoryIndex
-  KetzerischerLootverteilerData.isVisible = KetzerischerLootverteilerFrame:IsVisible()
-  KetzerischerLootverteilerData.master = Addon.master
-  KetzerischerLootverteilerData.minRarity = Addon.minRarity
-  KetzerischerLootverteilerData.activeTab = PanelTemplates_GetSelectedTab(KetzerischerLootverteilerFrame)
-  HereticRaidInfo:Serialize(KetzerischerLootverteilerData)
+  HereticLootmasterData.histories = HereticHistory.histories
+  HereticLootmasterData.activeHistoryIndex = Addon.activeHistoryIndex
+  HereticLootmasterData.isVisible = HereticLootmasterFrame:IsVisible()
+  HereticLootmasterData.master = Addon.master
+  HereticLootmasterData.minRarity = Addon.minRarity
+  HereticLootmasterData.activeTab = PanelTemplates_GetSelectedTab(HereticLootmasterFrame)
+  HereticRaidInfo:Serialize(HereticLootmasterData)
 end
 
 function Addon:OnEncounterEnd(event, encounterID, encounterName, difficultyID, raidSize, endStatus)
   if (endStatus == 1 and Addon:IsTrackedDifficulity(difficultyID) and
     (not Addon.minRarity or Addon.minRarity[1] < 1000)) then
-    KetzerischerLootverteilerShow()
+    HereticLootmasterShow()
   end
   if (Addon:IsMaster() and Addon:IsAuthorizedToClaimMaster("player") ) then
     Addon:ClaimMaster()
@@ -344,8 +344,8 @@ end
 
 
 -- Keybindings
-BINDING_HEADER_KETZERISCHER_LOOTVERTEILER = "Ketzerischer Lootverteiler"
-BINDING_NAME_KETZERISCHER_LOOTVERTEILER_TOGGLE = "Toggle window"
+BINDING_HEADER_HERETIC_LOOTMASTER = "Heretic Lootmaster"
+BINDING_NAME_HERETIC_LOOTMASTER_TOGGLE = "Toggle window"
 
 StaticPopupDialogs["HERETIC_LOOT_MASTER_CONFIRM_DELETE_FROM_HISTORY"] = {
   text = "Are you sure you want to delete this item permanently from history?",
@@ -406,7 +406,7 @@ function HistoryLootItem_OnClick(self, button, down)
   return false
 end
 
-function KetzerischerLootverteilerFrame_GetItemAtCursor(self)
+function HereticLootmasterFrame_GetItemAtCursor(self)
   local frame = HereticHistoryScrollFrame_GetItemAtCursor(getActiveTab().itemView)
   if frame then return frame end
   frame = HereticRollCollectorFrame
@@ -416,44 +416,44 @@ function KetzerischerLootverteilerFrame_GetItemAtCursor(self)
   return nil
 end
 
-function KetzerischerLootverteilerFrame_OnLoad(self)
+function HereticLootmasterFrame_OnLoad(self)
   Addon:Initialize()
   HereticRaidInfo:Initialize()
-  Addon:InitializeEventHandlers(KetzerischerLootverteilerFrame);
+  Addon:InitializeEventHandlers(HereticLootmasterFrame);
 
   self:RegisterForDrag("LeftButton");
 
-  KetzerischerLootverteilerFrame.tabView[1].itemView.HereticUpdate = HereticHistoryScrollFrame_Update
-  KetzerischerLootverteilerFrame.tabView[1].itemView.itemList = Addon.itemList
-  KetzerischerLootverteilerFrame.tabView[1].itemView.HereticOnItemClicked =  MasterLootItem_OnClick
-  KetzerischerLootverteilerFrame.tabView[2].itemView.HereticUpdate =
+  HereticLootmasterFrame.tabView[1].itemView.HereticUpdate = HereticHistoryScrollFrame_Update
+  HereticLootmasterFrame.tabView[1].itemView.itemList = Addon.itemList
+  HereticLootmasterFrame.tabView[1].itemView.HereticOnItemClicked =  MasterLootItem_OnClick
+  HereticLootmasterFrame.tabView[2].itemView.HereticUpdate =
     function (self)
       self.itemList = Addon:GetActiveHistory()
       HereticHistoryScrollFrame_Update(self)
     end
-  KetzerischerLootverteilerFrame.tabView[2].itemView.itemList = HereticHistory.histories[1]
-  KetzerischerLootverteilerFrame.tabView[2].itemView.HereticOnItemClicked = HistoryLootItem_OnClick
-  KetzerischerLootverteilerFrame.tabView[3].itemView.HereticUpdate =
+  HereticLootmasterFrame.tabView[2].itemView.itemList = HereticHistory.histories[1]
+  HereticLootmasterFrame.tabView[2].itemView.HereticOnItemClicked = HistoryLootItem_OnClick
+  HereticLootmasterFrame.tabView[3].itemView.HereticUpdate =
     function (self)
       HereticPlayerInfoScrollFrame_Update(self)
     end
 
-  KetzerischerLootverteilerFrame.GetItemAtCursor = KetzerischerLootverteilerFrame_GetItemAtCursor
-  PanelTemplates_SetNumTabs(KetzerischerLootverteilerFrame, #KetzerischerLootverteilerFrame.tabView);
+  HereticLootmasterFrame.GetItemAtCursor = HereticLootmasterFrame_GetItemAtCursor
+  PanelTemplates_SetNumTabs(HereticLootmasterFrame, #HereticLootmasterFrame.tabView);
   HereticTab_SetActiveTab(1)
 end
 
-function KetzerischerLootverteilerFrame_OnDragStart()
-  KetzerischerLootverteilerFrame:StartMoving();
+function HereticLootmasterFrame_OnDragStart()
+  HereticLootmasterFrame:StartMoving();
 end
 
-function KetzerischerLootverteilerFrame_OnDragStop()
-  KetzerischerLootverteilerFrame:StopMovingOrSizing();
+function HereticLootmasterFrame_OnDragStop()
+  HereticLootmasterFrame:StopMovingOrSizing();
 end
 
 function HereticTab_SetActiveTab(id)
-  PanelTemplates_SetTab(KetzerischerLootverteilerFrame, id);
-  for i,tab in pairs(KetzerischerLootverteilerFrame.tabView) do
+  PanelTemplates_SetTab(HereticLootmasterFrame, id);
+  for i,tab in pairs(HereticLootmasterFrame.tabView) do
     if i == id then
       tab:Show();
     else
@@ -474,6 +474,6 @@ function Addon:SetCurrentHistory(id)
   Addon:update("change history")
 end
 
-function KetzerischerLootverteilerRollButton_OnClick(self)
+function HereticLootmasterRollButton_OnClick(self)
    HereticRollCollectorFrame:Toggle()
 end

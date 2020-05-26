@@ -1,8 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
   ..\FrameXML\UI.xsd">
-    <Script file="KetzerischerLootverteiler.lua"/>
+    <Script file="HereticLootmaster.lua"/>
 
-    <Frame name="KetzerischerLootverteilerFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
+    <Frame name="HereticLootmasterFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
         <Size x="495" y="310"/>
         <TitleRegion>
             <Size x="495" y="20"/>
@@ -25,13 +25,13 @@
         </Backdrop>
         <Layers>
             <Layer level="OVERLAY">
-                <FontString name="KetzerischerLootverteilerTitleText" font="Fonts/MORPHEUS.ttf" text="Ketzerischer Lootverteiler" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
+                <FontString name="HereticLootmasterTitleText" font="Fonts/MORPHEUS.ttf" text="Heretic Lootmaster" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
                     <Anchors>
                       <Anchor point="TOPLEFT" relativeTo="$parent" x="10" y="-5" />
                     </Anchors>
                     <FontHeight val="18"/>
                 </FontString>
-                <FontString name="KetzerischerLootverteilerStatusText" inherits="GameFontNormal" justifyH="LEFT" text="">
+                <FontString name="HereticLootmasterStatusText" inherits="GameFontNormal" justifyH="LEFT" text="">
                     <Size>
                         <AbsDimension x="200" y="0"/>
                     </Size>
@@ -97,7 +97,7 @@
                         <OnShow function="HereticRarityDropDown_OnShow"/>
                     </Scripts>
                     <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="KetzerischerLootverteilerFrame">
+                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="HereticLootmasterFrame">
                             <Offset x="-10" y="-2"/>
                         </Anchor>
                     </Anchors>
@@ -107,7 +107,7 @@
                     <AbsDimension x="24" y="24"/>
                   </Size>
                   <Scripts>
-                      <OnClick function="KetzerischerLootverteilerRollButton_OnClick"/>
+                      <OnClick function="HereticLootmasterRollButton_OnClick"/>
                       <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
                         GameTooltip:SetText("Click here toggle the roll collector");
@@ -144,7 +144,7 @@
                       </Anchor>
                   </Anchors>
                   <Scripts>
-                      <OnClick function="KetzerischerLootverteilerRollButton_OnClick"/>
+                      <OnClick function="HereticLootmasterRollButton_OnClick"/>
                       <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
                         GameTooltip:SetText("Shift-RightClick on item icon to delete.\nAlt+LeftClick on item icon to post in raid chat and clear roll collector.");
@@ -262,9 +262,9 @@
 
         </Frames>
         <Scripts>
-            <OnLoad>KetzerischerLootverteilerFrame_OnLoad(self);</OnLoad>
-            <OnDragStart>KetzerischerLootverteilerFrame_OnDragStart(self);</OnDragStart>
-            <OnDragStop>KetzerischerLootverteilerFrame_OnDragStop(self);</OnDragStop>
+            <OnLoad>HereticLootmasterFrame_OnLoad(self);</OnLoad>
+            <OnDragStart>HereticLootmasterFrame_OnDragStart(self);</OnDragStart>
+            <OnDragStop>HereticLootmasterFrame_OnDragStop(self);</OnDragStop>
         </Scripts>
     </Frame>
 </Ui>

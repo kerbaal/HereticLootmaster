@@ -1,7 +1,7 @@
 <Bindings>
-  <Binding name="KETZERISCHER_LOOTVERTEILER_TOGGLE"
-    header="KETZERISCHER_LOOTVERTEILER"
+  <Binding name="HERETIC_LOOTMASTER_TOGGLE"
+    header="HERETIC_LOOTMASTER"
     category="ADDONS">
-    KetzerischerLootverteilerToggle()
+    HereticLootmasterToggle()
   </Binding>
 </Bindings>
