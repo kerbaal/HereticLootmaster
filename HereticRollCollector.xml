@@ -1,168 +1,164 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
   ..\FrameXML\UI.xsd">
-    <Script file="HereticRollCollector.lua"/>
-    <Button name="HereticRollFrameTemplate" virtual="true" movable="true"
-      clampedToScreen="true" hidden="true" inherits="BackdropTemplate" mixin="BackdropTemplateMixin">
-        <Size x="170" y="20"/>
-        <KeyValues>
-					<KeyValue key="backdropInfo" value="ROLL_BACKDROP" type="global"/>
-					<KeyValue key="backdropColor" value="ROLL_BACKDROP_FONT_COLOR" type="global"/>
-					<KeyValue key="backdropBorderColor" value="ROLL_BACKDROP_BORDER_COLOR" type="global"/>
-					<KeyValue key="backdropColorAlpha" value="0.9" type="number"/>
-				</KeyValues>
+  <Script file="HereticRollCollector.lua"/>
+  <Button name="HereticRollFrameTemplate" virtual="true" movable="true" clampedToScreen="true" hidden="true" inherits="BackdropTemplate" mixin="BackdropTemplateMixin">
+    <Size x="170" y="20"/>
+    <KeyValues>
+      <KeyValue key="backdropInfo" value="ROLL_BACKDROP" type="global"/>
+      <KeyValue key="backdropColor" value="ROLL_BACKDROP_FONT_COLOR" type="global"/>
+      <KeyValue key="backdropBorderColor" value="ROLL_BACKDROP_BORDER_COLOR" type="global"/>
+      <KeyValue key="backdropColorAlpha" value="0.9" type="number"/>
+    </KeyValues>
 
-        <Layers>
-            <Layer level="ARTWORK">
-                <FontString name="$parentName" inherits="GameFontNormalSmall" justifyH="LEFT" text="Kerbaal">
-                    <Size x="70" y="8"/>
-                    <Anchors>
-                        <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="10" y="0"/>
-                    </Anchors>
-                </FontString>
-                <FontString name="$parentRoll" inherits="GameFontNormalSmall" justifyH="CENTER" text="93">
-                    <Size x="30" y="8"/>
-                    <Anchors>
-                        <Anchor point="LEFT" relativeTo="$parentName" relativePoint="RIGHT" x="2" y="0"/>
-                    </Anchors>
-                </FontString>
-                <FontString name="$parentItemCount" inherits="GameFontNormalSmall" justifyH="CENTER" text="1">
-                    <Size x="60" y="8"/>
-                    <Anchors>
-                        <Anchor point="LEFT" relativeTo="$parentRoll" relativePoint="RIGHT" x="2" y="0"/>
-                    </Anchors>
-                </FontString>
-                <FontString name="$parentSlotText" inherits="GameFontNormalSmall" justifyH="CENTER" parentKey="slotText">
-                    <Size x="154" y="8"/>
-                    <Anchors>
-                        <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="10" y="0"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
-        <Scripts>
-            <OnLoad inherit="prepend">
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentName" inherits="GameFontNormalSmall" justifyH="LEFT" text="Kerbaal">
+          <Size x="70" y="8"/>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="10" y="0"/>
+          </Anchors>
+        </FontString>
+        <FontString name="$parentRoll" inherits="GameFontNormalSmall" justifyH="CENTER" text="93">
+          <Size x="30" y="8"/>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentName" relativePoint="RIGHT" x="2" y="0"/>
+          </Anchors>
+        </FontString>
+        <FontString name="$parentItemCount" inherits="GameFontNormalSmall" justifyH="CENTER" text="1">
+          <Size x="60" y="8"/>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentRoll" relativePoint="RIGHT" x="2" y="0"/>
+          </Anchors>
+        </FontString>
+        <FontString name="$parentSlotText" inherits="GameFontNormalSmall" justifyH="CENTER" parentKey="slotText">
+          <Size x="154" y="8"/>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parent" relativePoint="LEFT" x="10" y="0"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Scripts>
+      <OnLoad inherit="prepend">
                 self:RegisterForDrag("LeftButton");
                 self:RegisterForClicks("RightButtonUp");
-            </OnLoad>
-            <OnEnter>
+      </OnLoad>
+      <OnEnter>
               self:SetBackdropBorderColor(1, 1, 0);
-            </OnEnter>
-            <OnLeave>
+      </OnEnter>
+      <OnLeave>
               self:SetBackdropBorderColor(0.2, 0.2, 0.2);
-            </OnLeave>
-            <OnClick function="HereticRollFrame_OnClick"/>
-            <OnDragStart function="HereticRollFrame_OnDragStart"/>
-            <OnDragStop function="HereticRollFrame_OnDragStop"/>
-        </Scripts>
-    </Button>
+      </OnLeave>
+      <OnClick function="HereticRollFrame_OnClick"/>
+      <OnDragStart function="HereticRollFrame_OnDragStart"/>
+      <OnDragStop function="HereticRollFrame_OnDragStop"/>
+    </Scripts>
+  </Button>
 
-    <Button name="HereticRollDragFrame" inherits="HereticRollFrameTemplate" hidden="true"/>
+  <Button name="HereticRollDragFrame" inherits="HereticRollFrameTemplate" hidden="true"/>
 
-    <Frame name="HereticRollCollectorFrame" parent="UIParent" frameLevel="5" toplevel="true"
-       frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true"
-       inherits="BaseBasicFrameTemplate">
-        <Size x="210" y="200"/>
+  <Frame name="HereticRollCollectorFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true" inherits="BaseBasicFrameTemplate">
+    <Size x="210" y="200"/>
+    <Anchors>
+      <Anchor point="CENTER"/>
+    </Anchors>
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture parentKey="BG">
+          <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0"/>
+            <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+          </Anchors>
+          <Color r="0" g="0" b="0" a="0.6"/>
+        </Texture>
+      </Layer>
+      <Layer level="OVERLAY">
+        <FontString name="$parentTitleText" font="Fonts/MORPHEUS.ttf" text="Heretic Rolls" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
+          <Anchors>
+            <Anchor point="TOP" x="0" y="-5"/>
+            <Anchor point="LEFT" x="10"/>
+            <Anchor point="RIGHT" x="-10"/>
+          </Anchors>
+          <FontHeight val="12"/>
+        </FontString>
+      </Layer>
+    </Layers>
+
+    <Frames>
+      <ScrollFrame name="$parentScrollBar" inherits="FauxScrollFrameTemplate">
         <Anchors>
-            <Anchor point="CENTER"/>
+          <Anchor point="TOPLEFT">
+            <Offset>
+              <AbsDimension x="0" y="-30"/>
+            </Offset>
+          </Anchor>
+          <Anchor point="BOTTOMRIGHT">
+            <Offset>
+              <AbsDimension x="-30" y="10"/>
+            </Offset>
+          </Anchor>
         </Anchors>
-        <Layers>
-          <Layer level="BACKGROUND">
-            <Texture parentKey="BG">
-              <Anchors>
-                <Anchor point="TOPLEFT" x="0" y="0"/>
-                <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
-              </Anchors>
-              <Color r="0" g="0" b="0" a="0.6"/>
-            </Texture>
-          </Layer>
-          <Layer level="OVERLAY">
-              <FontString name="$parentTitleText" font="Fonts/MORPHEUS.ttf"
-                text="Heretic Rolls" parentKey="TitleText" wordwrap="false"
-                justifyH="LEFT">
-                  <Anchors>
-                      <Anchor point="TOP" x="0" y="-5"/>
-                      <Anchor point="LEFT" x="10"/>
-                      <Anchor point="RIGHT" x="-10"/>
-                  </Anchors>
-                  <FontHeight val="12"/>
-              </FontString>
-          </Layer>
-        </Layers>
-
-        <Frames>
-          <ScrollFrame name="$parentScrollBar" inherits="FauxScrollFrameTemplate">
-            <Anchors>
-              <Anchor point="TOPLEFT">
-                <Offset>
-                  <AbsDimension x="0" y="-30"/>
-                </Offset>
-              </Anchor>
-              <Anchor point="BOTTOMRIGHT">
-                <Offset>
-                  <AbsDimension x="-30" y="10"/>
-                </Offset>
-              </Anchor>
-            </Anchors>
-            <Scripts>
-              <OnVerticalScroll>
-               FauxScrollFrame_OnVerticalScroll(self, offset, 20, RollsScrollBar_Update);
-              </OnVerticalScroll>
-            </Scripts>
-         </ScrollFrame>
-         <Button name="$parentRollFrame1" inherits="HereticRollFrameTemplate" id="1">
-           <Anchors>
-               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-30"/>
-           </Anchors>
-         </Button>
-         <Button name="$parentRollFrame2" inherits="HereticRollFrameTemplate" id="2">
-           <Anchors>
-               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-50"/>
-           </Anchors>
-         </Button>
-         <Button name="$parentRollFrame3" inherits="HereticRollFrameTemplate" id="3">
-           <Anchors>
-               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-70"/>
-           </Anchors>
-         </Button>
-         <Button name="$parentRollFrame4" inherits="HereticRollFrameTemplate" id="4">
-           <Anchors>
-               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-90"/>
-           </Anchors>
-         </Button>
-         <Button name="$parentRollFrame5" inherits="HereticRollFrameTemplate" id="5">
-           <Anchors>
-               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-110"/>
-           </Anchors>
-         </Button>
-         <Button name="$parentRollFrame6" inherits="HereticRollFrameTemplate" id="6">
-           <Anchors>
-               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-130"/>
-           </Anchors>
-         </Button>
-         <Button name="$parentRollFrame7" inherits="HereticRollFrameTemplate" id="7">
-           <Anchors>
-               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-150"/>
-           </Anchors>
-         </Button>
-         <Button name="$parentRollFrame8" inherits="HereticRollFrameTemplate" id="8">
-           <Anchors>
-               <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-170"/>
-           </Anchors>
-         </Button>
-         <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
-             <Size x="24" y="24"/>
-             <Anchors>
-                 <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
-                     <Offset x="0" y="0"/>
-                 </Anchor>
-             </Anchors>
-         </Button>
-        </Frames>
         <Scripts>
-            <OnLoad>HereticRollCollectorFrame_OnLoad(self);</OnLoad>
-            <OnUpdate function="HereticRollCollectorFrame_OnUpdate"/>
-            <OnDragStart>HereticRollCollectorFrame_OnDragStart(self);</OnDragStart>
-            <OnDragStop>HereticRollCollectorFrame_OnDragStop(self);</OnDragStop>
+          <OnVerticalScroll>
+               FauxScrollFrame_OnVerticalScroll(self, offset, 20, RollsScrollBar_Update);
+          </OnVerticalScroll>
         </Scripts>
-    </Frame>
+      </ScrollFrame>
+      <Button name="$parentRollFrame1" inherits="HereticRollFrameTemplate" id="1">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-30"/>
+        </Anchors>
+      </Button>
+      <Button name="$parentRollFrame2" inherits="HereticRollFrameTemplate" id="2">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-50"/>
+        </Anchors>
+      </Button>
+      <Button name="$parentRollFrame3" inherits="HereticRollFrameTemplate" id="3">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-70"/>
+        </Anchors>
+      </Button>
+      <Button name="$parentRollFrame4" inherits="HereticRollFrameTemplate" id="4">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-90"/>
+        </Anchors>
+      </Button>
+      <Button name="$parentRollFrame5" inherits="HereticRollFrameTemplate" id="5">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-110"/>
+        </Anchors>
+      </Button>
+      <Button name="$parentRollFrame6" inherits="HereticRollFrameTemplate" id="6">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-130"/>
+        </Anchors>
+      </Button>
+      <Button name="$parentRollFrame7" inherits="HereticRollFrameTemplate" id="7">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-150"/>
+        </Anchors>
+      </Button>
+      <Button name="$parentRollFrame8" inherits="HereticRollFrameTemplate" id="8">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="-170"/>
+        </Anchors>
+      </Button>
+      <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
+        <Size x="24" y="24"/>
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
+            <Offset x="0" y="0"/>
+          </Anchor>
+        </Anchors>
+      </Button>
+    </Frames>
+    <Scripts>
+      <OnLoad>HereticRollCollectorFrame_OnLoad(self);</OnLoad>
+      <OnUpdate function="HereticRollCollectorFrame_OnUpdate"/>
+      <OnDragStart>HereticRollCollectorFrame_OnDragStart(self);</OnDragStart>
+      <OnDragStop>HereticRollCollectorFrame_OnDragStop(self);</OnDragStop>
+    </Scripts>
+  </Frame>
 </Ui>

@@ -1,254 +1,255 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
   ..\FrameXML\UI.xsd">
-    <Script file="HereticLootmaster.lua"/>
+  <Script file="HereticLootmaster.lua"/>
 
-    <Frame name="HereticLootmasterFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true" inherits="BaseBasicFrameTemplate">
-        <Size x="495" y="310"/>
+  <Frame name="HereticLootmasterFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true" inherits="BaseBasicFrameTemplate">
+    <Size x="495" y="310"/>
+    <Anchors>
+      <Anchor point="CENTER"/>
+    </Anchors>
+    <Layers>
+      <Layer level="BACKGROUND">
+        <Texture parentKey="BG">
+          <Anchors>
+            <Anchor point="TOPLEFT" x="0" y="0"/>
+            <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+          </Anchors>
+          <Color r="0" g="0" b="0" a="0.6"/>
+        </Texture>
+      </Layer>
+      <Layer level="OVERLAY">
+        <FontString name="HereticLootmasterTitleText" font="Fonts/MORPHEUS.ttf" text="Heretic Lootmaster" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
+          <Anchors>
+            <Anchor point="TOPLEFT" relativeTo="$parent" x="10" y="-5" />
+          </Anchors>
+          <FontHeight val="14"/>
+        </FontString>
+        <FontString name="HereticLootmasterStatusText" inherits="GameFontNormal" justifyH="LEFT" text="">
+          <Size>
+            <AbsDimension x="200" y="0"/>
+          </Size>
+          <Anchors>
+            <Anchor point="BOTTOM" x="0" y="10"/>
+            <Anchor point="LEFT" x="10"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Frames>
+
+      <Button name="HereticHistoryDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
+        <Scripts>
+          <OnShow function="HereticHistoryDropDown_OnShow"/>
+        </Scripts>
         <Anchors>
-            <Anchor point="CENTER"/>
-        </Anchors> 
-        <Layers>
-            <Layer level="BACKGROUND">
-              <Texture parentKey="BG">
-                <Anchors>
-                  <Anchor point="TOPLEFT" x="0" y="0"/>
-                  <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
-                </Anchors>
-                <Color r="0" g="0" b="0" a="0.6"/>
-              </Texture>
-            </Layer>
-            <Layer level="OVERLAY">
-                <FontString name="HereticLootmasterTitleText" font="Fonts/MORPHEUS.ttf" text="Heretic Lootmaster" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
-                    <Anchors>
-                      <Anchor point="TOPLEFT" relativeTo="$parent" x="10" y="-5" />
-                    </Anchors>
-                    <FontHeight val="14"/>
-                </FontString>
-                <FontString name="HereticLootmasterStatusText" inherits="GameFontNormal" justifyH="LEFT" text="">
-                    <Size>
-                        <AbsDimension x="200" y="0"/>
-                    </Size>
-                    <Anchors>
-                        <Anchor point="BOTTOM" x="0" y="10"/>
-                        <Anchor point="LEFT" x="10"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
-        </Layers>
-          <Frames>
+          <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent">
+            <Offset x="-10" y="-2"/>
+          </Anchor>
+        </Anchors>
+      </Button>
 
-            <Button name="HereticHistoryDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
-                <Scripts>
-                  <OnShow function="HereticHistoryDropDown_OnShow"/>
-                </Scripts>
+      <Frame name="$parentTabView1" parentArray="tabView" hidden="true">
+        <Size x="495" y="280"/>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
+            <Offset x="0" y="-30"/>
+          </Anchor>
+        </Anchors>
+        <Frames>
+          <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="0"/>
+              <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="35"/>
+            </Anchors>
+            <Frames>
+              <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
                 <Anchors>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent">
-                        <Offset x="-10" y="-2"/>
-                    </Anchor>
+                  <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-14"/>
+                  <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="14"/>
                 </Anchors>
-            </Button>
-
-            <Frame name="$parentTabView1" parentArray="tabView" hidden="true">
-              <Size x="495" y="280"/>
-              <Anchors>
-                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
-                      <Offset x="0" y="-30"/>
-                  </Anchor>
-              </Anchors>
-              <Frames>
-                <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
-                  <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="0"/>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="35"/>
-                  </Anchors>
-                  <Frames>
-                    <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
-                      <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-14"/>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="14"/>
-                      </Anchors>
-                    </Slider>
-                  </Frames>
-                  <Scripts>
-                    <OnLoad function="HereticHistoryScrollFrame_OnLoad"/>
-                    <OnShow>
+              </Slider>
+            </Frames>
+            <Scripts>
+              <OnLoad function="HereticHistoryScrollFrame_OnLoad"/>
+              <OnShow>
                       HereticHistoryScrollFrame_Update()
-                    </OnShow>
-                  </Scripts>
-                </ScrollFrame>
-                <Button name="HereticRarityDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
-                    <Scripts>
-                        <OnShow function="HereticRarityDropDown_OnShow"/>
-                    </Scripts>
-                    <Anchors>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="HereticLootmasterFrame">
-                            <Offset x="-10" y="-2"/>
-                        </Anchor>
-                    </Anchors>
-                </Button>
-                <Button name="$parentRollButton">
-                  <Size>
-                    <AbsDimension x="24" y="24"/>
-                  </Size>
-                  <Scripts>
-                      <OnClick function="HereticLootmasterRollButton_OnClick"/>
-                      <OnEnter>
+              </OnShow>
+            </Scripts>
+          </ScrollFrame>
+          <Button name="HereticRarityDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
+            <Scripts>
+              <OnShow function="HereticRarityDropDown_OnShow"/>
+            </Scripts>
+            <Anchors>
+              <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" relativeTo="HereticLootmasterFrame">
+                <Offset x="-10" y="-2"/>
+              </Anchor>
+            </Anchors>
+          </Button>
+          <Button name="$parentRollButton">
+            <Size>
+              <AbsDimension x="24" y="24"/>
+            </Size>
+            <Scripts>
+              <OnClick function="HereticLootmasterRollButton_OnClick"/>
+              <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
                         GameTooltip:SetText("Click here toggle the roll collector");
-                      </OnEnter>
-                      <OnLeave>
+              </OnEnter>
+              <OnLeave>
                         GameTooltip:Hide();
-                      </OnLeave>
-                  </Scripts>
+              </OnLeave>
+            </Scripts>
+            <Anchors>
+              <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="HereticRarityDropDown">
+                <Offset x="0" y="-2"/>
+              </Anchor>
+            </Anchors>
+            <DisabledTexture file="Interface\ButtonsUI-GroupLoot-Dice-Disabled"/>
+            <NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up"/>
+            <PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down"/>
+            <HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD"/>
+          </Button>
+          <Button name="$parent_Help" parentKey="help">
+            <Size x="25" y="34"/>
+            <Layers>
+              <Layer level="ARTWORK" textureSubLevel="1">
+                <Texture parentKey="QuestionMark" inherits="QuestIcon-QuestionMark" hidden="false">
+                  <Size x="13" y="22"/>
                   <Anchors>
-                      <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="HereticRarityDropDown">
-                          <Offset x="0" y="-2"/>
-                      </Anchor>
+                    <Anchor point="CENTER" relativeKey="$parent.QuestIconBg" x="0.5" />
                   </Anchors>
-                  <DisabledTexture file="Interface\ButtonsUI-GroupLoot-Dice-Disabled"/>
-                  <NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up"/>
-                  <PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down"/>
-                  <HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD"/>
-                </Button>
-                <Button name="$parent_Help" parentKey="help">
-                  <Size x="25" y="34"/>
-                  <Layers>
-                    <Layer level="ARTWORK" textureSubLevel="1">
-                      <Texture parentKey="QuestionMark" inherits="QuestIcon-QuestionMark" hidden="false">
-                        <Size x="13" y="22"/>
-                        <Anchors>
-                          <Anchor point="CENTER" relativeKey="$parent.QuestIconBg" x="0.5" />
-                        </Anchors>
-                      </Texture>
-                    </Layer>
-                  </Layers>
-                  <Anchors>
-                      <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent">
-                          <Offset x="0" y="0"/>
-                      </Anchor>
-                  </Anchors>
-                  <Scripts>
-                      <OnClick function="HereticLootmasterRollButton_OnClick"/>
-                      <OnEnter>
+                </Texture>
+              </Layer>
+            </Layers>
+            <Anchors>
+              <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent">
+                <Offset x="0" y="0"/>
+              </Anchor>
+            </Anchors>
+            <Scripts>
+              <OnClick function="HereticLootmasterRollButton_OnClick"/>
+              <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
                         GameTooltip:SetText("Shift-RightClick on item icon to delete.\nAlt+LeftClick on item icon to post in raid chat and clear roll collector.");
-                      </OnEnter>
-                      <OnLeave>
+              </OnEnter>
+              <OnLeave>
                         GameTooltip:Hide();
-                      </OnLeave>
-                  </Scripts>
-                </Button>
-              </Frames>
-            </Frame>
-
-            <Frame name="$parentTabView2" parentArray="tabView" hidden="true">
-              <Size x="495" y="280"/>
-              <Anchors>
-                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
-                      <Offset x="0" y="-30"/>
-                  </Anchor>
-              </Anchors>
-              <Frames>
-                <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
-                  <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="0"/>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="35"/>
-                  </Anchors>
-                  <Frames>
-                    <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
-                      <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-14"/>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="14"/>
-                      </Anchors>
-                    </Slider>
-                  </Frames>
-                  <Scripts>
-                    <OnLoad function="HereticHistoryScrollFrame_OnLoad"/>
-                    <OnShow>
-                      HereticHistoryScrollFrame_Update()
-                    </OnShow>
-                  </Scripts>
-                </ScrollFrame>
-              </Frames>
-            </Frame>
-
-            <Frame name="$parentTabView3" parentArray="tabView" hidden="true">
-              <Size x="495" y="280"/>
-              <Anchors>
-                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
-                      <Offset x="0" y="-30"/>
-                  </Anchor>
-              </Anchors>
-              <Frames>
-                <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
-                  <Anchors>
-                    <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="5" y="0"/>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="35"/>
-                  </Anchors>
-                  <Frames>
-                    <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
-                      <Anchors>
-                        <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-14"/>
-                        <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="14"/>
-                      </Anchors>
-                    </Slider>
-                  </Frames>
-                  <Scripts>
-                    <OnLoad function="HereticPlayerInfoScrollFrame_OnLoad"/>
-                    <OnShow>
-                      HereticPlayerInfoScrollFrame_Update()
-                    </OnShow>
-                  </Scripts>
-                </ScrollFrame>
-              </Frames>
-            </Frame>
-
-
-            <Button name="$parentTab1" inherits="CharacterFrameTabButtonTemplate" id="1" text="Master">
-                <Anchors>
-                    <Anchor point="LEFT" relativePoint="BOTTOMLEFT">
-                        <Offset>
-                            <AbsDimension x="16" y="-12"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                    <OnClick function="HereticTab_OnClick">
-                    </OnClick>
-                </Scripts>
-            </Button>
-
-            <Button name="$parentTab2" inherits="CharacterFrameTabButtonTemplate" id="2" text="History">
-                <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT">
-                        <Offset>
-                            <AbsDimension x="-16" y="0"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                  <OnClick function="HereticTab_OnClick"></OnClick>
-                </Scripts>
-            </Button>
-
-            <Button name="$parentTab3" inherits="CharacterFrameTabButtonTemplate" id="3" text="Raid">
-                <Anchors>
-                    <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT">
-                        <Offset>
-                            <AbsDimension x="-16" y="0"/>
-                        </Offset>
-                    </Anchor>
-                </Anchors>
-                <Scripts>
-                  <OnClick function="HereticTab_OnClick"></OnClick>
-                </Scripts>
-            </Button>
-
+              </OnLeave>
+            </Scripts>
+          </Button>
         </Frames>
+      </Frame>
+
+      <Frame name="$parentTabView2" parentArray="tabView" hidden="true">
+        <Size x="495" y="280"/>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
+            <Offset x="0" y="-30"/>
+          </Anchor>
+        </Anchors>
+        <Frames>
+          <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="10" y="0"/>
+              <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="35"/>
+            </Anchors>
+            <Frames>
+              <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-14"/>
+                  <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="14"/>
+                </Anchors>
+              </Slider>
+            </Frames>
+            <Scripts>
+              <OnLoad function="HereticHistoryScrollFrame_OnLoad"/>
+              <OnShow>
+                      HereticHistoryScrollFrame_Update()
+              </OnShow>
+            </Scripts>
+          </ScrollFrame>
+        </Frames>
+      </Frame>
+
+      <Frame name="$parentTabView3" parentArray="tabView" hidden="true">
+        <Size x="495" y="280"/>
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
+            <Offset x="0" y="-30"/>
+          </Anchor>
+        </Anchors>
+        <Frames>
+          <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
+            <Anchors>
+              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="5" y="0"/>
+              <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="35"/>
+            </Anchors>
+            <Frames>
+              <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">
+                <Anchors>
+                  <Anchor point="TOPLEFT" relativePoint="TOPRIGHT" relativeTo="$parent" x="0" y="-14"/>
+                  <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="0" y="14"/>
+                </Anchors>
+              </Slider>
+            </Frames>
+            <Scripts>
+              <OnLoad function="HereticPlayerInfoScrollFrame_OnLoad"/>
+              <OnShow>
+                      HereticPlayerInfoScrollFrame_Update()
+              </OnShow>
+            </Scripts>
+          </ScrollFrame>
+        </Frames>
+      </Frame>
+
+
+      <Button name="$parentTab1" inherits="CharacterFrameTabButtonTemplate" id="1" text="Master">
+        <Anchors>
+          <Anchor point="LEFT" relativePoint="BOTTOMLEFT">
+            <Offset>
+              <AbsDimension x="16" y="-12"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
         <Scripts>
-            <OnLoad>HereticLootmasterFrame_OnLoad(self);</OnLoad>
-            <OnDragStart>HereticLootmasterFrame_OnDragStart(self);</OnDragStart>
-            <OnDragStop>HereticLootmasterFrame_OnDragStop(self);</OnDragStop>
+          <OnClick function="HereticTab_OnClick">
+          </OnClick>
         </Scripts>
-    </Frame>
+      </Button>
+
+      <Button name="$parentTab2" inherits="CharacterFrameTabButtonTemplate" id="2" text="History">
+        <Anchors>
+          <Anchor point="LEFT" relativeTo="$parentTab1" relativePoint="RIGHT">
+            <Offset>
+              <AbsDimension x="-16" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick function="HereticTab_OnClick"></OnClick>
+        </Scripts>
+      </Button>
+
+      <Button name="$parentTab3" inherits="CharacterFrameTabButtonTemplate" id="3" text="Raid">
+        <Anchors>
+          <Anchor point="LEFT" relativeTo="$parentTab2" relativePoint="RIGHT">
+            <Offset>
+              <AbsDimension x="-16" y="0"/>
+            </Offset>
+          </Anchor>
+        </Anchors>
+        <Scripts>
+          <OnClick function="HereticTab_OnClick"></OnClick>
+        </Scripts>
+      </Button>
+
+    </Frames>
+    <Scripts>
+      <OnLoad>HereticLootmasterFrame_OnLoad(self);</OnLoad>
+      <OnDragStart>HereticLootmasterFrame_OnDragStart(self);</OnDragStart>
+      <OnDragStop>HereticLootmasterFrame_OnDragStop(self);</OnDragStop>
+    </Scripts>
+  </Frame>
 </Ui>

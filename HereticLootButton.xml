@@ -1,127 +1,128 @@
-<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\FrameXML\UI.xsd">
   <Script file="HereticLootButton.lua"/>
   <Button name="HereticLootButton" registerForClicks="LeftButtonUp, RightButtonUp" virtual="true">
     <Size x="430" y="41" />
-      <Layers>
-        <Layer level="OVERLAY">
-          <Texture name="$parentIconQuestTexture" parentKey="questTexture">
-            <Size x="37" y="38"/>
-            <Anchors>
-              <Anchor point="TOP" x="0" y="0"/>
-            </Anchors>
-          </Texture>
-        </Layer>
-        <Layer level="ARTWORK">
-          <Texture name="$parentNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
-            <Size x="260" y="30"/>
-            <Anchors>
-              <Anchor point="BOTTOMLEFT" x="20" y="13"/>
-            </Anchors>
-          </Texture>
-          <FontString name="$parentText" inherits="GameFontNormal" justifyH="LEFT" parentKey="itemName">
-            <Size x="210" y="18"/>
-            <Anchors>
-              <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parentNameFrame" x="25" y="-6"/>
-            </Anchors>
-          </FontString>
-        </Layer>
-      </Layers>
-      <Frames>
-        <ItemButton name="$parentItemButton" parentKey="iconButton">
+    <Layers>
+      <Layer level="OVERLAY">
+        <Texture name="$parentIconQuestTexture" parentKey="questTexture">
+          <Size x="37" y="38"/>
           <Anchors>
-            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-3"/>
+            <Anchor point="TOP" x="0" y="0"/>
           </Anchors>
-          <Scripts>
-              <OnEnter>
+        </Texture>
+      </Layer>
+      <Layer level="ARTWORK">
+        <Texture name="$parentNameFrame" file="Interface\QuestFrame\UI-QuestItemNameFrame">
+          <Size x="260" y="30"/>
+          <Anchors>
+            <Anchor point="BOTTOMLEFT" x="20" y="13"/>
+          </Anchors>
+        </Texture>
+        <FontString name="$parentText" inherits="GameFontNormal" justifyH="LEFT" parentKey="itemName">
+          <Size x="210" y="18"/>
+          <Anchors>
+            <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parentNameFrame" x="25" y="-6"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Frames>
+      <ItemButton name="$parentItemButton" parentKey="iconButton">
+        <Anchors>
+          <Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="2" y="-3"/>
+        </Anchors>
+        <Scripts>
+          <OnEnter>
                   HereticLootButton_OnEnter(self:GetParent(), motion)
-              </OnEnter>
-              <OnLeave>
+          </OnEnter>
+          <OnLeave>
                   GameTooltip:Hide();
                   ResetCursor();
-              </OnLeave>
-              <OnUpdate>
+          </OnLeave>
+          <OnUpdate>
                   if ( GameTooltip:IsOwned(self:GetParent()) ) then HereticLootButton_OnEnter(self:GetParent()) end
                   CursorOnUpdate(self:GetParent());
-              </OnUpdate>
-              <OnClick function="HereticLootButton_OnClick"/>
-          </Scripts>
-        </ItemButton>
-        <Button name="$parentTextItem" parentKey="itemText">
-          <Size x="170" y="18"/>
-          <Anchors>
-            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent" x="-3" y="-3"/>
-          </Anchors>
-          <Layers>
-            <Layer level="OVERLAY">
-              <FontString name="$parentTextItemSlot" inherits="GameFontNormal" justifyH="LEFT" parentKey="itemSlot">
-                <Color r="1" g="1" b="1" a="1"/>
-                <Anchors>
-                  <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="3" y="-3"/>
-                </Anchors>
-              </FontString>
-              <FontString name="$parentType" inherits="GameFontNormal" justifyH="RIGHT" parentKey="itemType">
-                <Color r="1" g="1" b="1" a="1"/>
-                <Anchors>
-                  <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent" x="-3" y="-3"/>
-                </Anchors>
-              </FontString>
-            </Layer>
-          </Layers>
-          <Scripts>
-            <OnEnter>
-                HereticLootButtonItemType_OnEnter(self, motion)
-            </OnEnter>
-            <OnLeave>
-                GameTooltip:Hide();
-            </OnLeave>
-          </Scripts>
-        </Button>
-      </Frames>
-  </Button>
-
-  <Button name="HereticDropButtonTemplate" virtual="true" hidden="true">
-      <Size x="380" y="20"/>
-      <Layers>
-          <Layer level="ARTWORK">
-            <FontString name="$parentTextItemLevel" inherits="GameFontNormal" justifyH="LEFT" parentKey="itemLevelText">
-              <Size x="30" y="18"/>
+          </OnUpdate>
+          <OnClick function="HereticLootButton_OnClick"/>
+        </Scripts>
+      </ItemButton>
+      <Button name="$parentTextItem" parentKey="itemText">
+        <Size x="170" y="18"/>
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent" x="-3" y="-3"/>
+        </Anchors>
+        <Layers>
+          <Layer level="OVERLAY">
+            <FontString name="$parentTextItemSlot" inherits="GameFontNormal" justifyH="LEFT" parentKey="itemSlot">
+              <Color r="1" g="1" b="1" a="1"/>
               <Anchors>
-                <Anchor point="LEFT" relativePoint="LEFT" relativeTo="$parent" x="0" y="0"/>
+                <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="3" y="-3"/>
               </Anchors>
             </FontString>
-            <Texture name="$parentTexture" hidden="true" parentKey="itemSocketTexture">
-              <Size>
-                <AbsDimension x="12" y="12"/>
-              </Size>
+            <FontString name="$parentType" inherits="GameFontNormal" justifyH="RIGHT" parentKey="itemType">
+              <Color r="1" g="1" b="1" a="1"/>
               <Anchors>
-                <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parentTextItemLevel" x="0" y="2"/>
-              </Anchors>
-            </Texture>
-            <FontString name="$parentDonatorText" inherits="GameFontNormalSmall" justifyH="LEFT" parentKey="donatorText">
-              <Size x="85" y="8"/>
-              <Anchors>
-                <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parentTexture" x="5" y="0"/>
-              </Anchors>
-            </FontString>
-            <FontString name="$parentDate" inherits="GameFontNormalSmall" justifyH="LEFT" parentKey="dateText">
-              <Size x="70" y="8"/>
-              <Anchors>
-                <Anchor point="LEFT" relativeTo="$parentDonatorText" relativePoint="RIGHT" x="5" y="0"/>
+                <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent" x="-3" y="-3"/>
               </Anchors>
             </FontString>
           </Layer>
-      </Layers>
-      <Frames>
-        <Button name="$parentWinnerFrame" inherits="HereticRollFrameTemplate" hidden="true" parentKey="winnerFrame">
+        </Layers>
+        <Scripts>
+          <OnEnter>
+                HereticLootButtonItemType_OnEnter(self, motion)
+          </OnEnter>
+          <OnLeave>
+                GameTooltip:Hide();
+          </OnLeave>
+        </Scripts>
+      </Button>
+    </Frames>
+  </Button>
+
+  <Button name="HereticDropButtonTemplate" virtual="true" hidden="true">
+    <Size x="380" y="20"/>
+    <Layers>
+      <Layer level="ARTWORK">
+        <FontString name="$parentTextItemLevel" inherits="GameFontNormal" justifyH="LEFT" parentKey="itemLevelText">
+          <Size x="30" y="18"/>
           <Anchors>
-            <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+            <Anchor point="LEFT" relativePoint="LEFT" relativeTo="$parent" x="0" y="0"/>
           </Anchors>
-        </Button>
-      </Frames>
-      <Scripts>
-        <OnLoad function="HereticDropButton_OnLoad"/>
-      </Scripts>
+        </FontString>
+        <Texture name="$parentTexture" hidden="true" parentKey="itemSocketTexture">
+          <Size>
+            <AbsDimension x="12" y="12"/>
+          </Size>
+          <Anchors>
+            <Anchor point="BOTTOMLEFT" relativePoint="BOTTOMRIGHT" relativeTo="$parentTextItemLevel" x="0" y="2"/>
+          </Anchors>
+        </Texture>
+        <FontString name="$parentDonatorText" inherits="GameFontNormalSmall" justifyH="LEFT" parentKey="donatorText">
+          <Size x="85" y="8"/>
+          <Anchors>
+            <Anchor point="LEFT" relativePoint="RIGHT" relativeTo="$parentTexture" x="5" y="0"/>
+          </Anchors>
+        </FontString>
+        <FontString name="$parentDate" inherits="GameFontNormalSmall" justifyH="LEFT" parentKey="dateText">
+          <Size x="70" y="8"/>
+          <Anchors>
+            <Anchor point="LEFT" relativeTo="$parentDonatorText" relativePoint="RIGHT" x="5" y="0"/>
+          </Anchors>
+        </FontString>
+      </Layer>
+    </Layers>
+    <Frames>
+      <Button name="$parentWinnerFrame" inherits="HereticRollFrameTemplate" hidden="true" parentKey="winnerFrame">
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="0" y="0"/>
+        </Anchors>
+      </Button>
+    </Frames>
+    <Scripts>
+      <OnLoad function="HereticDropButton_OnLoad"/>
+    </Scripts>
   </Button>
 
   <Frame name="HereticLootFrame" virtual="true">
@@ -132,7 +133,7 @@
       <Button name="$parentButton" inherits="HereticLootButton" virtual="true" parentKey="itemButton">
         <Anchors>
           <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent">
-              <Offset x="0" y="0"/>
+            <Offset x="0" y="0"/>
           </Anchor>
         </Anchors>
       </Button>
