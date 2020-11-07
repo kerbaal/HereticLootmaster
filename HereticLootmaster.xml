@@ -2,34 +2,27 @@
   ..\FrameXML\UI.xsd">
     <Script file="HereticLootmaster.lua"/>
 
-    <Frame name="HereticLootmasterFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
+    <Frame name="HereticLootmasterFrame" parent="UIParent" frameLevel="5" toplevel="true" frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true" inherits="BaseBasicFrameTemplate">
         <Size x="495" y="310"/>
-        <TitleRegion>
-            <Size x="495" y="20"/>
-            <Anchors><Anchor point="TOP"/>
-            </Anchors>
-        </TitleRegion>
         <Anchors>
             <Anchor point="CENTER"/>
-        </Anchors>
-        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-            <!-- <BackgroundInsets>
-        <AbsInset left="5" right="5" top="5" bottom="5"/>
-      </BackgroundInsets>-->
-            <TileSize>
-                <AbsValue val="32"/>
-            </TileSize>
-            <EdgeSize>
-                <AbsValue val="5"/>
-            </EdgeSize>
-        </Backdrop>
+        </Anchors> 
         <Layers>
+            <Layer level="BACKGROUND">
+              <Texture parentKey="BG">
+                <Anchors>
+                  <Anchor point="TOPLEFT" x="0" y="0"/>
+                  <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+                </Anchors>
+                <Color r="0" g="0" b="0" a="0.6"/>
+              </Texture>
+            </Layer>
             <Layer level="OVERLAY">
                 <FontString name="HereticLootmasterTitleText" font="Fonts/MORPHEUS.ttf" text="Heretic Lootmaster" parentKey="TitleText" wordwrap="false" justifyH="LEFT">
                     <Anchors>
                       <Anchor point="TOPLEFT" relativeTo="$parent" x="10" y="-5" />
                     </Anchors>
-                    <FontHeight val="18"/>
+                    <FontHeight val="14"/>
                 </FontString>
                 <FontString name="HereticLootmasterStatusText" inherits="GameFontNormal" justifyH="LEFT" text="">
                     <Size>
@@ -44,21 +37,12 @@
         </Layers>
           <Frames>
 
-            <Button name="$parent_Close" parentKey="close" inherits="UIPanelCloseButton">
-                <Size x="24" y="24"/>
-                <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent">
-                        <Offset x="0" y="0"/>
-                    </Anchor>
-                </Anchors>
-            </Button>
-
             <Button name="HereticHistoryDropDown" inherits="UIDropDownMenuTemplate" parentKey="dropDown">
                 <Scripts>
                   <OnShow function="HereticHistoryDropDown_OnShow"/>
                 </Scripts>
                 <Anchors>
-                    <Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" relativeTo="$parent_Close">
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent">
                         <Offset x="-10" y="-2"/>
                     </Anchor>
                 </Anchors>
@@ -199,7 +183,7 @@
                 <ScrollFrame name="$parentContainer" inherits="HybridScrollFrameTemplate" parentKey="itemView">
                   <Anchors>
                     <Anchor point="TOPLEFT" relativePoint="TOPLEFT" relativeTo="$parent" x="5" y="0"/>
-                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="10"/>
+                    <Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" relativeTo="$parent" x="-24" y="35"/>
                   </Anchors>
                   <Frames>
                     <Slider name="$parentScrollBar" inherits="HybridScrollBarTemplate">

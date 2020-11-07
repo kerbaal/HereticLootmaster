@@ -2,21 +2,14 @@
   ..\FrameXML\UI.xsd">
     <Script file="HereticRollCollector.lua"/>
     <Button name="HereticRollFrameTemplate" virtual="true" movable="true"
-      clampedToScreen="true" hidden="true">
+      clampedToScreen="true" hidden="true" inherits="BackdropTemplate" mixin="BackdropTemplateMixin">
         <Size x="170" y="20"/>
-        <Backdrop bgFile="Interface\ChatFrame\ChatFrameBackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-            <TileSize>
-                <AbsValue val="32"/>
-            </TileSize>
-            <EdgeSize>
-                <AbsValue val="10"/>
-            </EdgeSize>
-            <Color r="0" g="0" b="0"/>
-            <Bordercolor r="0.2" g="0.2" b="0.2"/>
-            <BackgroundInsets>
-                <AbsInset left="1" right="1" top="1" bottom="1"/>
-            </BackgroundInsets>
-        </Backdrop>
+        <KeyValues>
+					<KeyValue key="backdropInfo" value="ROLL_BACKDROP" type="global"/>
+					<KeyValue key="backdropColor" value="ROLL_BACKDROP_FONT_COLOR" type="global"/>
+					<KeyValue key="backdropBorderColor" value="ROLL_BACKDROP_BORDER_COLOR" type="global"/>
+					<KeyValue key="backdropColorAlpha" value="0.9" type="number"/>
+				</KeyValues>
 
         <Layers>
             <Layer level="ARTWORK">
@@ -47,15 +40,15 @@
             </Layer>
         </Layers>
         <Scripts>
-            <OnLoad>
+            <OnLoad inherit="prepend">
                 self:RegisterForDrag("LeftButton");
                 self:RegisterForClicks("RightButtonUp");
             </OnLoad>
             <OnEnter>
-              self:SetBackdropBorderColor(1.0, 1.0, 0.0)
+              self:SetBackdropBorderColor(1, 1, 0);
             </OnEnter>
             <OnLeave>
-              self:SetBackdropBorderColor(0.2, 0.2, 0.2)
+              self:SetBackdropBorderColor(0.2, 0.2, 0.2);
             </OnLeave>
             <OnClick function="HereticRollFrame_OnClick"/>
             <OnDragStart function="HereticRollFrame_OnDragStart"/>
@@ -66,31 +59,34 @@
     <Button name="HereticRollDragFrame" inherits="HereticRollFrameTemplate" hidden="true"/>
 
     <Frame name="HereticRollCollectorFrame" parent="UIParent" frameLevel="5" toplevel="true"
-       frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true">
+       frameStrata="MEDIUM" movable="true" enableMouse="true" clampedToScreen="true" hidden="true"
+       inherits="BaseBasicFrameTemplate">
         <Size x="210" y="200"/>
         <Anchors>
             <Anchor point="CENTER"/>
         </Anchors>
-        <Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
-            <TileSize>
-                <AbsValue val="32"/>
-            </TileSize>
-            <EdgeSize>
-                <AbsValue val="5"/>
-            </EdgeSize>
-        </Backdrop>
         <Layers>
-            <Layer level="OVERLAY">
-                <FontString name="$parentTitleText" inherits="GameFontNormal"
-                  text="Heretic rollcollector" parentKey="TitleText" wordwrap="false"
-                  justifyH="LEFT">
-                    <Anchors>
-                        <Anchor point="TOP" x="0" y="-5"/>
-                        <Anchor point="LEFT" x="10"/>
-                        <Anchor point="RIGHT" x="-10"/>
-                    </Anchors>
-                </FontString>
-            </Layer>
+          <Layer level="BACKGROUND">
+            <Texture parentKey="BG">
+              <Anchors>
+                <Anchor point="TOPLEFT" x="0" y="0"/>
+                <Anchor point="BOTTOMRIGHT" x="0" y="0"/>
+              </Anchors>
+              <Color r="0" g="0" b="0" a="0.6"/>
+            </Texture>
+          </Layer>
+          <Layer level="OVERLAY">
+              <FontString name="$parentTitleText" font="Fonts/MORPHEUS.ttf"
+                text="Heretic Rolls" parentKey="TitleText" wordwrap="false"
+                justifyH="LEFT">
+                  <Anchors>
+                      <Anchor point="TOP" x="0" y="-5"/>
+                      <Anchor point="LEFT" x="10"/>
+                      <Anchor point="RIGHT" x="-10"/>
+                  </Anchors>
+                  <FontHeight val="12"/>
+              </FontString>
+          </Layer>
         </Layers>
 
         <Frames>

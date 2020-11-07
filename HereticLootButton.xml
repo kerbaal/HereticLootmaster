@@ -82,19 +82,6 @@
 
   <Button name="HereticDropButtonTemplate" virtual="true" hidden="true">
       <Size x="380" y="20"/>
-      <Backdrop bgFile="Interface\ChatFrame\ChatFrameBackground" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
-          <TileSize>
-              <AbsValue val="32"/>
-          </TileSize>
-          <EdgeSize>
-              <AbsValue val="10"/>
-          </EdgeSize>
-          <Color r="0" g="0" b="0" a="0"/>
-          <Bordercolor r="0" g="0" b="0" a="0"/>
-          <BackgroundInsets>
-              <AbsInset left="1" right="1" top="1" bottom="1"/>
-          </BackgroundInsets>
-      </Backdrop>
       <Layers>
           <Layer level="ARTWORK">
             <FontString name="$parentTextItemLevel" inherits="GameFontNormal" justifyH="LEFT" parentKey="itemLevelText">

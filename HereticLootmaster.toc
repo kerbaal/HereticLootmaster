@@ -1,4 +1,4 @@
-## Interface: 80200
+## Interface: 90001
 ## Title: Heretic Lootmaster
 ## Notes: Helps distributing loot on a donation basis
 ## Author: Kerbaal

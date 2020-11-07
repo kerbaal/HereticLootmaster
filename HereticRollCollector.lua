@@ -164,3 +164,16 @@ function HereticRollFrame_OnClick(button)
     button:HereticOnRightClick()
   end
 end
+
+ROLL_BACKDROP = {
+	bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+	edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+	tile = true,
+	tileEdge = true,
+	tileSize = 8,
+	edgeSize = 12,
+	insets = { left = 1, right = 1, top = 1, bottom = 1 },
+};
+
+ROLL_BACKDROP_FONT_COLOR = CreateColor(0.0, 0.0, 0.0);
+ROLL_BACKDROP_BORDER_COLOR = CreateColor(0, 0, 0);
