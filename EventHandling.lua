@@ -13,7 +13,8 @@ local function eventHandlerBNChat(self, event, msg, sender, languageName, channe
     local name, realm = gameAccountInfo.characterName, gameAccountInfo.realmName
     Util.dbgprint("BN: " .. sender .. " " .. name .. "-" .. realm)
     if name and realm then
-      Addon:AddAllItems(msg, name .. "-" .. realm, sender)
+      local from = name .. "-" .. realm
+      Addon:AddAllItems(msg, from, from)
     end
   end
 end

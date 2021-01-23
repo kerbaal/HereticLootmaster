@@ -174,7 +174,8 @@ function Addon:AddItem(itemString, from, sender)
   -- Do not filter if the item comes from the lootmaster.
   if (sender ~= Addon.master or Addon:IsMaster()) then
     local quality = select(3,GetItemInfo(itemString))
-    if (Addon.minRarity and quality < Addon.minRarity[1]) then
+    -- TODO: Use ItemMixin:ContinueOnItemLoad to avoid nil due to item cache miss.
+    if (Addon.minRarity and quality and quality < Addon.minRarity[1]) then
       return
     end
   end
