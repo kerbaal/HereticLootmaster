@@ -93,6 +93,9 @@
             </Size>
             <Scripts>
               <OnClick function="HereticLootmasterRollButton_OnClick"/>
+              <OnLoad inherit="prepend">
+                        self:RegisterForClicks("LeftButtonUp", "RightButtonUp");
+              </OnLoad>
               <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
                         GameTooltip:SetText("Click here toggle the roll collector");
@@ -129,7 +132,6 @@
               </Anchor>
             </Anchors>
             <Scripts>
-              <OnClick function="HereticLootmasterRollButton_OnClick"/>
               <OnEnter>
                         GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
                         GameTooltip:SetText("Shift-RightClick on item icon to delete.\nAlt+LeftClick on item icon to post in raid chat and clear roll collector.");

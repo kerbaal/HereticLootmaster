@@ -67,7 +67,11 @@ function HereticRollCollectorFrame_Update(self, ...)
   FauxScrollFrame_Update(scrollBar, numRolls, 8, 20,
     self:GetName() .. "RollFrame", 170, 190);
   local offset = FauxScrollFrame_GetOffset(scrollBar)
-  table.sort(self.rolls, HereticRoll.CompareWithLootCount)
+  if (Addon.lootOrder and Addon:lootOrder() == Addon.LOOT_ORDER_LOOT_RECEIVED_HIGHEST_ROLL) then
+    table.sort(self.rolls, HereticRoll.CompareWithLootCount)
+  else
+    table.sort(self.rolls, HereticRoll.Compare)
+  end
   for id=1,8 do
     local rollFrameName = self:GetName() .. "RollFrame" .. id
     local rollFrame = _G[rollFrameName]

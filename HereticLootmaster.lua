@@ -61,7 +61,23 @@ function Addon:Initialize()
   Addon.master = nil;
   Addon.lootCount = {};
   Addon.rolls = {};
+  Addon.LOOT_ORDER_HIGHEST_ROLL = "highestRoll";
+  Addon.LOOT_ORDER_LOOT_RECEIVED_HIGHEST_ROLL = "lootReceivedHighestRoll";
+  Addon.currentLootOrder = Addon.LOOT_ORDER_HIGHEST_ROLL;
   C_ChatInfo.RegisterAddonMessagePrefix(Addon.MSG_PREFIX);
+end
+
+function Addon:lootOrder(newLootOrder)
+  if (newLootOrder == nil) then
+    return self.currentLootOrder
+  end
+  if (newLootOrder ~= Addon.LOOT_ORDER_HIGHEST_ROLL and newLootOrder ~= Addon.LOOT_ORDER_LOOT_RECEIVED_HIGHEST_ROLL) then
+    Util.dbgprint("Invalid loot order, using default.");
+    newLootOrder = Addon.LOOT_ORDER_HIGHEST_ROLL
+  end
+  self.currentLootOrder = newLootOrder;
+  HereticRollCollectorFrame_Update(HereticRollCollectorFrame)
+  return self.currentLootOrder;
 end
 
 function Addon:GetActiveHistory()
@@ -319,6 +335,9 @@ function Addon:OnAddonLoaded()
   if HereticLootmasterData.activeTab then
     HereticTab_SetActiveTab(Util.toRange(HereticLootmasterFrame.tabView, HereticLootmasterData.activeTab))
   end
+  if HereticLootmasterData.lootOrder then
+    Addon:lootOrder(HereticLootmasterData.lootOrder)
+  end
   Addon:update("addon loaded")
 end
 
@@ -329,6 +348,7 @@ function Addon:Serialize()
   HereticLootmasterData.master = Addon.master
   HereticLootmasterData.minRarity = Addon.minRarity
   HereticLootmasterData.activeTab = PanelTemplates_GetSelectedTab(HereticLootmasterFrame)
+  HereticLootmasterData.lootOrder = Addon.currentLootOrder
   HereticRaidInfo:Serialize(HereticLootmasterData)
 end
 
@@ -474,6 +494,35 @@ function Addon:SetCurrentHistory(id)
   Addon:update("change history")
 end
 
-function HereticLootmasterRollButton_OnClick(self)
-   HereticRollCollectorFrame:Toggle()
+local  HereticLootmasterRollButtonMenuFrame = CreateFrame("Frame", "HereticLootmasterRollButtonMenuFrame", UIParent, "UIDropDownMenuTemplate")
+
+function HereticLootmasterRollButton_OnClick(self, button)
+  if (button == "LeftButton") then
+    HereticRollCollectorFrame:Toggle()
+  else
+    UIDropDownMenu_Initialize(HereticLootmasterRollButtonMenuFrame, HereticRollCollectorFrameDropDown_Initialize, "MENU");
+    ToggleDropDownMenu(1, nil, HereticLootmasterRollButtonMenuFrame, self:GetName(), 0, 0);
+  end
+end
+
+function HereticRollCollectorFrameDropDown_Initialize(frame)
+  local title = { text = "Choose roll order", isTitle = true};
+  UIDropDownMenu_AddButton(title);
+  local lootOrder = Addon:lootOrder();
+  local highestRoll =
+    { text = "Highest roll",
+      func = function() print("You've chosen highest roll");
+               Addon:lootOrder(Addon.LOOT_ORDER_HIGHEST_ROLL)
+             end,
+      checked = lootOrder == Addon.LOOT_ORDER_HIGHEST_ROLL
+    };
+  UIDropDownMenu_AddButton(highestRoll);
+  local lootReceived =
+    { text = "Loot received, highest roll",
+      func = function() print("You've chosen loot received, highest roll");
+               Addon:lootOrder(Addon.LOOT_ORDER_LOOT_RECEIVED_HIGHEST_ROLL);
+             end,
+      checked = lootOrder == Addon.LOOT_ORDER_LOOT_RECEIVED_HIGHEST_ROLL
+    };
+  UIDropDownMenu_AddButton(lootReceived);
 end
