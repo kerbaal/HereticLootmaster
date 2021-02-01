@@ -2,7 +2,7 @@ local ADDON, Addon = ...
 
 local Util = Addon.Util
 
-SLASH_HereticLootmaster1, SLASH_HereticLootmaster2 = '/klv', '/kpm';
+SLASH_HereticLootmaster1, SLASH_HereticLootmaster2 = '/hlm', '/klv', '/kpm';
 function SlashCmdList.HereticLootmaster(msg, editbox)
   if (msg == "" or msg:match("^%s*toggle%s*$")) then
     HereticLootmasterToggle()
