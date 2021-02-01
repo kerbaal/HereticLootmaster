@@ -16,6 +16,7 @@ end
 function Addon:update(reason)
   Util.dbgprint("Updating UI (" .. reason ..")..")
   HereticTabView_Update(getActiveTab())
+  HereticHistoryDropDown_OnShow(HereticHistoryDropDown)
 end
 
 function HereticLootmasterShow()
@@ -224,11 +225,11 @@ local function updateTitle()
 end
 
 function Addon:ClearHistory()
-  Addon.itemList:DeleteAllEntries()
+  self.itemList:DeleteAllEntries()
   HereticHistory:Wipe();
-  Addon.activeHistoryIndex = 1
+  self:SetCurrentHistory(1)
   HereticTab_SetActiveTab(1)
-  Addon:update("DeleteAllEntries")
+  self:update("DeleteAllEntries")
 end
 
 function Addon:IsMaster()
